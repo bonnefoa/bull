@@ -1,8 +1,6 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include <bl_sdl.h>
 
-int main(int argc, char *argv[])
+int main()
 {
         sdl_launch();
         return 0;
