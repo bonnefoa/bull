@@ -10,7 +10,7 @@ CCFLAGS += `pkg-config --cflags glewmx gl sdl2`
 
 LIBS = `pkg-config --libs glewmx gl sdl2`
 
-_OBJ = 
+_OBJ = bl_sdl.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 MAIN = $(ODIR)/main.o $(OBJ) 
