@@ -10,6 +10,7 @@ flags = [
 , '-I', '/usr/include/GL'
 , '-I', '/usr/include/libdrm'
 , '-I', '/usr/include/SDL2'
+, '-I', '/usr/include/bullet'
 ]
 
 def DirectoryOfThisScript():

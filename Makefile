@@ -6,11 +6,11 @@ TESTDIR = tests
 
 CC      = clang
 CCFLAGS = -I$(IDIR) -Wextra -Wall -x c++
-CCFLAGS += `pkg-config --cflags glewmx gl sdl2`
+CCFLAGS += `pkg-config --cflags glewmx gl sdl2 bullet`
 
-LIBS = `pkg-config --libs glewmx gl sdl2`
+LIBS = `pkg-config --libs glewmx gl sdl2 bullet`
 
-_OBJ = bl_window.o bl_input.o bl_render.o
+_OBJ = bl_window.o bl_input.o bl_render.o bl_simulation.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 MAIN = $(ODIR)/main.o $(OBJ) 

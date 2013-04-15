@@ -7,6 +7,6 @@ BlRender::BlRender()
 
 void BlRender::render()
 {
-        glClearColor ( 1.0, 0.0, 0.0, 1.0 );
-        glClear ( GL_COLOR_BUFFER_BIT );
+        glClearColor( 1.0, 0.0, 0.0, 1.0 );
+        glClear( GL_COLOR_BUFFER_BIT );
 }
