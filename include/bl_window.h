@@ -3,15 +3,16 @@
 
 #include <SDL.h>
 
-class BlSdl {
+class BlWindow {
         public:
-                BlSdl(void);
+                SDL_Window *window;
+                SDL_GLContext context;
+
+                BlWindow(void);
                 void launch(void);
                 void shutdown(void);
 
         private:
-                SDL_Window *main_window;
-                SDL_GLContext main_context;
                 void die(const char *msg);
                 void check_error(int line = -1);
 };
