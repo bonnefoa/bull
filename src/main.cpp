@@ -1,10 +1,12 @@
 #include <bl_input.h>
 #include <bl_render.h>
 #include <bl_window.h>
+#include <bl_simulation.h>
 
 BlInput bl_input;
 BlWindow bl_window;
 BlRender bl_render;
+BlSimulation bl_simulation;
 
 void main_loop()
 {
@@ -17,6 +19,7 @@ void main_loop()
 
 int main()
 {
+        bl_simulation.doSimulation();
         bl_window.launch();
         while(true) {
                 main_loop();
