@@ -1,22 +1,18 @@
 #include <bl_input.h>
+#include <bl_render.h>
 #include <bl_window.h>
-#include <GL/gl.h>
 
 BlInput bl_input;
 BlWindow bl_window;
-
-void render()
-{
-        glClearColor ( 1.0, 0.0, 0.0, 1.0 );
-        glClear ( GL_COLOR_BUFFER_BIT );
-        SDL_GL_SwapWindow(bl_window.window);
-}
+BlRender bl_render;
 
 void main_loop()
 {
         bl_input.poll_input();
         bl_input.handle_input();
-        render();
+        bl_render.render();
+
+        SDL_GL_SwapWindow(bl_window.window);
 }
 
 int main()
