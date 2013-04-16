@@ -12,15 +12,15 @@ void BlProgram::loadProgram()
                         glDetachShader(programId, (*shaders[i]).shaderId);
                 }
         }
-        GLint program_ok;
+        GLint programOk;
         for(unsigned int i = 0; i < shaders.size(); i++){
                 GLuint shaderId = (*shaders[i]).loadShader();
                 glAttachShader(programId, shaderId);
         }
         glLinkProgram(programId);
 
-        glGetProgramiv(programId, GL_LINK_STATUS, &program_ok);
-        if(!program_ok)
+        glGetProgramiv(programId, GL_LINK_STATUS, &programOk);
+        if(!programOk)
         {
                 fprintf(stderr, "Failed to link shader program:\n");
                 show_info_log(programId, glGetProgramiv, glGetProgramInfoLog);
