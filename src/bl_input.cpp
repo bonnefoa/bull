@@ -8,13 +8,13 @@ BlInput::BlInput()
         }
 }
 
-void BlInput::poll_input()
+void BlInput::pollInput()
 {
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
                 switch (event.type) {
                         case SDL_QUIT:
-                                game_state = 1;
+                                gameState = 1;
                                 break;
                         case SDL_KEYDOWN:
                                 keys[event.key.keysym.sym] = true;
@@ -28,9 +28,9 @@ void BlInput::poll_input()
         }
 }
 
-void BlInput::handle_input()
+void BlInput::handleInput()
 {
         if(keys[SDLK_ESCAPE]) {
-                game_state = 1;
+                gameState = 1;
         }
 }

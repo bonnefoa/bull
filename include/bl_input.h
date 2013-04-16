@@ -6,11 +6,11 @@ class BlInput
 
         public:
                 bool keys[322];
-                int game_state;
+                int gameState;
 
                 BlInput();
-                void poll_input();
-                void handle_input();
+                void pollInput();
+                void handleInput();
 };
 
 
