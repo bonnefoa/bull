@@ -1,0 +1,72 @@
+#include "bl_model.h"
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
+void BlModel::init()
+{
+        glGenBuffers(1, &indiceBuffer);
+        glGenBuffers(1, &vertexBuffer);
+}
+
+void BlModel::loadInBuffer()
+{
+        vertices.clear();
+        indices.clear();
+        //bool res = loadAsset();
+        //if ( !res ) {
+                //fprintf(stderr, "Error loading obj\n");
+                //exit(1);
+        //}
+
+        //glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+        //glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(btVector3)
+                        //, &vertices[0], GL_STATIC_DRAW);
+
+        //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indiceBuffer);
+        //glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size()
+                        //* sizeof(unsigned int)
+                        //, &indices[0], GL_STATIC_DRAW);
+        //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
+
+
+bool BlModel::loadAsset(void)
+{
+        Assimp::Importer importer;
+        const aiScene * scene = importer.ReadFile(modelPath,
+                        aiProcess_CalcTangentSpace
+                        | aiProcess_JoinIdenticalVertices
+                        | aiProcess_Triangulate
+                        | aiProcess_OptimizeMeshes
+                        | aiProcess_SortByPType
+                        | aiProcess_FindInstances
+                        );
+        if (!scene) {
+                fprintf(stderr, "Could not load scene. %s\n"
+                                , importer.GetErrorString());
+                return false;
+        }
+
+        for (unsigned int i = 0; i < scene->mNumMeshes; i++){
+                aiMesh * mesh = scene->mMeshes[i];
+                printf("Process mesh %i\n", i);
+                for(unsigned int j=0; j < mesh->mNumVertices; j++){
+                        aiVector3D meshVert = mesh->mVertices[j];
+                        btVector3 vertice = btVector3(meshVert.x
+                                        , meshVert.y, meshVert.z);
+                        vertices.push_back(vertice);
+                }
+
+                for(unsigned int j=0; j < mesh->mNumFaces; j++){
+                        aiFace meshFace = mesh->mFaces[j];
+                        for(unsigned int k=0; k < meshFace.mNumIndices; k+=3){
+                                indices.push_back(meshFace.mIndices[k]);
+                                indices.push_back(meshFace.mIndices[k+1]);
+                                indices.push_back(meshFace.mIndices[k+2]);
+                        }
+                }
+
+        }
+        return true;
+}
