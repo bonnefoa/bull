@@ -14,7 +14,7 @@ class BlWindow {
 
         private:
                 void die(const char *msg);
-                void check_error(int line = -1);
+                void checkError(int line = -1);
 };
 
 #endif

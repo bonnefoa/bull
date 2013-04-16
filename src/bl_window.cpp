@@ -13,7 +13,7 @@ void BlWindow::die(const char *msg)
         exit(1);
 }
 
-void BlWindow::check_error(int line)
+void BlWindow::checkError(int line)
 {
 #ifndef NDEBUG
         const char *error = SDL_GetError();
@@ -49,10 +49,10 @@ void BlWindow::launch()
                         512, 512, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
         if (!window)
                 die("Unable to create window");
-        check_error(__LINE__);
+        checkError(__LINE__);
 
         context = SDL_GL_CreateContext(window);
-        check_error(__LINE__);
+        checkError(__LINE__);
 
         SDL_GL_SetSwapInterval(1);
 }
