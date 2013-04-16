@@ -15,7 +15,6 @@ class BlShader {
                         : shaderFile(shaderFile), shaderType(shaderType) {shaderId=0;};
                 GLuint loadShader(void);
         private:
-                void showInfoLog(void);
 };
 
 #endif

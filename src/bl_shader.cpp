@@ -2,17 +2,7 @@
 #include <bl_file.h>
 #include <stdio.h>
 #include <stdlib.h>
-
-void BlShader::showInfoLog()
-{
-        GLint log_length;
-        char *log;
-        glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &log_length);
-        log = (char *) malloc(log_length);
-        glGetShaderInfoLog(shaderId, log_length, NULL, log);
-        fprintf(stderr, "%s", log);
-        free(log);
-}
+#include <bl_util.h>
 
 GLuint BlShader::loadShader()
 {
@@ -31,7 +21,7 @@ GLuint BlShader::loadShader()
         glGetShaderiv(shaderId, GL_COMPILE_STATUS, &shader_ok);
         if (!shader_ok) {
                 fprintf(stderr, "Failed to compile %s:\n", shaderFile);
-                showInfoLog();
+                show_info_log(shaderId, glGetShaderiv, glGetShaderInfoLog);
                 glDeleteShader(shaderId);
                 return 0;
         }
