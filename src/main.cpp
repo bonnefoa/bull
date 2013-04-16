@@ -2,29 +2,44 @@
 #include <bl_render.h>
 #include <bl_window.h>
 #include <bl_simulation.h>
+#include <bl_program_model.h>
 
-BlInput bl_input;
-BlWindow bl_window;
-BlRender bl_render;
-BlSimulation bl_simulation;
+BlInput *blInput;
+BlWindow blWindow;
+BlRender blRender;
+BlSimulation blSimulation;
+BlProgramModel *blProgramModel;
 
 void main_loop()
 {
-        bl_input.poll_input();
-        bl_input.handle_input();
-        bl_render.render();
+        blInput->pollInput();
+        blInput->handleInput();
+        blRender.render();
+        SDL_GL_SwapWindow(blWindow.window);
+}
 
-        SDL_GL_SwapWindow(bl_window.window);
+void init()
+{
+        blWindow.launch();
+        blInput = new BlInput();
+
+        std::vector<BlShader*> shaders;
+        BlShader *modelVertexShader = new BlShader("glsl/model_vertex.glsl", GL_VERTEX_SHADER);
+        BlShader *modelFragmentShader = new BlShader("glsl/model_fragment.glsl", GL_FRAGMENT_SHADER);
+        shaders.push_back(modelVertexShader);
+        shaders.push_back(modelFragmentShader);
+
+        blProgramModel = new BlProgramModel(shaders, blInput);
+        blProgramModel->init();
 }
 
 int main()
 {
-        bl_simulation.doSimulation();
-        bl_window.launch();
+        init();
         while(true) {
                 main_loop();
-                if(bl_input.game_state == 1) {
-                        bl_window.shutdown();
+                if(blInput->gameState == 1) {
+                        blWindow.shutdown();
                         return 0;
                 }
         }
