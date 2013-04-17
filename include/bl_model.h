@@ -16,6 +16,7 @@ class BlModel {
                 void init();
                 void loadInBuffer();
                 bool loadAsset(void);
+                void drawElement(GLuint locationVertex);
 
         private:
 
