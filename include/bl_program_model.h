@@ -6,6 +6,7 @@
 #include <bl_program.h>
 #include <bl_shader.h>
 #include <bl_model.h>
+#include <bl_input.h>
 #include <vector>
 
 class  BlProgramModel : public BlProgram
