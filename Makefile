@@ -6,9 +6,9 @@ TESTDIR = tests
 
 CC      = clang++
 CCFLAGS = -I$(IDIR) -Wextra -Wall
-CCFLAGS += `pkg-config --cflags glewmx gl sdl2 bullet assimp`
+CCFLAGS += `pkg-config --cflags glew gl sdl2 bullet assimp`
 
-LIBS = `pkg-config --libs glewmx gl sdl2 bullet assimp`
+LIBS = `pkg-config --libs glew gl sdl2 bullet assimp`
 
 TEST_CCFLAGS = $(CCFLAGS)
 TEST_CCFLAGS += `pkg-config --cflags check`
