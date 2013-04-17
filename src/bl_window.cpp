@@ -1,3 +1,4 @@
+#include <GL/glew.h>
 #include <bl_window.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -53,6 +54,9 @@ void BlWindow::launch()
 
         context = SDL_GL_CreateContext(window);
         checkError(__LINE__);
+
+        if (glewInit() != GLEW_OK)
+                die("Failed to initialize GLEW\n");
 
         SDL_GL_SetSwapInterval(1);
 }
