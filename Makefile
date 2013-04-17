@@ -4,8 +4,8 @@ ODIR    = obj
 LDIR    = lib
 TESTDIR = tests
 
-CC      = clang
-CCFLAGS = -I$(IDIR) -Wextra -Wall -x c++
+CC      = clang++
+CCFLAGS = -I$(IDIR) -Wextra -Wall
 CCFLAGS += `pkg-config --cflags glewmx gl sdl2 bullet assimp`
 
 LIBS = `pkg-config --libs glewmx gl sdl2 bullet assimp`
@@ -15,7 +15,7 @@ TEST_CCFLAGS += `pkg-config --cflags check`
 TEST_LIBS = $(LIBS)
 TEST_LIBS += `pkg-config --libs check`
 
-_OBJ = bl_window.o bl_input.o bl_render.o bl_simulation.o bl_file.o bl_shader.o bl_model.o bl_program.o bl_util.o
+_OBJ = bl_window.o bl_input.o bl_render.o bl_simulation.o bl_file.o bl_shader.o bl_model.o bl_program.o bl_util.o bl_program_model.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 MAIN = $(ODIR)/main.o $(OBJ) 
