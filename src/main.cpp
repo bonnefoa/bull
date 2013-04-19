@@ -5,7 +5,7 @@
 #include <bl_program_model.h>
 
 BlInput *blInput;
-BlWindow blWindow;
+BlWindow *blWindow;
 BlRender blRender;
 BlSimulation blSimulation;
 BlProgramModel *blProgramModel;
@@ -19,7 +19,8 @@ void main_loop()
 
 void init()
 {
-        blWindow.launch();
+        blWindow = new BlWindow();
+        blWindow->launch();
         blRender.init();
         blInput = new BlInput();
 
@@ -42,10 +43,10 @@ int main()
         while(true) {
                 main_loop();
                 if(blInput->gameState == 1) {
-                        blWindow.shutdown();
+                        blWindow->shutdown();
                         return 0;
                 }
-                SDL_GL_SwapWindow(blWindow.window);
+                SDL_GL_SwapWindow(blWindow->window);
         }
         return 1;
 }
