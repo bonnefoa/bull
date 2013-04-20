@@ -9,12 +9,14 @@ BlWindow *blWindow;
 BlRender *blRender;
 BlSimulation *blSimulation;
 BlProgramModel *blProgramModel;
+BlModel *blModel;
 
 void main_loop()
 {
         blInput->pollInput();
         blInput->handleInput();
         blRender->render();
+        blProgramModel->displayModel(blModel);
 }
 
 void init()
@@ -37,6 +39,11 @@ void init()
         blProgramModel = new BlProgramModel(shaders, blInput);
         blProgramModel->loadProgram();
         blProgramModel->init();
+
+        blModel = new BlModel("");
+        blModel->loadAsset();
+
+        blProgramModel->loadModelInBuffer(blModel);
 }
 
 int main()
