@@ -6,23 +6,25 @@
 
 BlInput *blInput;
 BlWindow *blWindow;
-BlRender blRender;
-BlSimulation blSimulation;
+BlRender *blRender;
+BlSimulation *blSimulation;
 BlProgramModel *blProgramModel;
 
 void main_loop()
 {
         blInput->pollInput();
         blInput->handleInput();
-        blRender.render();
+        blRender->render();
 }
 
 void init()
 {
         blWindow = new BlWindow();
         blWindow->launch();
-        blRender.init();
+        blRender = new BlRender();
+        blRender->init();
         blInput = new BlInput();
+        blSimulation = new BlSimulation();
 
         std::vector<BlShader*> shaders;
         BlShader *modelVertexShader = new BlShader("glsl/model_vertex.glsl"
