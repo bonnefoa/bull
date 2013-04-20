@@ -9,10 +9,16 @@
 class BlModel {
 
         const char *modelPath;
+        std::vector <btVector3> vertices;
+        std::vector <unsigned int> indices;
 
         public:
-                BlModel(const char * modelPath)
+                BlModel(const char *modelPath)
                         : modelPath(modelPath) {};
+                BlModel(std::vector<btVector3> vertices
+                                , std::vector<unsigned int> indices) :
+                        vertices(vertices)
+                        , indices(indices) {};
                 void init();
                 void loadInBuffer();
                 bool loadAsset(void);
@@ -23,8 +29,6 @@ class BlModel {
                 GLuint vertexBuffer;
                 GLuint indiceBuffer;
 
-                std::vector <btVector3> vertices;
-                std::vector <unsigned int> indices;
 };
 
 #endif
