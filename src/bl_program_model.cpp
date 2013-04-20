@@ -13,15 +13,15 @@ void BlProgramModel::init()
 
 void BlProgramModel::bindMVP()
 {
-        btMatrix3x3 M = btMatrix3x3();
+        btTransform M = btTransform();
         M.setIdentity();
-        btMatrix3x3 V = blInput->view;
-        btMatrix3x3 P = blInput->projection;
-        btMatrix3x3 MV = V * M;
-        btMatrix3x3 MVP = P * MV;
+        btTransform V = blInput->view;
+        btTransform P = blInput->projection;
+        btTransform MV = V * M;
+        btTransform MVP = P * MV;
 
         btScalar mat[16];
-        MVP.getOpenGLSubMatrix(mat);
+        MVP.getOpenGLMatrix(mat);
         glUniformMatrix4fv(uniformMVP, 1, GL_FALSE, mat);
 }
 
