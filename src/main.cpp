@@ -13,10 +13,21 @@ BlModel *blModel;
 
 void main_loop()
 {
-        blInput->pollInput();
         blInput->handleInput();
         blRender->render();
         blProgramModel->displayModel(blModel);
+}
+
+void init_test_model() {
+        std::vector<btVector3> vertices;
+        std::vector<unsigned int> indices;
+        vertices.push_back(btVector3(-1, -1, 0));
+        vertices.push_back(btVector3(-1, 1, 0));
+        vertices.push_back(btVector3(1, -1, 0));
+        indices.push_back(0);
+        indices.push_back(1);
+        indices.push_back(2);
+        blModel = new BlModel(vertices, indices);
 }
 
 void init()
@@ -40,9 +51,7 @@ void init()
         blProgramModel->loadProgram();
         blProgramModel->init();
 
-        blModel = new BlModel("");
-        blModel->loadAsset();
-
+        init_test_model();
         blProgramModel->loadModelInBuffer(blModel);
 }
 

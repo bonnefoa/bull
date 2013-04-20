@@ -2,6 +2,7 @@
 #define HANDLE_INPUT_H
 
 #include "btBulletDynamicsCommon.h"
+#include <SDL.h>
 
 class BlInput
 {
@@ -14,12 +15,12 @@ class BlInput
         btScalar zNear;
         btScalar zFar;
         double lastTicks;
-        bool keys[322];
         btVector3 position;
+        int axisX;
+        int axisY;
 
         public:
                 BlInput();
-                void pollInput();
                 void handleInput();
 
                 int gameState;
@@ -36,6 +37,8 @@ class BlInput
                                 , const btVector3 &up
                                 , const btVector3 &position);
                 void computeProjection();
+                void handleDown(SDL_Event *event);
+                void handleUp(SDL_Event *event);
 };
 
 #endif
