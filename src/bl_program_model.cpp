@@ -25,6 +25,13 @@ void BlProgramModel::bindMVP()
         glUniformMatrix4fv(uniformMVP, 1, GL_FALSE, mat);
 }
 
+void BlProgramModel::loadModelInBuffer(BlModel *model)
+{
+        glUseProgram(programId);
+        model->loadInBuffer();
+        glUseProgram(0);
+}
+
 void BlProgramModel::displayModel(BlModel *model)
 {
         glUseProgram(programId);

@@ -18,6 +18,7 @@ class  BlProgramModel : public BlProgram
                 void init(void);
                 void bindMVP(void);
                 void displayModel(BlModel *model);
+                void loadModelInBuffer(BlModel *model);
 
         private:
                 BlInput *blInput;
