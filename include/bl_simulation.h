@@ -1,7 +1,7 @@
 #ifndef BL_SIMULATION_H
 #define BL_SIMULATION_H
 
-#include "btBulletDynamicsCommon.h"
+#include <bullet.h>
 
 class BlSimulation {
         public:

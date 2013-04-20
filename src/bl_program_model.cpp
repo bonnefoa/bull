@@ -1,5 +1,5 @@
 #include "bl_program_model.h"
-#include "btBulletDynamicsCommon.h"
+#include <bullet.h>
 
 void BlProgramModel::init()
 {

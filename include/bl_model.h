@@ -4,7 +4,7 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 #include <vector>
-#include "btBulletDynamicsCommon.h"
+#include <bullet.h>
 
 class BlModel {
 

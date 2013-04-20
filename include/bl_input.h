@@ -1,7 +1,7 @@
 #ifndef HANDLE_INPUT_H
 #define HANDLE_INPUT_H
 
-#include "btBulletDynamicsCommon.h"
+#include <bullet.h>
 #include <SDL.h>
 
 class BlInput
