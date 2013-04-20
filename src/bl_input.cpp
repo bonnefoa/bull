@@ -1,5 +1,6 @@
 #include <bl_input.h>
 #include <SDL.h>
+#include <math.h>
 
 BlInput::BlInput(): aspect(4.0f/3.0f), zNear(0.1f), zFar(100.0f)
 {
@@ -13,6 +14,7 @@ BlInput::BlInput(): aspect(4.0f/3.0f), zNear(0.1f), zFar(100.0f)
         mouseSpeed = 0.1f ;
         lastTicks = 0 ;
         position = btVector3(0.f, 0.f, 0.f);
+        computeProjection();
         SDL_SetRelativeMouseMode(SDL_TRUE);
 }
 
@@ -62,24 +64,26 @@ void BlInput::computeNewAngles(float deltaTime)
         theta = fmin(theta, 3.14);
 }
 
-btTransform BlInput::computeView(const btVector3 &lookAt
+void BlInput::computeView(const btVector3 &lookAt
                 , const btVector3 &right
                 , const btVector3 &up, const btVector3 &position)
 {
-       btTransform transform;
-       btMatrix3x3 basis;
-       basis[0] = right;
-       basis[1] = up;
-       basis[2] = lookAt;
-       transform.setBasis(basis.transpose());
-       transform.setOrigin(position * btScalar(-1));
-       return transform;
+        btTransform transform;
+        btMatrix3x3 basis;
+        basis[0] = right;
+        basis[1] = up;
+        basis[2] = lookAt;
+        view = btTransform(basis.transpose(), position * btScalar(-1));
 }
 
-btTransform BlInput::computeProjection()
+void BlInput::computeProjection()
 {
-       btTransform res;
-       return res;
+        btMatrix3x3 basis(
+                        (cos(fov) / sin(fov)) / aspect, 0, 0
+                        , 0, zFar, 0
+                        , 0, 0, (zNear + zFar) / (zNear - zFar));
+        btVector3 origin = btVector3(0, 0, 2 * zFar * zNear / (zNear - zFar));
+        projection = btTransform(basis, origin);
 }
 
 void BlInput::handleMovement()
@@ -103,8 +107,7 @@ void BlInput::handleMovement()
         } else if(keys[SDLK_RIGHT]) {
                 position += right * deltaTime * speed;
         }
-        view = computeView(direction, right, up, position);
-        projection = computeProjection();
+        computeView(direction, right, up, position);
 }
 
 void BlInput::handleInput()

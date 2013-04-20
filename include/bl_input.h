@@ -9,10 +9,10 @@ class BlInput
         float theta;
         float mouseSpeed;
         float speed;
-        float fov;
-        const float aspect;
-        const float zNear;
-        const float zFar;
+        btScalar fov;
+        btScalar aspect;
+        btScalar zNear;
+        btScalar zFar;
         double lastTicks;
         bool keys[322];
         btVector3 position;
@@ -31,11 +31,11 @@ class BlInput
                 void handleMovement();
                 float getDeltaTime();
                 void computeNewAngles(float deltaTime);
-                btTransform computeView(const btVector3 &lookAt
+                void computeView(const btVector3 &lookAt
                                 , const btVector3 &right
                                 , const btVector3 &up
                                 , const btVector3 &position);
-                btTransform computeProjection();
+                void computeProjection();
 };
 
 #endif
