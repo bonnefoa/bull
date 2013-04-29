@@ -11,16 +11,14 @@ void BlModel::init()
 
 void BlModel::loadInBuffer()
 {
-        vertices.clear();
-        indices.clear();
-
         glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-        glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(btVector3)
+        glBufferData(GL_ARRAY_BUFFER, 3 * sizeof(btVector3)
                         , &vertices[0], GL_STATIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indiceBuffer);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size()
-                        * sizeof(unsigned int)
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER
+                        , indices.size() * sizeof(unsigned int)
                         , &indices[0], GL_STATIC_DRAW);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
@@ -28,13 +26,17 @@ void BlModel::loadInBuffer()
 
 void BlModel::drawElement(GLuint locationVertex)
 {
-        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-        glVertexAttribPointer(locationVertex, 3, GL_FLOAT
-                        , GL_FALSE, 0, (void *)0);
+        glEnableVertexAttribArray(0);
+        glEnableVertexAttribArray(1);
 
+        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+        glVertexAttribPointer(locationVertex, 4, GL_FLOAT
+                        , GL_FALSE, 0, (void *)0);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indiceBuffer);
-        glDrawElements(GL_TRIANGLES, indices.size()
-                        , GL_UNSIGNED_INT, (void *)0);
+        glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void *)0);
+
+        glDisableVertexAttribArray(0);
+        glDisableVertexAttribArray(1);
 }
 
 bool BlModel::loadAsset(void)
@@ -66,7 +68,7 @@ bool BlModel::loadAsset(void)
 
                 for(unsigned int j=0; j < mesh->mNumFaces; j++){
                         aiFace meshFace = mesh->mFaces[j];
-                        for(unsigned int k=0; k < meshFace.mNumIndices; k+=3){
+                        for(unsigned int k=0; k < meshFace.mNumIndices; k+=3) {
                                 indices.push_back(meshFace.mIndices[k]);
                                 indices.push_back(meshFace.mIndices[k+1]);
                                 indices.push_back(meshFace.mIndices[k+2]);

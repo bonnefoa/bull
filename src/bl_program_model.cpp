@@ -6,9 +6,8 @@ void BlProgramModel::init()
         glUseProgram(programId);
 
         uniformMVP = glGetUniformLocation(programId, "MVP");
-        locationVertexPositionWorldspace = glGetAttribLocation(programId, "vertexPosition_modelspace");
-
-        glUseProgram(0);
+        locationVertexPositionWorldspace = glGetAttribLocation(programId
+                        , "vertexPosition_modelspace");
 }
 
 void BlProgramModel::bindMVP()
@@ -29,21 +28,12 @@ void BlProgramModel::loadModelInBuffer(BlModel *model)
 {
         glUseProgram(programId);
         model->loadInBuffer();
-        glUseProgram(0);
 }
 
 void BlProgramModel::displayModel(BlModel *model)
 {
         glUseProgram(programId);
 
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
-
         model->drawElement(locationVertexPositionWorldspace);
-        bindMVP();
-
-        glDisableVertexAttribArray(0);
-        glDisableVertexAttribArray(1);
-
-        glUseProgram(0);
+        //bindMVP();
 }

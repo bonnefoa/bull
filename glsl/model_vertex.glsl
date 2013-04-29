@@ -8,5 +8,6 @@ out vec3 vertexPosition_worldspace;
 
 void main()
 {
-        gl_Position = MVP * vec4(vertexPosition_modelspace, 1.0f);
+        /*gl_Position = MVP * vec4(vertexPosition_modelspace, 1.0f);*/
+        gl_Position = vec4(vertexPosition_modelspace, 1.0f);
 }

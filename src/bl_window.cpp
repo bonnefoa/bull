@@ -3,6 +3,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+void errorCallback( GLenum source,
+                GLenum type, GLuint id, GLenum severity,
+                GLsizei length, const char* message,
+                void* userParam)
+{
+        (void) userParam;
+        printf("%s\t",message);
+        printf("%d, %d, %d, %d, %d\n", source, type
+                        , id, length, severity);
+}
+
 BlWindow::BlWindow()
 {
 }
@@ -58,6 +69,7 @@ void BlWindow::launch()
 
         if (glewInit() != GLEW_OK)
                 die("Failed to initialize GLEW\n");
+        glDebugMessageCallbackARB( errorCallback, NULL );
 
         SDL_GL_SetSwapInterval(1);
 }
