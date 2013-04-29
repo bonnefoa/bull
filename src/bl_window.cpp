@@ -44,6 +44,7 @@ void BlWindow::launch()
         SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
 
         window = SDL_CreateWindow("bullora"
                         , SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
