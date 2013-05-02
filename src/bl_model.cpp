@@ -26,17 +26,16 @@ void BlModel::loadInBuffer()
 
 void BlModel::drawElement(GLuint locationVertex)
 {
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
+        glEnableVertexAttribArray(locationVertex);
 
         glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-        glVertexAttribPointer(locationVertex, 4, GL_FLOAT
+        glVertexAttribPointer(locationVertex, 4 , GL_FLOAT
                         , GL_FALSE, 0, (void *)0);
+
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indiceBuffer);
         glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void *)0);
 
-        glDisableVertexAttribArray(0);
-        glDisableVertexAttribArray(1);
+        glDisableVertexAttribArray(locationVertex);
 }
 
 bool BlModel::loadAsset(void)
