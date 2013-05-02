@@ -15,7 +15,7 @@ TEST_CCFLAGS += `pkg-config --cflags check`
 TEST_LIBS = $(LIBS)
 TEST_LIBS += `pkg-config --libs check`
 
-_OBJ = bl_window.o bl_input.o bl_render.o bl_simulation.o bl_file.o bl_shader.o bl_model.o bl_program.o bl_util.o bl_program_model.o
+_OBJ = bl_window.o bl_input.o bl_simulation.o bl_file.o bl_shader.o bl_model.o bl_program.o bl_util.o bl_program_model.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 MAIN = $(ODIR)/main.o $(OBJ) 

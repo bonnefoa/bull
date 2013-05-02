@@ -1,22 +1,13 @@
 #include <bl_input.h>
-#include <bl_render.h>
 #include <bl_window.h>
 #include <bl_simulation.h>
 #include <bl_program_model.h>
 
 BlInput *blInput;
 BlWindow *blWindow;
-BlRender *blRender;
 BlSimulation *blSimulation;
 BlProgramModel *blProgramModel;
 BlModel *blModel;
-
-void main_loop()
-{
-        blInput->handleInput();
-        blRender->render();
-        blProgramModel->displayModel(blModel);
-}
 
 void init_test_model() {
         std::vector<btVector3> vertices;
@@ -35,8 +26,6 @@ void init()
 {
         blWindow = new BlWindow();
         blWindow->launch();
-        blRender = new BlRender();
-        blRender->init();
         blInput = new BlInput();
         blSimulation = new BlSimulation();
 
@@ -54,6 +43,14 @@ void init()
 
         init_test_model();
         blProgramModel->loadModelInBuffer(blModel);
+}
+
+void main_loop()
+{
+        glClearColor( 0.0, 0.0, 0.2, 1.0 );
+        glClear( GL_COLOR_BUFFER_BIT );
+        blInput->handleInput();
+        blProgramModel->displayModel(blModel);
 }
 
 int main()
