@@ -28,3 +28,15 @@ void printBtTransform(btTransform *mat)
        }
        printf("%f %f %f %f\n\n", 0.f, 0.f, 0.f, 1.f);
 }
+
+int max(int a, int b)
+{
+        if (a > b) return a;
+        return b;
+}
+
+int min(int a, int b)
+{
+        if (a < b) return a;
+        return b;
+}

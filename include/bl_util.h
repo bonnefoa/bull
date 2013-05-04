@@ -10,5 +10,8 @@ void show_info_log(GLuint object,
                 PFNGLGETSHADERINFOLOGPROC glGet__InfoLog);
 void printBtTransform(btTransform *mat);
 
+int max(int a, int b);
+int min(int a, int b);
+
 #endif
 
