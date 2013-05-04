@@ -35,5 +35,5 @@ void BlProgramModel::displayModel(BlModel *model)
         glUseProgram(programId);
 
         model->drawElement(locationVertexPositionWorldspace);
-        //bindMVP();
+        bindMVP();
 }
