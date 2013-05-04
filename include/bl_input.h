@@ -27,16 +27,17 @@ class BlInput
 
                 btTransform view;
                 btTransform projection;
+
+                void computeView(const btVector3 &lookAt
+                                , btVector3 &right
+                                , const btVector3 &position);
+                void computeProjection(btScalar fov, btScalar aspect
+                                , btScalar zNear, btScalar zFar);
         private:
                 btVector3 computeCurrentDirection();
                 void handleMovement();
                 float getDeltaTime();
                 void computeNewAngles(float deltaTime);
-                void computeView(const btVector3 &lookAt
-                                , const btVector3 &right
-                                , const btVector3 &up
-                                , const btVector3 &position);
-                void computeProjection();
                 void handleDown(SDL_Event *event);
                 void handleUp(SDL_Event *event);
 };

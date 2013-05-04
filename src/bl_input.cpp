@@ -104,40 +104,45 @@ void BlInput::computeNewAngles(float deltaTime)
 }
 
 void BlInput::computeView(const btVector3 &lookAt
-                , const btVector3 &right
-                , const btVector3 &up, const btVector3 &position)
+                , btVector3 &right
+                , const btVector3 &eye)
 {
         btTransform transform;
         btMatrix3x3 basis;
-        basis[0] = right;
-        basis[1] = up;
-        basis[2] = lookAt;
-        view = btTransform(basis.transpose(), position * btScalar(-1));
+        btVector3 zAxis = (lookAt - eye).normalize();
+        btVector3 xAxis = right.normalize();
+        btVector3 yAxis = zAxis.cross(xAxis);
+        basis[0] = xAxis;
+        basis[1] = yAxis;
+        basis[2] = zAxis;
+        basis = basis.transpose();
+        view = btTransform(basis, eye * btScalar(-1));
 }
 
-void BlInput::computeProjection()
+void BlInput::computeProjection(btScalar fov, btScalar aspect, btScalar zNear, btScalar zFar)
 {
-        btMatrix3x3 basis(
-                        (cos(fov) / sin(fov)) / aspect, 0, 0
-                        , 0, zFar, 0
-                        , 0, 0, (zNear + zFar) / (zNear - zFar));
-        btVector3 origin = btVector3(0, 0, 2 * zFar * zNear / (zNear - zFar));
+        btScalar f = 1 / tan(fov/2);
+        btScalar xRot = f / aspect;
+        btScalar yRot = f;
+        btScalar zRot = (zNear + zFar) / (zNear - zFar);
+        btScalar zTrans = 2 * zNear * zFar / (zNear - zFar);
+        btMatrix3x3 basis(xRot, 0, 0
+                        , 0, yRot, 0
+                        , 0, 0, zRot);
+        btVector3 origin = btVector3(0, 0, zTrans);
         projection = btTransform(basis, origin);
 }
 
 void BlInput::handleMovement()
 {
-        btVector3 direction, up, right;
+        btVector3 direction, right;
         float deltaTime;
 
         deltaTime = getDeltaTime();
         computeNewAngles(deltaTime);
-
-        direction = computeCurrentDirection();
         right = btVector3(sin(phi - 3.14f / 2.0f), 0, cos(phi - 3.14f / 2.0f));
-        up = right.cross(direction);
 
         position += axisX * direction * deltaTime * speed;
         position += axisY * right * deltaTime * speed;
-        computeView(direction, right, up, position);
+        computeView(direction, right, position);
 }
