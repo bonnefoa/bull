@@ -23,9 +23,9 @@ START_TEST (test_projection_simple)
         btScalar zNear = 5.0f;
         btScalar zFar = 15.0f;
         btScalar aspect = 4.0f/3.0f;
-        input.computeProjection(fov, aspect, zNear, zFar);
+        btTransform projection = input.computeProjection(fov, aspect, zNear, zFar);
         btVector3 point = btVector3(4.0f, 3.0f, -15.0f);
-        btVector3 res = input.projection * point;
+        btVector3 res = projection * point;
         assert_float_equals(3.0f, res[0]);
         assert_float_equals(3.0f, res[1]);
         assert_float_equals(15.0f, res[2]);
@@ -39,9 +39,9 @@ START_TEST (test_projection_pi_3)
         btScalar zNear = 5.0f;
         btScalar zFar = 15.0f;
         btScalar aspect = 4.0f/3.0f;
-        input.computeProjection(fov, aspect, zNear, zFar);
+        btTransform projection = input.computeProjection(fov, aspect, zNear, zFar);
         btVector3 point = btVector3(4.0f, 3.0f, -15.0f);
-        btVector3 res = input.projection * point;
+        btVector3 res = projection * point;
         assert_float_equals(3.0f / sqrt(3), res[0]);
         assert_float_equals(3.0f / sqrt(3), res[1]);
         assert_float_equals(15.0f, res[2]);
@@ -54,8 +54,7 @@ START_TEST (test_view)
         btVector3 lookAt = btVector3(1, 1, 1);
         btVector3 right = btVector3(1,0,0);
         btVector3 eye = btVector3(1, 1, -1);
-        input.computeView(lookAt, right, eye);
-        btTransform view = input.view;
+        btTransform view = input.computeView(lookAt, right, eye);
 
         btVector3 center = view * lookAt;
         assert_float_equals(0.0f, center[0]);

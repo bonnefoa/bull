@@ -16,8 +16,10 @@ class BlInput
         btScalar zFar;
         double lastTicks;
         btVector3 position;
-        int axisX;
-        int axisY;
+        int axisRight;
+        int axisLeft;
+        int axisUp;
+        int axisDown;
 
         public:
                 BlInput();
@@ -28,10 +30,10 @@ class BlInput
                 btTransform view;
                 btTransform projection;
 
-                void computeView(const btVector3 &lookAt
+                btTransform computeView(const btVector3 &lookAt
                                 , btVector3 &right
                                 , const btVector3 &position);
-                void computeProjection(btScalar fov, btScalar aspect
+                btTransform computeProjection(btScalar fov, btScalar aspect
                                 , btScalar zNear, btScalar zFar);
         private:
                 btVector3 computeCurrentDirection();

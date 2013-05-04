@@ -1,21 +1,25 @@
 #include <bl_input.h>
+#include <bl_util.h>
 #include <math.h>
+#define MAX_AXIS 5
 
 BlInput::BlInput()
 {
         phi = 3.14f;
         theta = 0.0f ;
         fov = 45.0f;
-        speed = 8.0f ;
-        mouseSpeed = 0.1f ;
+        speed = 0.001f ;
+        mouseSpeed = 0.0001f ;
         lastTicks = 0 ;
-        position = btVector3(0.f, 0.f, 0.f);
+        position = btVector3(0.f, 0.f, -8.f);
         aspect = 4.0f/3.0f;
         zNear = 0.1f;
         zFar = 100.0f;
-        axisX = 0;
-        axisY = 0;
-        computeProjection();
+        axisRight = 0;
+        axisLeft = 0;
+        axisUp = 0;
+        axisDown = 0;
+        projection = computeProjection(fov, aspect, zNear, zFar);
         SDL_SetRelativeMouseMode(SDL_TRUE);
 }
 
@@ -23,16 +27,16 @@ void BlInput::handleUp(SDL_Event *event)
 {
         switch(event->key.keysym.sym) {
                 case SDLK_UP:
-                        axisY--;
+                        axisUp = 0;
                         break;
                 case SDLK_DOWN:
-                        axisY++;
+                        axisDown = 0;
                         break;
                 case SDLK_LEFT:
-                        axisX++;
+                        axisLeft = 0;
                         break;
                 case SDLK_RIGHT:
-                        axisX--;
+                        axisRight = 0;
                         break;
         }
 }
@@ -41,16 +45,16 @@ void BlInput::handleDown(SDL_Event *event)
 {
         switch(event->key.keysym.sym) {
                 case SDLK_UP:
-                        axisY++;
+                        axisUp = min(axisUp+1, MAX_AXIS);
                         break;
                 case SDLK_DOWN:
-                        axisY--;
+                        axisDown = min(axisDown+1, MAX_AXIS);
                         break;
                 case SDLK_LEFT:
-                        axisX--;
+                        axisLeft = min(axisLeft+1, MAX_AXIS);
                         break;
                 case SDLK_RIGHT:
-                        axisX++;
+                        axisRight = min(axisRight+1, MAX_AXIS);
                         break;
                 case SDLK_ESCAPE:
                         gameState = 1;
@@ -93,10 +97,10 @@ void BlInput::computeNewAngles(float deltaTime)
         phi += mouseSpeed * deltaTime * float(deltaX);
         theta -= mouseSpeed * deltaTime * float(deltaY);
         theta = fmax(0, theta);
-        theta = fmin(theta, 3.14);
+        theta = fmin(theta, M_PI);
 }
 
-void BlInput::computeView(const btVector3 &lookAt
+btTransform BlInput::computeView(const btVector3 &lookAt
                 , btVector3 &right
                 , const btVector3 &eye)
 {
@@ -109,10 +113,10 @@ void BlInput::computeView(const btVector3 &lookAt
         basis[1] = yAxis;
         basis[2] = zAxis;
         basis = basis.transpose();
-        view = btTransform(basis, eye * btScalar(-1));
+        return btTransform(basis, eye * btScalar(-1));
 }
 
-void BlInput::computeProjection(btScalar fov, btScalar aspect, btScalar zNear, btScalar zFar)
+btTransform BlInput::computeProjection(btScalar fov, btScalar aspect, btScalar zNear, btScalar zFar)
 {
         btScalar f = 1 / tan(fov/2);
         btScalar xRot = f / aspect;
@@ -123,7 +127,15 @@ void BlInput::computeProjection(btScalar fov, btScalar aspect, btScalar zNear, b
                         , 0, yRot, 0
                         , 0, 0, zRot);
         btVector3 origin = btVector3(0, 0, zTrans);
-        projection = btTransform(basis, origin);
+        return btTransform(basis, origin);
+}
+
+btVector3 BlInput::computeCurrentDirection()
+{
+        btScalar x = sin(theta) * sin(phi);
+        btScalar y = cos(theta);
+        btScalar z = sin(theta) * cos(phi);
+        return btVector3(x, y, z).normalize();
 }
 
 void BlInput::handleMovement()
@@ -133,9 +145,15 @@ void BlInput::handleMovement()
 
         deltaTime = getDeltaTime();
         computeNewAngles(deltaTime);
-        right = btVector3(sin(phi - 3.14f / 2.0f), 0, cos(phi - 3.14f / 2.0f));
+        right = btVector3(sin(phi - M_PI_2), 0, cos(phi - M_PI_2));
+        direction = computeCurrentDirection();
 
-        position += axisX * direction * deltaTime * speed;
-        position += axisY * right * deltaTime * speed;
-        computeView(direction, right, position);
+        printf("theta %f, phi %f\n", theta, phi);
+        printf("axisUp %d\n", axisUp);
+        printf("right %f %f %f\n", right[0], right[1], right[2]);
+        printf("direction %f %f %f\n", direction[0], direction[1], direction[2]);
+
+        position += float(axisUp - axisDown) * direction * deltaTime * speed;
+        position += float(axisRight - axisRight) * right * deltaTime * speed;
+        view = computeView(direction, right, position);
 }
