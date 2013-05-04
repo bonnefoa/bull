@@ -75,14 +75,7 @@ void BlInput::handleInput()
                                 break;
                 }
         }
-}
-
-btVector3 BlInput::computeCurrentDirection()
-{
-        btScalar x = sin(theta) * sin(phi);
-        btScalar y = cos(theta);
-        btScalar z = sin(theta) * cos(phi);
-        return btVector3(x, y, z);
+        handleMovement();
 }
 
 float BlInput::getDeltaTime()
