@@ -42,10 +42,14 @@ check_model: $(ODIR)/check_model.o $(OBJ)
 	$(CC) -o $@ $^ $(TEST_CCFLAGS) $(TEST_LIBS)
 	./check_model
 
+check_input: $(ODIR)/check_input.o $(OBJ) 
+	$(CC) -o $@ $^ $(TEST_CCFLAGS) $(TEST_LIBS)
+	./check_input
+
 main: $(MAIN)
 	$(CC) -o $@ $^ $(CCFLAGS) $(LIBS)
 
-.PHONY: clean
+.PHONY: clean check_input
 
 clean:
 	rm -rf $(ODIR)/*.o 
