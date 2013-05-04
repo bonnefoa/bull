@@ -3,10 +3,12 @@
 
 #include <GL/glew.h>
 #include <GL/gl.h>
+#include <bullet.h>
 
 void show_info_log(GLuint object,
                 PFNGLGETSHADERIVPROC glGet__iv,
                 PFNGLGETSHADERINFOLOGPROC glGet__InfoLog);
+void printBtTransform(btTransform *mat);
 
 #endif
 

@@ -14,3 +14,17 @@ void show_info_log(GLuint object,
         fprintf(stderr, "%s", log);
         free(log);
 }
+
+void printBtTransform(btTransform *mat)
+{
+       btMatrix3x3 bas = mat->getBasis();
+       btVector3 ori = mat->getOrigin();
+       for (int n = 0; n < 3; n++) {
+                for (int m = 0; m < 3; m++) {
+                        printf("%f ", bas[n][m]);
+                }
+                printf("%f ", ori[n]);
+                printf("\n");
+       }
+       printf("%f %f %f %f\n\n", 0.f, 0.f, 0.f, 1.f);
+}
