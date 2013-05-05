@@ -1,6 +1,7 @@
 #include <bl_input.h>
 #include <bl_util.h>
 #include <math.h>
+#include <bl_log.h>
 #define MAX_AXIS 5
 
 BlInput::BlInput()
@@ -148,10 +149,10 @@ void BlInput::handleMovement()
         right = btVector3(sin(phi - M_PI_2), 0, cos(phi - M_PI_2));
         direction = computeCurrentDirection();
 
-        printf("theta %f, phi %f\n", theta, phi);
-        printf("axisUp %d\n", axisUp);
-        printf("right %f %f %f\n", right[0], right[1], right[2]);
-        printf("direction %f %f %f\n", direction[0], direction[1], direction[2]);
+        INFO("theta %f, phi %f\n", theta, phi);
+        INFO("axisUp %d\n", axisUp);
+        INFO("right %f %f %f\n", right[0], right[1], right[2]);
+        INFO("direction %f %f %f\n", direction[0], direction[1], direction[2]);
 
         position += float(axisUp - axisDown) * direction * deltaTime * speed;
         position += float(axisRight - axisRight) * right * deltaTime * speed;

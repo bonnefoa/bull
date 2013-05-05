@@ -7,7 +7,7 @@ void BlProgram::loadProgram()
 {
         if (programId == 0) {
                 programId = glCreateProgram();
-                printf("Initialized program with id %d\n", programId);
+                INFO("Initialized program with id %d\n", programId);
         } else {
                 for(unsigned int i = 0; i < shaders.size(); i++) {
                         glDetachShader(programId, (*shaders[i]).shaderId);

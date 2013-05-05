@@ -58,7 +58,7 @@ bool BlModel::loadAsset(void)
 
         for (unsigned int i = 0; i < scene->mNumMeshes; i++){
                 aiMesh * mesh = scene->mMeshes[i];
-                printf("Process mesh %i\n", i);
+                INFO("Process mesh %i\n", i);
                 for(unsigned int j=0; j < mesh->mNumVertices; j++){
                         aiVector3D meshVert = mesh->mVertices[j];
                         btVector3 vertice = btVector3(meshVert.x

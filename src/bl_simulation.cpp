@@ -1,4 +1,5 @@
 #include "bl_simulation.h"
+#include <bl_log.h>
 
 BlSimulation::BlSimulation()
 {
@@ -74,7 +75,7 @@ void BlSimulation::doSimulation()
                         if(body && body->getMotionState()) {
                                 btTransform trans;
                                 body->getMotionState()->getWorldTransform(trans);
-                                printf("word pos = %f,%f,%f\n"
+                                INFO("word pos = %f,%f,%f\n"
                                         , float(trans.getOrigin().getX())
                                         , float(trans.getOrigin().getY())
                                         , float(trans.getOrigin().getZ()));

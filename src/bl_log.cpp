@@ -2,9 +2,7 @@
 
 void logMessage(FILE *stream, const char* tag, const char* fmt, ...)
 {
-        time_t now;
-        time(&now);
-        fprintf(stream, "%s [%s]: ", ctime(&now), tag);
+        fprintf(stream, "[%s]: ", tag);
 
         va_list ap;
         va_start(ap, fmt);
