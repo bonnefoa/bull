@@ -1,4 +1,5 @@
 #include "bl_model.h"
+#include <bl_log.h>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -50,7 +51,7 @@ bool BlModel::loadAsset(void)
                         | aiProcess_FindInstances
                         );
         if (!scene) {
-                fprintf(stderr, "Could not load scene. %s\n"
+                ERROR("Could not load scene. %s\n"
                                 , importer.GetErrorString());
                 return false;
         }

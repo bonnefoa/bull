@@ -2,6 +2,7 @@
 #include <bl_window.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <bl_log.h>
 
 void errorCallback( GLenum source,
                 GLenum type, GLuint id, GLenum severity,
@@ -9,8 +10,8 @@ void errorCallback( GLenum source,
                 void* userParam)
 {
         (void) userParam;
-        printf("%s\t",message);
-        printf("%d, %d, %d, %d, %d\n", source, type
+        INFO("%s\t",message);
+        INFO("%d, %d, %d, %d, %d\n", source, type
                         , id, length, severity);
 }
 
@@ -20,23 +21,21 @@ BlWindow::BlWindow()
 
 void BlWindow::die(const char *msg)
 {
-        printf("%s: %s\n", msg, SDL_GetError());
+        INFO("%s: %s\n", msg, SDL_GetError());
         SDL_Quit();
         exit(1);
 }
 
 void BlWindow::checkError(int line)
 {
-#ifndef NDEBUG
         const char *error = SDL_GetError();
         if (*error != '\0')
         {
-                printf("SDL Error: %s\n", error);
+                INFO("SDL Error: %s\n", error);
                 if (line != -1)
-                        printf(" + line: %i\n", line);
+                        INFO(" + line: %i\n", line);
                 SDL_ClearError();
         }
-#endif
 }
 
 void BlWindow::shutdown()

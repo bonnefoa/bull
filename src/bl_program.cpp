@@ -1,6 +1,7 @@
 #include "bl_program.h"
 #include <stdio.h>
 #include <bl_util.h>
+#include <bl_log.h>
 
 void BlProgram::loadProgram()
 {
@@ -22,7 +23,7 @@ void BlProgram::loadProgram()
         glGetProgramiv(programId, GL_LINK_STATUS, &programOk);
         if(!programOk)
         {
-                fprintf(stderr, "Failed to link shader program:\n");
+                ERROR("Failed to link shader program:\n");
                 show_info_log(programId, glGetProgramiv, glGetProgramInfoLog);
                 glDeleteProgram(programId);
         }

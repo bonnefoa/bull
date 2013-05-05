@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <bl_util.h>
+#include <bl_log.h>
 
 GLuint BlShader::loadShader()
 {
@@ -20,11 +21,11 @@ GLuint BlShader::loadShader()
         glCompileShader(shaderId);
         glGetShaderiv(shaderId, GL_COMPILE_STATUS, &shader_ok);
         if (!shader_ok) {
-                fprintf(stderr, "Failed to compile %s:\n", shaderFile);
+                ERROR("Failed to compile %s:\n", shaderFile);
                 show_info_log(shaderId, glGetShaderiv, glGetShaderInfoLog);
                 glDeleteShader(shaderId);
                 return 0;
         }
-        fprintf(stdout, "Shader source compiled %s:\n", shaderFile);
+        INFO("Shader source compiled %s:\n", shaderFile);
         return shaderId;
 }

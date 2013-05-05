@@ -53,8 +53,11 @@ void main_loop()
         blProgramModel->displayModel(blModel);
 }
 
-int main()
+int main(int argc, char **argv)
 {
+        (void) argc;
+        (void) argv;
+
         init();
         while(true) {
                 main_loop();
