@@ -31,9 +31,7 @@ void BlWindow::checkError(int line)
         const char *error = SDL_GetError();
         if (*error != '\0')
         {
-                INFO("SDL Error: %s\n", error);
-                if (line != -1)
-                        INFO(" + line: %i\n", line);
+                INFO("SDL Error: %s, line %i\n", error, line);
                 SDL_ClearError();
         }
 }
