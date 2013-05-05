@@ -12,9 +12,9 @@ BlModel *blModel;
 void init_test_model() {
         std::vector<btVector3> vertices;
         std::vector<unsigned int> indices;
-        vertices.push_back(btVector3(-0.8f, -0.8f, 0.0f));
-        vertices.push_back(btVector3(0.8f, -0.8f, 0.0f));
-        vertices.push_back(btVector3(0.0f, 0.8f, 0.0f));
+        vertices.push_back(btVector3(-8.0f, -8.0f, 0.0f));
+        vertices.push_back(btVector3(8.0f, -8.0f, 0.0f));
+        vertices.push_back(btVector3(0.0f, 8.0f, 0.0f));
         indices.push_back(0);
         indices.push_back(1);
         indices.push_back(2);
