@@ -2,25 +2,13 @@
 #include <bl_window.h>
 #include <bl_simulation.h>
 #include <bl_program_model.h>
+#include <bl_loader.h>
 
 BlInput *blInput;
 BlWindow *blWindow;
 BlSimulation *blSimulation;
 BlProgramModel *blProgramModel;
-BlModel *blModel;
-
-void init_test_model() {
-        std::vector<btVector3> vertices;
-        std::vector<unsigned int> indices;
-        vertices.push_back(btVector3(-8.0f, -8.0f, 0.0f));
-        vertices.push_back(btVector3(8.0f, -8.0f, 0.0f));
-        vertices.push_back(btVector3(0.0f, 8.0f, 0.0f));
-        indices.push_back(0);
-        indices.push_back(1);
-        indices.push_back(2);
-        blModel = new BlModel(vertices, indices);
-        blModel->init();
-}
+std::vector<BlModel*> *blModels;
 
 void init()
 {
@@ -41,8 +29,15 @@ void init()
         blProgramModel->loadProgram();
         blProgramModel->init();
 
-        init_test_model();
-        blProgramModel->loadModelInBuffer(blModel);
+}
+
+void initModels(char *filename)
+{
+        blModels = loadScene(filename);
+        for (std::vector<BlModel*>::iterator it = blModels->begin();
+                        it != blModels->end(); ++it) {
+                blProgramModel->loadModelInBuffer(*it);
+        }
 }
 
 void main_loop()
@@ -50,7 +45,10 @@ void main_loop()
         glClearColor( 0.0, 0.0, 0.2, 1.0 );
         glClear( GL_COLOR_BUFFER_BIT );
         blInput->handleInput();
-        blProgramModel->displayModel(blModel);
+        for (std::vector<BlModel*>::iterator it = blModels->begin();
+                        it != blModels->end(); ++it) {
+                blProgramModel->displayModel(*it);
+        }
 }
 
 int main(int argc, char **argv)
@@ -59,6 +57,7 @@ int main(int argc, char **argv)
         (void) argv;
 
         init();
+        initModels(argv[1]);
         while(true) {
                 main_loop();
                 if(blInput->gameState == 1) {
