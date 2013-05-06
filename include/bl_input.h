@@ -14,12 +14,15 @@ class BlInput
         btScalar aspect;
         btScalar zNear;
         btScalar zFar;
-        double lastTicks;
         btVector3 position;
         int axisRight;
         int axisLeft;
         int axisUp;
         int axisDown;
+
+        Uint32 lastTicks;
+        Uint32 nextTime;
+        Uint32 now;
 
         public:
                 BlInput();
