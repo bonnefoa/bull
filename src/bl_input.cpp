@@ -4,7 +4,6 @@
 #include <bl_log.h>
 
 #define MAX_AXIS 5
-#define TICK_INTERVAL 3000
 
 BlInput::BlInput()
 {
@@ -24,7 +23,6 @@ BlInput::BlInput()
 
         lastTicks = 0 ;
         now = 0;
-        nextTime = 0;
 
         projection = computeProjection(fov, aspect, zNear, zFar);
         SDL_SetRelativeMouseMode(SDL_TRUE);
@@ -137,6 +135,17 @@ btTransform BlInput::computeProjection(btScalar fov, btScalar aspect, btScalar z
         return btTransform(basis, origin);
 }
 
+void BlInput::logState()
+{
+        INFO("theta %f, phi %f\n", theta, phi);
+        INFO("right %f %f %f\n", right[0], right[1], right[2]);
+        INFO("direction %f %f %f\n", direction[0], direction[1], direction[2]);
+        INFO("V\n");
+        printBtTransform(&view);
+        INFO("P\n");
+        printBtTransform(&projection);
+}
+
 btVector3 BlInput::computeCurrentDirection()
 {
         btScalar x = sin(theta) * sin(phi);
@@ -147,21 +156,12 @@ btVector3 BlInput::computeCurrentDirection()
 
 void BlInput::handleMovement()
 {
-        btVector3 direction, right;
         float deltaTime;
 
         deltaTime = getDeltaTime();
         computeNewAngles(deltaTime);
         right = btVector3(sin(phi - M_PI_2), 0, cos(phi - M_PI_2));
         direction = computeCurrentDirection();
-
-        if(nextTime <= now) {
-                nextTime = now + TICK_INTERVAL;
-                INFO("theta %f, phi %f\n", theta, phi);
-                INFO("axisUp %d\n", axisUp);
-                INFO("right %f %f %f\n", right[0], right[1], right[2]);
-                INFO("direction %f %f %f\n", direction[0], direction[1], direction[2]);
-        }
 
         position += float(axisUp - axisDown) * direction * deltaTime * speed;
         position += float(axisRight - axisRight) * right * deltaTime * speed;

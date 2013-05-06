@@ -17,16 +17,9 @@ void BlProgramModel::bindMVP()
         btTransform M = btTransform();
         M.setIdentity();
         btTransform V = blInput->view;
-        INFO("V\n");
-        printBtTransform(&V);
         btTransform P = blInput->projection;
-        INFO("P\n");
-        printBtTransform(&P);
         btTransform MV = V * M;
         btTransform MVP = P * MV;
-        INFO("MVP\n");
-        printBtTransform(&MVP);
-
         btScalar mat[16];
         MVP.getOpenGLMatrix(mat);
         glUniformMatrix4fv(uniformMVP, 1, GL_FALSE, mat);

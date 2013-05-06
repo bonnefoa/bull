@@ -21,13 +21,14 @@ class BlInput
         int axisDown;
 
         Uint32 lastTicks;
-        Uint32 nextTime;
-        Uint32 now;
+        btVector3 direction;
+        btVector3 right;
 
         public:
                 BlInput();
                 void handleInput();
 
+                Uint32 now;
                 int gameState;
 
                 btTransform view;
@@ -38,6 +39,7 @@ class BlInput
                                 , const btVector3 &position);
                 btTransform computeProjection(btScalar fov, btScalar aspect
                                 , btScalar zNear, btScalar zFar);
+                void logState();
         private:
                 btVector3 computeCurrentDirection();
                 void handleMovement();
