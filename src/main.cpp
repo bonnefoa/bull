@@ -3,6 +3,7 @@
 #include <bl_simulation.h>
 #include <bl_program_model.h>
 #include <bl_loader.h>
+#include <bl_log.h>
 
 BlInput *blInput;
 BlWindow *blWindow;
@@ -36,6 +37,8 @@ void initModels(char *filename)
         blModels = loadScene(filename);
         for (std::vector<BlModel*>::iterator it = blModels->begin();
                         it != blModels->end(); ++it) {
+                INFO("Load in buffer\n");
+                (*it)->init();
                 blProgramModel->loadModelInBuffer(*it);
         }
 }
