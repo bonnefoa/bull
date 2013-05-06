@@ -7,12 +7,12 @@
 
 BlInput::BlInput()
 {
-        phi = 3.14f;
-        theta = 0.0f ;
-        fov = 45.0f;
+        phi = M_PI;
+        theta = M_PI_2;
+        fov = M_PI_2;
         speed = 0.001f ;
         mouseSpeed = 0.0001f ;
-        position = btVector3(0.f, 0.f, -8.f);
+        position = btVector3(0.f, 0.f, 4.f);
         aspect = 4.0f/3.0f;
         zNear = 0.1f;
         zFar = 100.0f;
@@ -20,6 +20,11 @@ BlInput::BlInput()
         axisLeft = 0;
         axisUp = 0;
         axisDown = 0;
+
+        sAxisRight = 0;
+        sAxisLeft = 0;
+        sAxisUp = 0;
+        sAxisDown = 0;
 
         lastTicks = 0 ;
         now = 0;
@@ -32,34 +37,48 @@ void BlInput::handleUp(SDL_Event *event)
 {
         switch(event->key.keysym.sym) {
                 case SDLK_UP:
+                        sAxisUp = 0;
                         axisUp = 0;
                         break;
                 case SDLK_DOWN:
                         axisDown = 0;
+                        sAxisDown = 0;
                         break;
                 case SDLK_LEFT:
                         axisLeft = 0;
+                        sAxisLeft = 0;
                         break;
                 case SDLK_RIGHT:
                         axisRight = 0;
+                        sAxisRight = 0;
                         break;
+        }
+}
+
+void incrementAxis(SDL_Keymod mod, int *normalAxis, int *modAxis)
+{
+        if(mod == KMOD_LSHIFT) {
+                *modAxis = min(*modAxis+1, MAX_AXIS);
+        } else {
+                *normalAxis = min(*normalAxis+1, MAX_AXIS);
         }
 }
 
 void BlInput::handleDown(SDL_Event *event)
 {
+        SDL_Keymod mod = SDL_GetModState();
         switch(event->key.keysym.sym) {
                 case SDLK_UP:
-                        axisUp = min(axisUp+1, MAX_AXIS);
+                        incrementAxis(mod, &axisUp, &sAxisUp);
                         break;
                 case SDLK_DOWN:
-                        axisDown = min(axisDown+1, MAX_AXIS);
+                        incrementAxis(mod, &axisDown, &sAxisDown);
                         break;
                 case SDLK_LEFT:
-                        axisLeft = min(axisLeft+1, MAX_AXIS);
+                        incrementAxis(mod, &axisLeft, &sAxisLeft);
                         break;
                 case SDLK_RIGHT:
-                        axisRight = min(axisRight+1, MAX_AXIS);
+                        incrementAxis(mod, &axisRight, &sAxisRight);
                         break;
                 case SDLK_ESCAPE:
                         gameState = 1;
@@ -99,35 +118,36 @@ void BlInput::computeNewAngles(float deltaTime)
 {
         int deltaX, deltaY;
         SDL_GetRelativeMouseState(&deltaX, &deltaY);
-        phi += mouseSpeed * deltaTime * float(deltaX);
-        theta -= mouseSpeed * deltaTime * float(deltaY);
-        theta = fmax(0, theta);
+        phi += mouseSpeed * deltaTime * float(deltaX + sAxisLeft - sAxisRight);
+        theta -= mouseSpeed * deltaTime * float(deltaY + sAxisUp - sAxisDown);
+        theta = fmax(0.0f, theta);
         theta = fmin(theta, M_PI);
 }
 
 btTransform BlInput::computeView(const btVector3 &lookAt
-                , btVector3 &right
+                , btVector3 &up
                 , const btVector3 &eye)
 {
         btTransform transform;
         btMatrix3x3 basis;
         btVector3 zAxis = (lookAt - eye).normalize();
-        btVector3 xAxis = right.normalize();
-        btVector3 yAxis = zAxis.cross(xAxis);
+        btVector3 xAxis = up.cross(zAxis).normalize();
+        btVector3 yAxis = zAxis.cross(xAxis).normalize();
         basis[0] = xAxis;
         basis[1] = yAxis;
         basis[2] = zAxis;
         basis = basis.transpose();
+        right = xAxis;
         return btTransform(basis, eye * btScalar(-1));
 }
 
 btTransform BlInput::computeProjection(btScalar fov, btScalar aspect, btScalar zNear, btScalar zFar)
 {
-        btScalar f = 1 / tan(fov/2);
+        btScalar f = 1.f / tan(fov / 2.f);
         btScalar xRot = f / aspect;
         btScalar yRot = f;
         btScalar zRot = (zNear + zFar) / (zNear - zFar);
-        btScalar zTrans = 2 * zNear * zFar / (zNear - zFar);
+        btScalar zTrans = 2.0f * zNear * zFar / (zNear - zFar);
         btMatrix3x3 basis(xRot, 0, 0
                         , 0, yRot, 0
                         , 0, 0, zRot);
@@ -140,17 +160,18 @@ void BlInput::logState()
         INFO("theta %f, phi %f\n", theta, phi);
         INFO("right %f %f %f\n", right[0], right[1], right[2]);
         INFO("direction %f %f %f\n", direction[0], direction[1], direction[2]);
+        INFO("position %f %f %f\n", position[0], position[1], position[2]);
         INFO("V\n");
         printBtTransform(&view);
         INFO("P\n");
         printBtTransform(&projection);
 }
 
-btVector3 BlInput::computeCurrentDirection()
+btVector3 BlInput::convertCoordinate(btScalar t, btScalar p)
 {
-        btScalar x = sin(theta) * sin(phi);
-        btScalar y = cos(theta);
-        btScalar z = sin(theta) * cos(phi);
+        btScalar x = sin(t) * sin(p);
+        btScalar y = cos(t);
+        btScalar z = sin(t) * cos(p);
         return btVector3(x, y, z).normalize();
 }
 
@@ -160,10 +181,11 @@ void BlInput::handleMovement()
 
         deltaTime = getDeltaTime();
         computeNewAngles(deltaTime);
-        right = btVector3(sin(phi - M_PI_2), 0, cos(phi - M_PI_2));
-        direction = computeCurrentDirection();
+        //right = btVector3(sin(phi - M_PI_2), 0, cos(phi - M_PI_2));
+        direction = convertCoordinate(theta, phi);
+        btVector3 up = convertCoordinate(M_PI_2 - theta, M_PI_2 - phi);
 
         position += float(axisUp - axisDown) * direction * deltaTime * speed;
-        position += float(axisRight - axisRight) * right * deltaTime * speed;
-        view = computeView(direction, right, position);
+        position += float(axisLeft - axisRight) * right * deltaTime * speed;
+        view = computeView(direction, up, position);
 }

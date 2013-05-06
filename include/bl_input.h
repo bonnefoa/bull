@@ -20,6 +20,11 @@ class BlInput
         int axisUp;
         int axisDown;
 
+        int sAxisRight;
+        int sAxisLeft;
+        int sAxisUp;
+        int sAxisDown;
+
         Uint32 lastTicks;
         btVector3 direction;
         btVector3 right;
@@ -41,7 +46,7 @@ class BlInput
                                 , btScalar zNear, btScalar zFar);
                 void logState();
         private:
-                btVector3 computeCurrentDirection();
+                btVector3 convertCoordinate(btScalar theta, btScalar phi);
                 void handleMovement();
                 float getDeltaTime();
                 void computeNewAngles(float deltaTime);
