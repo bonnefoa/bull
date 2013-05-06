@@ -49,7 +49,7 @@ check_input: $(ODIR)/check_input.o $(OBJ)
 main: $(MAIN)
 	$(CC) -o $@ $^ $(CCFLAGS) $(LIBS)
 
-.PHONY: clean check_input
+.PHONY: clean check_input check_model
 
 clean:
 	rm -rf $(ODIR)/*.o 
