@@ -10,9 +10,12 @@ void errorCallback( GLenum source,
                 void* userParam)
 {
         (void) userParam;
-        INFO("%s\t",message);
-        INFO("%d, %d, %d, %d, %d\n", source, type
-                        , id, length, severity);
+        (void) source;
+        (void) type;
+        (void) id;
+        (void) length;
+        (void) severity;
+        INFO("%s\n",message);
 }
 
 BlWindow::BlWindow()
