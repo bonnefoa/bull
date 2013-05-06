@@ -69,8 +69,8 @@ void BlWindow::launch()
         checkError(__LINE__);
 
         glEnable(GL_CULL_FACE);
-        //glEnable(GL_DEPTH_TEST);
-        //glDepthFunc(GL_LESS);
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
 
         if (glewInit() != GLEW_OK)
                 die("Failed to initialize GLEW\n");
