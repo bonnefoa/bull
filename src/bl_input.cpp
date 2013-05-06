@@ -125,19 +125,17 @@ void BlInput::computeNewAngles(float deltaTime)
 }
 
 btTransform BlInput::computeView(const btVector3 &lookAt
-                , btVector3 &up
+                , btVector3 &yAxis
                 , const btVector3 &eye)
 {
         btTransform transform;
         btMatrix3x3 basis;
         btVector3 zAxis = (lookAt - eye).normalize();
-        btVector3 xAxis = up.cross(zAxis).normalize();
-        btVector3 yAxis = zAxis.cross(xAxis).normalize();
+        btVector3 xAxis = yAxis.cross(zAxis).normalize();
         basis[0] = xAxis;
         basis[1] = yAxis;
         basis[2] = zAxis;
         basis = basis.transpose();
-        right = xAxis;
         return btTransform(basis, eye * btScalar(-1));
 }
 
@@ -159,6 +157,7 @@ void BlInput::logState()
 {
         INFO("theta %f, phi %f\n", theta, phi);
         INFO("right %f %f %f\n", right[0], right[1], right[2]);
+        INFO("up %f %f %f\n", up[0], up[1], up[2]);
         INFO("direction %f %f %f\n", direction[0], direction[1], direction[2]);
         INFO("position %f %f %f\n", position[0], position[1], position[2]);
         INFO("V\n");
@@ -167,7 +166,7 @@ void BlInput::logState()
         printBtTransform(&projection);
 }
 
-btVector3 BlInput::convertCoordinate(btScalar t, btScalar p)
+btVector3 convertCoordinate(btScalar t, btScalar p)
 {
         btScalar x = sin(t) * sin(p);
         btScalar y = cos(t);
@@ -181,9 +180,9 @@ void BlInput::handleMovement()
 
         deltaTime = getDeltaTime();
         computeNewAngles(deltaTime);
-        //right = btVector3(sin(phi - M_PI_2), 0, cos(phi - M_PI_2));
         direction = convertCoordinate(theta, phi);
-        btVector3 up = convertCoordinate(M_PI_2 - theta, M_PI_2 - phi);
+        up = convertCoordinate(theta - M_PI_2, phi);
+        right = convertCoordinate(theta, M_PI_2 + phi);
 
         position += float(axisUp - axisDown) * direction * deltaTime * speed;
         position += float(axisLeft - axisRight) * right * deltaTime * speed;

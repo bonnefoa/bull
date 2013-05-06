@@ -4,6 +4,8 @@
 #include <bullet.h>
 #include <SDL.h>
 
+btVector3 convertCoordinate(btScalar theta, btScalar phi);
+
 class BlInput
 {
         float phi;
@@ -28,6 +30,7 @@ class BlInput
         Uint32 lastTicks;
         btVector3 direction;
         btVector3 right;
+        btVector3 up;
 
         public:
                 BlInput();
@@ -46,7 +49,6 @@ class BlInput
                                 , btScalar zNear, btScalar zFar);
                 void logState();
         private:
-                btVector3 convertCoordinate(btScalar theta, btScalar phi);
                 void handleMovement();
                 float getDeltaTime();
                 void computeNewAngles(float deltaTime);
