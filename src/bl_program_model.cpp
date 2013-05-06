@@ -8,21 +8,35 @@ void BlProgramModel::init()
         glUseProgram(programId);
 
         uniformMVP = glGetUniformLocation(programId, "MVP");
+        uniformM = glGetUniformLocation(programId, "M");
+        uniformV = glGetUniformLocation(programId, "V");
+        uniformP = glGetUniformLocation(programId, "P");
         locationVertexPositionWorldspace = glGetAttribLocation(programId
                         , "vertexPosition_modelspace");
 }
 
+void sendMatrix(btTransform trans, GLuint uniform)
+{
+        btScalar mat[16];
+        trans.getOpenGLMatrix(mat);
+        glUniformMatrix4fv(uniform, 1, GL_FALSE, mat);
+}
+
 void BlProgramModel::bindMVP()
 {
+        btMatrix3x3 model = btMatrix3x3();
+        model.setIdentity();
         btTransform M = btTransform();
         M.setIdentity();
-        btTransform V = blInput->view;
-        btTransform P = blInput->projection;
-        btTransform MV = V * M;
-        btTransform MVP = P * MV;
+        M.setBasis(model);
+
+        sendMatrix(blInput->view, uniformV);
+        sendMatrix(M, uniformM);
+
         btScalar mat[16];
-        MVP.getOpenGLMatrix(mat);
-        glUniformMatrix4fv(uniformMVP, 1, GL_FALSE, mat);
+        blInput->projection.getOpenGLMatrix(mat);
+        mat[11] = -1.0f;
+        glUniformMatrix4fv(uniformP, 1, GL_FALSE, mat);
 }
 
 void BlProgramModel::loadModelInBuffer(BlModel *model)
