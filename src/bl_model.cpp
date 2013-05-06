@@ -41,6 +41,7 @@ void BlModel::drawElement(GLuint locationVertex)
 
 bool BlModel::loadAsset(void)
 {
+        INFO("Loading asset from file %s\n", modelPath);
         Assimp::Importer importer;
         const aiScene * scene = importer.ReadFile(modelPath,
                         aiProcess_CalcTangentSpace
