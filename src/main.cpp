@@ -56,7 +56,7 @@ void logState()
         }
 }
 
-void main_loop()
+void mainLoop()
 {
         glClearColor( 0.0, 0.0, 0.2, 1.0 );
         glClear( GL_COLOR_BUFFER_BIT );
@@ -78,7 +78,7 @@ int main(int argc, char **argv)
         initPrograms();
         initModels(argv[1]);
         while(true) {
-                main_loop();
+                mainLoop();
                 if(blInput->gameState == 1) {
                         blWindow->shutdown();
                         return 0;
