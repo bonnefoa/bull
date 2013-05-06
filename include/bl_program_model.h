@@ -23,6 +23,9 @@ class  BlProgramModel : public BlProgram
         private:
                 BlInput *blInput;
                 GLuint uniformMVP;
+                GLuint uniformM;
+                GLuint uniformV;
+                GLuint uniformP;
                 GLuint locationVertexPositionWorldspace;
 };
 
