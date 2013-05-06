@@ -7,10 +7,7 @@
 #include <bullet.h>
 
 class BlModel {
-
         const char *modelPath;
-        std::vector <btVector3> vertices;
-        std::vector <unsigned int> indices;
 
         public:
                 BlModel(const char *modelPath)
@@ -24,11 +21,11 @@ class BlModel {
                 bool loadAsset(void);
                 void drawElement(GLuint locationVertex);
 
+                std::vector <btVector3> vertices;
+                std::vector <unsigned int> indices;
         private:
-
                 GLuint vertexBuffer;
                 GLuint indiceBuffer;
-
 };
 
 #endif
