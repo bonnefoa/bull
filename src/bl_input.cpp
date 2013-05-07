@@ -81,7 +81,14 @@ void BlInput::handleDown(SDL_Event *event)
                         incrementAxis(mod, &axisRight, &sAxisRight);
                         break;
                 case SDLK_ESCAPE:
-                        gameState = 1;
+                        state = QUIT;
+                        break;
+                case SDLK_q:
+                        state = QUIT;
+                        break;
+                case SDLK_r:
+                        state = RELOAD;
+                        break;
         }
 }
 
@@ -91,7 +98,7 @@ void BlInput::handleInput()
         while (SDL_PollEvent(&event)) {
                 switch (event.type) {
                         case SDL_QUIT:
-                                gameState = 1;
+                                state = 1;
                                 break;
                         case SDL_KEYDOWN:
                                 handleDown(&event);
@@ -120,8 +127,6 @@ void BlInput::computeNewAngles(float deltaTime)
         SDL_GetRelativeMouseState(&deltaX, &deltaY);
         phi += mouseSpeed * deltaTime * float(deltaX + sAxisRight - sAxisLeft);
         theta -= mouseSpeed * deltaTime * float(deltaY + sAxisUp - sAxisDown);
-        //theta = fmax(0.0f, theta);
-        //theta = fmin(theta, M_PI);
 }
 
 btTransform BlInput::computeView(const btVector3 &right
