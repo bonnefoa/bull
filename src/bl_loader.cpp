@@ -74,7 +74,6 @@ std::vector<BlModel*> loadModelNode(xmlNode *node)
                 std::vector <unsigned int> indices;
                 aiMesh * mesh = scene->mMeshes[i];
                 const char *meshName = mesh->mName.C_Str();
-                printf("GA %s\n", (mesh->mName.data));
                 INFO("Process mesh %i %s\n", i, meshName);
                 for(unsigned int j=0; j < mesh->mNumVertices; j++){
                         aiVector3D meshVert = mesh->mVertices[j];
