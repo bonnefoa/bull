@@ -5,11 +5,52 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+
+btVector3 readPositionNode(xmlNode *node)
+{
+        float x = 0.0f;
+        float y = 0.0f;
+        float z = 0.0f;
+        char *end;
+        xmlNode *cur = node->xmlChildrenNode;
+        while (cur != NULL) {
+                if ((!xmlStrcmp(cur->name, (const xmlChar *)"x"))) {
+                        x = strtof((const char *)cur->children[0].content,
+                                        &end);
+                }
+                if ((!xmlStrcmp(cur->name, (const xmlChar *)"y"))) {
+                        y = strtof((const char *)cur->children[0].content,
+                                        &end);
+                }
+                if ((!xmlStrcmp(cur->name, (const xmlChar *)"z"))) {
+                        z = strtof((const char *)cur->children[0].content,
+                                        &end);
+                }
+                cur = cur->next;
+        }
+        return btVector3(x, y, z);
+}
+
+btVector3 readPosition(xmlNode *node)
+{
+        xmlNode *cur = node->xmlChildrenNode;
+        while (cur != NULL) {
+                if ((!xmlStrcmp(cur->name, (const xmlChar *)"position"))) {
+                        return readPositionNode(cur);
+                }
+                cur = cur->next;
+        }
+        return btVector3(0,0,0);
+}
 
 std::vector<BlModel*> loadModelNode(xmlNode *node)
 {
         const char *modelPath = (const char *)xmlGetProp(node,
                         (const unsigned char *)"filename");
+        btVector3 position = readPosition(node);
         INFO("Loading asset from file %s\n", modelPath);
         std::vector<BlModel*> res = std::vector<BlModel*>();
 
@@ -50,7 +91,7 @@ std::vector<BlModel*> loadModelNode(xmlNode *node)
                                 indices.push_back(meshFace.mIndices[k+2]);
                         }
                 }
-                res.push_back(new BlModel(vertices, indices));
+                res.push_back(new BlModel(vertices, indices, position));
         }
         return res;
 }
