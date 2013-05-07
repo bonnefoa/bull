@@ -1,0 +1,23 @@
+* TODO Generate one model by mesh from asset import
+
+* DONE Input handle
+
+** DONE Check theta and phi
+
+** DONE Left / right not working
+
+** DONE Check Position + direction 
+
+* TODO Display asset 
+
+** DONE Check vertices and indices from asset loaded
+
+** DONE Check view and projection
+
+** DONE Create one blmodel by mesh
+** DONE Allow position in xml configuration
+** DONE Handle reload 
+
+* TODO Bullet integration
+
+** TODO Create simple plan / cube object
