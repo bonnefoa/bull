@@ -9,16 +9,21 @@
 class BlModel {
         public:
                 BlModel(std::vector<btVector3> vertices
-                                , std::vector<unsigned int> indices) :
+                                , std::vector<unsigned int> indices
+                                , btVector3 position) :
                         vertices(vertices)
-                        , indices(indices) {};
+                        , indices(indices)
+                        , position(position) {};
                 void init();
                 void loadInBuffer();
                 bool loadAsset(void);
                 void drawElement(GLuint locationVertex);
+                void clear(void);
 
                 std::vector <btVector3> vertices;
                 std::vector <unsigned int> indices;
+                btVector3 position;
+
         private:
                 GLuint vertexBuffer;
                 GLuint indiceBuffer;
