@@ -39,6 +39,14 @@ void initPrograms()
 
 void initModels(char *filename)
 {
+        if(blModels) {
+                for (std::vector<BlModel*>::iterator it = blModels->begin();
+                                it != blModels->end(); ++it) {
+                        delete (*it);
+                }
+                blModels->clear();
+        }
+
         blModels = loadScene(filename);
         for (std::vector<BlModel*>::iterator it = blModels->begin();
                         it != blModels->end(); ++it) {
@@ -79,9 +87,14 @@ int main(int argc, char **argv)
         initModels(argv[1]);
         while(true) {
                 mainLoop();
-                if(blInput->gameState == 1) {
-                        blWindow->shutdown();
-                        return 0;
+                switch (blInput->state) {
+                        case QUIT:
+                                blWindow->shutdown();
+                                return 0;
+                        case RELOAD:
+                                initModels(argv[1]);
+                                blInput->state = NORMAL;
+                                break;
                 }
                 SDL_GL_SwapWindow(blWindow->window);
         }
