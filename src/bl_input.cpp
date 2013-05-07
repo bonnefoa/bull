@@ -140,7 +140,8 @@ btTransform BlInput::computeView(const btVector3 &right
         return view;
 }
 
-btTransform BlInput::computeProjection(btScalar fov, btScalar aspect, btScalar zNear, btScalar zFar)
+btTransform BlInput::computeProjection(btScalar fov, btScalar aspect,
+                btScalar zNear, btScalar zFar)
 {
         btScalar f = 1.f / tan(fov / 2.f);
         btScalar xRot = f / aspect;
@@ -174,7 +175,8 @@ void BlInput::handleMovement()
         deltaTime = getDeltaTime();
         computeNewAngles(deltaTime);
 
-        direction = btVector3(sin(theta) * sin(phi) , cos(theta) , sin(theta) * cos(phi));
+        direction = btVector3(sin(theta) * sin(phi),
+                        cos(theta) , sin(theta) * cos(phi));
         right = btVector3(sin(phi - M_PI_2), 0 , cos(phi - M_PI_2));
         up = right.cross(direction);
         computeView(right, up, direction, position);

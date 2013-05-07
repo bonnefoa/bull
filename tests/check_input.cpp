@@ -16,21 +16,6 @@ void teardown (void)
 {
 }
 
-START_TEST (test_coordinate)
-{
-        btVector3 v;
-        v = convertCoordinate(0.0f, M_PI_2);
-        assert_float_equals(0.0f, v[0]);
-        assert_float_equals(1.0f, v[1]);
-        assert_float_equals(0.0f, v[2]);
-
-        v = convertCoordinate(-M_PI_2, M_PI_2);
-        assert_float_equals(-1.0f, v[0]);
-        assert_float_equals(0.0f, v[1]);
-        assert_float_equals(0.0f, v[2]);
-}
-END_TEST
-
 START_TEST (test_projection_simple)
 {
         BlInput input = BlInput();
@@ -66,15 +51,16 @@ END_TEST
 START_TEST (test_view)
 {
         BlInput input = BlInput();
-        btVector3 lookAt = btVector3(1, 1, 1);
-        btVector3 right = btVector3(1,0,0);
-        btVector3 eye = btVector3(1, 1, -1);
-        btTransform view = input.computeView(lookAt, right, eye);
+        btVector3 position = btVector3(0, 0, 0);
+        btVector3 direction = btVector3(0, 0, -1);
+        btVector3 up = btVector3(0, 1, 0);
+        btVector3 right = btVector3(-1, 0, 0);
+        btTransform view = input.computeView(right, up, direction, position);
 
-        btVector3 center = view * lookAt;
+        btVector3 center = view * direction;
         assert_float_equals(0.0f, center[0]);
-        //assert_float_equals(0.0f, center[1]);
-        //assert_float_equals(2.0f, center[2]);
+        assert_float_equals(0.0f, center[1]);
+        assert_float_equals(1.0f, center[2]);
 }
 END_TEST
 
@@ -86,7 +72,6 @@ Suite *model_suite (void)
   tcase_add_test (tc_core, test_view);
   tcase_add_test (tc_core, test_projection_simple);
   tcase_add_test (tc_core, test_projection_pi_3);
-  tcase_add_test (tc_core, test_coordinate);
   suite_add_tcase (s, tc_core);
   return s;
 }
