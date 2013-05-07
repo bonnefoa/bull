@@ -7,6 +7,12 @@ void BlModel::init()
         glGenBuffers(1, &vertexBuffer);
 }
 
+void BlModel::clear(void)
+{
+        glDeleteBuffers(1, &indiceBuffer);
+        glDeleteBuffers(1, &vertexBuffer);
+}
+
 void BlModel::loadInBuffer()
 {
         glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
