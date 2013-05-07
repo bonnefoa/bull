@@ -7,11 +7,7 @@
 #include <bullet.h>
 
 class BlModel {
-        const char *modelPath;
-
         public:
-                BlModel(const char *modelPath)
-                        : modelPath(modelPath) {};
                 BlModel(std::vector<btVector3> vertices
                                 , std::vector<unsigned int> indices) :
                         vertices(vertices)
