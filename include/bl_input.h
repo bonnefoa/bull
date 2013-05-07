@@ -4,6 +4,12 @@
 #include <bullet.h>
 #include <SDL.h>
 
+enum gamestate {
+        NORMAL,
+        QUIT,
+        RELOAD,
+};
+
 btVector3 convertCoordinate(btScalar theta, btScalar phi);
 
 class BlInput
@@ -37,7 +43,7 @@ class BlInput
                 void handleInput();
 
                 Uint32 now;
-                int gameState;
+                int state;
 
                 btTransform view;
                 btTransform projection;
