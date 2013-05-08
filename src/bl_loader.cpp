@@ -90,7 +90,8 @@ std::vector<BlModel*> loadModelNode(xmlNode *node)
                                 indices.push_back(meshFace.mIndices[k+2]);
                         }
                 }
-                res.push_back(new BlModel(vertices, indices, position, mass));
+                res.push_back(new BlModel(vertices, indices, position
+                                        , mass, modelPath));
         }
         return res;
 }
