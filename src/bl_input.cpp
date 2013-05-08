@@ -12,7 +12,7 @@ BlInput::BlInput()
         fov = M_PI_2;
         speed = 0.001f ;
         mouseSpeed = 0.0001f ;
-        position = btVector3(0.f, 0.f, 4.f);
+        position = btVector3(0.f, 4.f, -5.f);
         aspect = 4.0f/3.0f;
         zNear = 0.1f;
         zFar = 100.0f;
@@ -126,7 +126,7 @@ void BlInput::computeNewAngles(float deltaTime)
         int deltaX, deltaY;
         SDL_GetRelativeMouseState(&deltaX, &deltaY);
         phi += mouseSpeed * deltaTime * float(deltaX + sAxisRight - sAxisLeft);
-        theta -= mouseSpeed * deltaTime * float(deltaY + sAxisUp - sAxisDown);
+        theta += mouseSpeed * deltaTime * float(-deltaY + sAxisUp - sAxisDown);
 }
 
 btTransform BlInput::computeView(const btVector3 &right
@@ -140,7 +140,7 @@ btTransform BlInput::computeView(const btVector3 &right
         basis[1] = up;
         basis[2] = direction;
         basis = basis.transpose();
-        view = btTransform(basis, position * -1.0f);
+        view = btTransform(basis, position);
         view = view.inverse();
         return view;
 }
@@ -186,6 +186,6 @@ void BlInput::handleMovement()
         up = right.cross(direction);
         computeView(right, up, direction, position);
 
-        position += float(axisUp - axisDown) * direction * deltaTime * speed;
-        position += float(axisLeft - axisRight) * right * deltaTime * speed;
+        position += float(axisDown - axisUp) * direction * deltaTime * speed;
+        position += float(axisRight - axisLeft) * right * deltaTime * speed;
 }
