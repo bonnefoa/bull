@@ -15,8 +15,6 @@ btVector3 convertCoordinate(btScalar theta, btScalar phi);
 
 class BlInput
 {
-        float phi;
-        float theta;
         float mouseSpeed;
         float speed;
         btScalar fov;
@@ -43,6 +41,8 @@ class BlInput
                 BlInput();
                 void handleInput();
 
+                float phi;
+                float theta;
                 Uint32 now;
                 int state;
 
@@ -57,8 +57,9 @@ class BlInput
                 btTransform computeProjection(btScalar fov, btScalar aspect
                                 , btScalar zNear, btScalar zFar);
                 void logState();
-        private:
                 void handleMovement();
+
+        private:
                 float getDeltaTime();
                 void computeNewAngles(float deltaTime);
                 void handleDown(SDL_Event *event);

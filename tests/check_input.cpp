@@ -51,16 +51,38 @@ END_TEST
 START_TEST (test_view)
 {
         BlInput input = BlInput();
-        btVector3 position = btVector3(0, 0, 0);
+        input.handleMovement();
+        assert_float_equals(input.view.getBasis()[0][0], -1.0f);
+        assert_float_equals(input.view.getBasis()[1][1], 1.0f);
+        assert_float_equals(input.view.getBasis()[2][2], -1.0f);
+
+        input.theta = M_PI_2;
+        input.phi = 0;
+        input.handleMovement();
+        assert_float_equals(input.view.getBasis()[0][0], 1.0f);
+        assert_float_equals(input.view.getBasis()[1][1], 1.0f);
+        assert_float_equals(input.view.getBasis()[2][2], 1.0f);
+
+        btVector3 position = btVector3(0, 0, 5);
         btVector3 direction = btVector3(0, 0, -1);
         btVector3 up = btVector3(0, 1, 0);
         btVector3 right = btVector3(-1, 0, 0);
         btTransform view = input.computeView(right, up, direction, position);
 
-        btVector3 center = view * direction;
+        btVector3 center = view * btVector3(0, 0, 0);
         assert_float_equals(0.0f, center[0]);
         assert_float_equals(0.0f, center[1]);
-        assert_float_equals(1.0f, center[2]);
+        assert_float_equals(5.0f, center[2]);
+
+        btVector3 upPoint = view * btVector3(0, 1, 5);
+        assert_float_equals(0.0f, upPoint[0]);
+        assert_float_equals(1.0f, upPoint[1]);
+        assert_float_equals(0.0f, upPoint[2]);
+
+        btVector3 rightPoint = view * btVector3(1, 1, 0);
+        assert_float_equals(-1.0f, rightPoint[0]);
+        assert_float_equals(1.0f, rightPoint[1]);
+        assert_float_equals(5.0f, rightPoint[2]);
 }
 END_TEST
 
