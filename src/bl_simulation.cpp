@@ -35,7 +35,7 @@ btRigidBody *BlSimulation::addBody(btCollisionShape *colShape
         return body;
 }
 
-void BlSimulation::addBlModel(BlModel *blModel)
+btRigidBody *BlSimulation::addBlModel(BlModel *blModel)
 {
                 btTransform startTransform;
                 startTransform.setIdentity();
@@ -43,24 +43,12 @@ void BlSimulation::addBlModel(BlModel *blModel)
                 btCollisionShape *shape = new btBoxShape(btVector3(btScalar(50.)
                                         , btScalar(50.), btScalar(50.)));
                 INFO("Add rigid body with mass %f\n", blModel->mass);
-                addBody(shape, startTransform, blModel->mass);
+                return addBody(shape, startTransform, blModel->mass);
 }
 
 void BlSimulation::step(void)
 {
         dynamicsWorld->stepSimulation(1.f/60.f, 10);
-        for(int j = dynamicsWorld->getNumCollisionObjects()-1; j>=0; j--) {
-                btCollisionObject *obj = dynamicsWorld->getCollisionObjectArray()[j];
-                btRigidBody *body = btRigidBody::upcast(obj);
-                if(body && body->getMotionState()) {
-                        btTransform trans;
-                        body->getMotionState()->getWorldTransform(trans);
-                        //INFO("word pos = %f,%f,%f\n"
-                                        //, float(trans.getOrigin().getX())
-                                        //, float(trans.getOrigin().getY())
-                                        //, float(trans.getOrigin().getZ()));
-                }
-        }
 }
 
 void BlSimulation::clearWorld()

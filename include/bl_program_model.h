@@ -16,7 +16,8 @@ class  BlProgramModel : public BlProgram
                                 , BlInput *blInput) :
                         BlProgram(shaders), blInput(blInput) {};
                 void init(void);
-                void bindMVP(void);
+                void bindModelMatrix(BlModel *blModel);
+                void bindProjectionMatrix(void);
                 void displayModel(BlModel *model);
                 void loadModelInBuffer(BlModel *model);
 

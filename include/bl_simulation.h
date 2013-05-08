@@ -12,7 +12,7 @@ class BlSimulation {
                 btRigidBody *addBody(btCollisionShape *colShape
                                 , btTransform transform, btScalar mass);
                 void step(void);
-                void addBlModel(BlModel *blModel);
+                btRigidBody *addBlModel(BlModel *blModel);
                 void clearWorld(void);
         private:
                 btAlignedObjectArray<btCollisionShape*> collisionShapes;
