@@ -29,7 +29,6 @@ void BlProgramModel::bindModelMatrix(BlModel *blModel)
         trans.setIdentity();
         if(body && body->getMotionState()) {
                 body->getMotionState()->getWorldTransform(trans);
-                printBtTransform(&trans);
         }
         sendMatrix(trans, uniformM);
 }
