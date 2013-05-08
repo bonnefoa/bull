@@ -44,13 +44,9 @@ void readModelNode(xmlNode *node, btVector3 *position, float *mass)
         }
 }
 
-std::vector<BlModel*> loadModelNode(xmlNode *node)
+std::vector<BlModel*> loadAssetFile(const char *modelPath,
+                btVector3 position, float mass)
 {
-        const char *modelPath = (const char *)xmlGetProp(node,
-                        (const unsigned char *)"filename");
-        float mass;
-        btVector3 position = btVector3();
-        readModelNode(node, &position, &mass);
         INFO("Loading asset from file %s\n", modelPath);
         std::vector<BlModel*> res = std::vector<BlModel*>();
 
@@ -94,9 +90,20 @@ std::vector<BlModel*> loadModelNode(xmlNode *node)
                                         , mass, modelPath));
         }
         return res;
+
 }
 
-std::vector<BlModel*> *loadScene(char *filename)
+std::vector<BlModel*> loadModelNode(xmlNode *node)
+{
+        const char *modelPath = (const char *)xmlGetProp(node,
+                        (const unsigned char *)"filename");
+        btVector3 position = btVector3();
+        float mass;
+        readModelNode(node, &position, &mass);
+        return loadAssetFile(modelPath, position, mass);
+}
+
+std::vector<BlModel*> *loadXmlScene(const char *filename)
 {
         xmlDoc         *document;
         xmlNode        *root, *node;

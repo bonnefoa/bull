@@ -8,6 +8,8 @@
 #include <vector>
 #include <bl_model.h>
 
-std::vector<BlModel*> *loadScene(char *filename);
+std::vector<BlModel*> *loadXmlScene(const char *filename);
+std::vector<BlModel*> loadAssetFile(const char *modelPath,
+                btVector3 position, float mass);
 
 #endif

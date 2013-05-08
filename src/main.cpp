@@ -49,7 +49,7 @@ void initModels(char *filename)
                 blSimulation->clearWorld();
         }
 
-        blModels = loadScene(filename);
+        blModels = loadXmlScene(filename);
         for (std::vector<BlModel*>::iterator it = blModels->begin();
                         it != blModels->end(); ++it) {
                 (*it)->init();
