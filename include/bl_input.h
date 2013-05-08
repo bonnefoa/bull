@@ -8,6 +8,7 @@ enum gamestate {
         NORMAL,
         QUIT,
         RELOAD,
+        STOP,
 };
 
 btVector3 convertCoordinate(btScalar theta, btScalar phi);

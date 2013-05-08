@@ -89,6 +89,13 @@ void BlInput::handleDown(SDL_Event *event)
                 case SDLK_r:
                         state = RELOAD;
                         break;
+                case SDLK_SPACE:
+                        if(state == STOP) {
+                                state = NORMAL;
+                        } else {
+                                state = STOP;
+                        };
+                        break;
         }
 }
 
