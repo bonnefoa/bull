@@ -22,17 +22,20 @@ void sendMatrix(btTransform trans, GLuint uniform)
         glUniformMatrix4fv(uniform, 1, GL_FALSE, mat);
 }
 
-void BlProgramModel::bindMVP()
+void BlProgramModel::bindModelMatrix(BlModel *blModel)
 {
-        btMatrix3x3 model = btMatrix3x3();
-        model.setIdentity();
-        btTransform M = btTransform();
-        M.setIdentity();
-        M.setBasis(model);
+        btRigidBody *body = blModel->rigidBody;
+        btTransform trans;
+        trans.setIdentity();
+        if(body && body->getMotionState()) {
+                body->getMotionState()->getWorldTransform(trans);
+                printBtTransform(&trans);
+        }
+        sendMatrix(trans, uniformM);
+}
 
-        sendMatrix(blInput->view, uniformV);
-        sendMatrix(M, uniformM);
-
+void BlProgramModel::bindProjectionMatrix()
+{
         btScalar mat[16];
         blInput->projection.getOpenGLMatrix(mat);
         mat[11] = -1.0f;
@@ -43,12 +46,13 @@ void BlProgramModel::loadModelInBuffer(BlModel *model)
 {
         glUseProgram(programId);
         model->loadInBuffer();
+        bindProjectionMatrix();
 }
 
-void BlProgramModel::displayModel(BlModel *model)
+void BlProgramModel::displayModel(BlModel *blModel)
 {
         glUseProgram(programId);
-
-        model->drawElement(locationVertexPositionWorldspace);
-        bindMVP();
+        bindModelMatrix(blModel);
+        sendMatrix(blInput->view, uniformV);
+        blModel->drawElement(locationVertexPositionWorldspace);
 }
