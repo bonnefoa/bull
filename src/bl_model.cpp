@@ -18,7 +18,9 @@ void BlModel::loadInBuffer()
         std::vector <btVector3> relocatedVertices = std::vector <btVector3>();
         for (std::vector<btVector3>::iterator it = vertices.begin();
                         it != vertices.end(); ++it) {
-                relocatedVertices.push_back(*it + position);
+                btVector3 reorderedVertices = btVector3(-(*it).getY(),
+                                (*it).getZ(), -(*it).getX());
+                relocatedVertices.push_back(reorderedVertices + position);
         }
         glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
         glBufferData(GL_ARRAY_BUFFER,
