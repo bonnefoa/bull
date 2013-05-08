@@ -19,5 +19,6 @@
 ** DONE Handle reload 
 
 * TODO Bullet integration
-
-** TODO Create simple plan / cube object
+** DONE Add mass to asset loading
+** TODO Update world with new state
+** IN PROGRESS Create simple plan / cube object
