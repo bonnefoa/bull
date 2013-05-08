@@ -3,16 +3,16 @@
 #include <math.h>
 #include <bl_log.h>
 
-#define MAX_AXIS 5
+#define MAX_AXIS 20
 
 BlInput::BlInput()
 {
-        phi = M_PI;
+        phi = 0.0f;
         theta = M_PI_2;
         fov = M_PI_2;
         speed = 0.001f ;
         mouseSpeed = 0.0001f ;
-        position = btVector3(0.f, 4.f, -5.f);
+        position = btVector3(0.f, 0.f, -8.f);
         aspect = 4.0f/3.0f;
         zNear = 0.1f;
         zFar = 100.0f;
@@ -132,7 +132,7 @@ void BlInput::computeNewAngles(float deltaTime)
 {
         int deltaX, deltaY;
         SDL_GetRelativeMouseState(&deltaX, &deltaY);
-        phi += mouseSpeed * deltaTime * float(deltaX + sAxisRight - sAxisLeft);
+        phi -= mouseSpeed * deltaTime * float(deltaX + sAxisRight - sAxisLeft);
         theta += mouseSpeed * deltaTime * float(-deltaY + sAxisUp - sAxisDown);
 }
 
@@ -145,9 +145,9 @@ btTransform BlInput::computeView(const btVector3 &right
         btMatrix3x3 basis;
         basis[0] = right;
         basis[1] = up;
-        basis[2] = direction;
+        basis[2] = -1.0f * direction;
         basis = basis.transpose();
-        view = btTransform(basis, position);
+        view = btTransform(basis, -1.0f * position);
         view = view.inverse();
         return view;
 }
@@ -158,8 +158,8 @@ btTransform BlInput::computeProjection(btScalar fov, btScalar aspect,
         btScalar f = 1.f / tan(fov / 2.f);
         btScalar xRot = f / aspect;
         btScalar yRot = f;
-        btScalar zRot = (zNear + zFar) / (zNear - zFar);
-        btScalar zTrans = 2.0f * zNear * zFar / (zNear - zFar);
+        btScalar zRot = (zFar + zNear) / (zNear - zFar);
+        btScalar zTrans = (2.0f * zFar * zNear) / (zNear - zFar);
         btMatrix3x3 basis(xRot, 0, 0
                         , 0, yRot, 0
                         , 0, 0, zRot);
@@ -187,12 +187,13 @@ void BlInput::handleMovement()
         deltaTime = getDeltaTime();
         computeNewAngles(deltaTime);
 
-        direction = btVector3(sin(theta) * sin(phi),
+        direction = -1.0f * btVector3(sin(theta) * sin(phi),
                         cos(theta) , sin(theta) * cos(phi));
-        right = btVector3(sin(phi - M_PI_2), 0 , cos(phi - M_PI_2));
+
+        right = btVector3(sin(phi + M_PI_2), 0 , cos(phi + M_PI_2));
         up = right.cross(direction);
         computeView(right, up, direction, position);
 
-        position += float(axisDown - axisUp) * direction * deltaTime * speed;
-        position += float(axisRight - axisLeft) * right * deltaTime * speed;
+        position -= float(axisUp - axisDown) * direction * deltaTime * speed;
+        position += float(axisLeft - axisRight) * right * deltaTime * speed;
 }
