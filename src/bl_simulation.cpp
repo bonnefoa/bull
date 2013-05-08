@@ -9,9 +9,6 @@ BlSimulation::BlSimulation()
 	solver = new btSequentialImpulseConstraintSolver;
 	dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher,overlappingPairCache,solver,collisionConfiguration);
         dynamicsWorld->setGravity(btVector3(0, -10, 0));
-
-        initGround();
-        initBox();
 }
 
 BlSimulation::~BlSimulation()
@@ -23,7 +20,7 @@ BlSimulation::~BlSimulation()
         delete collisionConfiguration;
 }
 
-void BlSimulation::addBody(btCollisionShape *colShape
+btRigidBody *BlSimulation::addBody(btCollisionShape *colShape
                 , btTransform transform, btScalar mass)
 {
         bool isDynamic = (mass != 0.f);
@@ -35,54 +32,39 @@ void BlSimulation::addBody(btCollisionShape *colShape
                         , motionState, colShape, localInertia);
         btRigidBody *body = new btRigidBody(rbInfo);
         dynamicsWorld->addRigidBody(body);
+        return body;
 }
 
-void BlSimulation::initBox()
+void BlSimulation::addBlModel(BlModel *blModel)
 {
-        btCollisionShape *colShape = new btSphereShape(btScalar(1.));
-        collisionShapes.push_back(colShape);
-
-        btTransform startTransform;
-        startTransform.setIdentity();
-        startTransform.setOrigin(btVector3(2,10,0));
-        btScalar mass(1.f);
-
-        addBody(colShape, startTransform, mass);
+                btTransform startTransform;
+                startTransform.setIdentity();
+                startTransform.setOrigin(blModel->position);
+                btCollisionShape *shape = new btBoxShape(btVector3(btScalar(50.)
+                                        , btScalar(50.), btScalar(50.)));
+                INFO("Add rigid body with mass %f\n", blModel->mass);
+                addBody(shape, startTransform, blModel->mass);
 }
 
-void BlSimulation::initGround()
+void BlSimulation::step(void)
 {
-        btCollisionShape *colShape = new btBoxShape(btVector3(btScalar(50.)
-                                , btScalar(50.), btScalar(50.)));
-        collisionShapes.push_back(colShape);
-        btTransform groundTransform;
-        groundTransform.setIdentity();
-        groundTransform.setOrigin(btVector3(0, -56, 0));
-
-        btScalar mass(0.);
-
-        addBody(colShape, groundTransform, mass);
-}
-
-void BlSimulation::doSimulation()
-{
-        for(int i = 0; i < 100; i++)
-        {
-                dynamicsWorld->stepSimulation(1.f/60.f, 10);
-                for(int j = dynamicsWorld->getNumCollisionObjects()-1; j>=0; j--) {
-                        btCollisionObject *obj = dynamicsWorld->getCollisionObjectArray()[j];
-                        btRigidBody *body = btRigidBody::upcast(obj);
-                        if(body && body->getMotionState()) {
-                                btTransform trans;
-                                body->getMotionState()->getWorldTransform(trans);
-                                INFO("word pos = %f,%f,%f\n"
-                                        , float(trans.getOrigin().getX())
-                                        , float(trans.getOrigin().getY())
-                                        , float(trans.getOrigin().getZ()));
-                        }
+        dynamicsWorld->stepSimulation(1.f/60.f, 10);
+        for(int j = dynamicsWorld->getNumCollisionObjects()-1; j>=0; j--) {
+                btCollisionObject *obj = dynamicsWorld->getCollisionObjectArray()[j];
+                btRigidBody *body = btRigidBody::upcast(obj);
+                if(body && body->getMotionState()) {
+                        btTransform trans;
+                        body->getMotionState()->getWorldTransform(trans);
+                        //INFO("word pos = %f,%f,%f\n"
+                                        //, float(trans.getOrigin().getX())
+                                        //, float(trans.getOrigin().getY())
+                                        //, float(trans.getOrigin().getZ()));
                 }
         }
+}
 
+void BlSimulation::clearWorld()
+{
         for(int i = dynamicsWorld->getNumCollisionObjects()-1; i>=0; i--) {
                 btCollisionObject *obj = dynamicsWorld->getCollisionObjectArray()[i];
                 btRigidBody *body = btRigidBody::upcast(obj);
@@ -92,7 +74,6 @@ void BlSimulation::doSimulation()
                 dynamicsWorld->removeCollisionObject(obj);
                 delete obj;
         }
-
         for(int i=0; i<collisionShapes.size();i++) {
                 btCollisionShape *shape = collisionShapes[i];
                 collisionShapes[i] = 0;

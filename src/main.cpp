@@ -46,6 +46,7 @@ void initModels(char *filename)
                         delete (*it);
                 }
                 blModels->clear();
+                blSimulation->clearWorld();
         }
 
         blModels = loadScene(filename);
@@ -54,6 +55,7 @@ void initModels(char *filename)
                 INFO("Load in buffer\n");
                 (*it)->init();
                 blProgramModel->loadModelInBuffer(*it);
+                blSimulation->addBlModel(*it);
         }
 }
 
@@ -71,6 +73,7 @@ void mainLoop()
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         blInput->handleInput();
         logState();
+        blSimulation->step();
 
         for (std::vector<BlModel*>::iterator it = blModels->begin();
                         it != blModels->end(); ++it) {
