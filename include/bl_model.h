@@ -10,10 +10,12 @@ class BlModel {
         public:
                 BlModel(std::vector<btVector3> vertices
                                 , std::vector<unsigned int> indices
-                                , btVector3 position) :
+                                , btVector3 position
+                                , float mass) :
                         vertices(vertices)
                         , indices(indices)
-                        , position(position) {};
+                        , position(position)
+                        , mass(mass) {};
                 void init();
                 void loadInBuffer();
                 bool loadAsset(void);
@@ -23,6 +25,7 @@ class BlModel {
                 std::vector <btVector3> vertices;
                 std::vector <unsigned int> indices;
                 btVector3 position;
+                float mass;
 
         private:
                 GLuint vertexBuffer;

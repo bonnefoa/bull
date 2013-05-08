@@ -8,49 +8,49 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+void getNodeFloat(xmlNode *node, const char *nodeName, float *res)
+{
+        char *end;
+        if ((!xmlStrcmp(node->name, (const xmlChar*)nodeName))) {
+                *res = strtof((const char *)node->children[0].content,
+                                &end);
+        }
+}
 
 btVector3 readPositionNode(xmlNode *node)
 {
         float x = 0.0f;
         float y = 0.0f;
         float z = 0.0f;
-        char *end;
         xmlNode *cur = node->xmlChildrenNode;
         while (cur != NULL) {
-                if ((!xmlStrcmp(cur->name, (const xmlChar *)"x"))) {
-                        x = strtof((const char *)cur->children[0].content,
-                                        &end);
-                }
-                if ((!xmlStrcmp(cur->name, (const xmlChar *)"y"))) {
-                        y = strtof((const char *)cur->children[0].content,
-                                        &end);
-                }
-                if ((!xmlStrcmp(cur->name, (const xmlChar *)"z"))) {
-                        z = strtof((const char *)cur->children[0].content,
-                                        &end);
-                }
+                getNodeFloat(cur, "x", &x);
+                getNodeFloat(cur, "y", &y);
+                getNodeFloat(cur, "z", &z);
                 cur = cur->next;
         }
         return btVector3(x, y, z);
 }
 
-btVector3 readPosition(xmlNode *node)
+void readModelNode(xmlNode *node, btVector3 *position, float *mass)
 {
         xmlNode *cur = node->xmlChildrenNode;
         while (cur != NULL) {
                 if ((!xmlStrcmp(cur->name, (const xmlChar *)"position"))) {
-                        return readPositionNode(cur);
+                        *position = readPositionNode(cur);
                 }
+                getNodeFloat(cur, "mass", mass);
                 cur = cur->next;
         }
-        return btVector3(0,0,0);
 }
 
 std::vector<BlModel*> loadModelNode(xmlNode *node)
 {
         const char *modelPath = (const char *)xmlGetProp(node,
                         (const unsigned char *)"filename");
-        btVector3 position = readPosition(node);
+        float mass;
+        btVector3 position = btVector3();
+        readModelNode(node, &position, &mass);
         INFO("Loading asset from file %s\n", modelPath);
         std::vector<BlModel*> res = std::vector<BlModel*>();
 
@@ -90,7 +90,7 @@ std::vector<BlModel*> loadModelNode(xmlNode *node)
                                 indices.push_back(meshFace.mIndices[k+2]);
                         }
                 }
-                res.push_back(new BlModel(vertices, indices, position));
+                res.push_back(new BlModel(vertices, indices, position, mass));
         }
         return res;
 }
