@@ -40,15 +40,15 @@ btRigidBody *BlSimulation::addBlModel(BlModel *blModel)
                 btTransform startTransform;
                 startTransform.setIdentity();
                 startTransform.setOrigin(blModel->position);
-                btCollisionShape *shape = new btBoxShape(btVector3(btScalar(50.)
-                                        , btScalar(50.), btScalar(50.)));
+                btCollisionShape *shape = new btBoxShape(btVector3(btScalar(1.)
+                                        , btScalar(1.), btScalar(1.)));
                 INFO("Add rigid body with mass %f\n", blModel->mass);
                 return addBody(shape, startTransform, blModel->mass);
 }
 
 void BlSimulation::step(void)
 {
-        dynamicsWorld->stepSimulation(1.f/60.f, 10);
+        dynamicsWorld->stepSimulation(1.f/60.f);
 }
 
 void BlSimulation::clearWorld()

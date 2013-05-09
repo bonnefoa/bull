@@ -1,4 +1,5 @@
 #include "bl_log.h"
+#include <stdarg.h>
 
 void logMessage(FILE *stream, const char* tag, const char* fmt, ...)
 {

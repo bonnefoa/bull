@@ -1,9 +1,35 @@
 #include "bl_collada.h"
+#include <bl_log.h>
 
-void ColladaWriter::doIt()
+
+ColladaWriter::ColladaWriter()
 {
+
+}
+
+ColladaWriter::~ColladaWriter()
+{
+
+}
+
+
+bool ColladaWriter::readFile(const char* filename)
+{
+        INFO("Reading collada file %s\n", filename);
         COLLADASaxFWL::Loader loader;
-        COLLADAFW::Root root(&loader, this);
+        INFO("Loader initialized\n");
+        //COLLADAFW::Root root(&loader, this);
+        //loader.setObjectFlags(COLLADASaxFWL::Loader::ASSET_FLAG
+                        //| COLLADASaxFWL::Loader::EFFECT_FLAG
+                        //| COLLADASaxFWL::Loader::MATERIAL_FLAG
+                        //| COLLADASaxFWL::Loader::LIBRARY_NODES_FLAG
+                        //| COLLADASaxFWL::Loader::VISUAL_SCENES_FLAG
+                        //| COLLADASaxFWL::Loader::SCENE_FLAG
+                        //| COLLADASaxFWL::Loader::GEOMETRY_FLAG);
+        //if ( !root.loadDocument(filename) )
+                //return false;
+
+        return true;
 }
 
 void ColladaWriter::load()
@@ -13,17 +39,18 @@ void ColladaWriter::load()
 
 void ColladaWriter::cancel(const COLLADAFW::String& errorMessage)
 {
-
+        //std::cout << errorMessage;
+        //INFO("Collada writer cancel : %s\n", errorMessage.c_str());
 }
 
 void ColladaWriter::start()
 {
-
+        //INFO("Collada writer start");
 }
 
 void ColladaWriter::finish()
 {
-
+        //INFO("Collada writer finished");
 }
 
 bool ColladaWriter::writeGlobalAsset(const COLLADAFW::FileInfo* asset)

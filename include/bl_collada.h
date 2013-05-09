@@ -16,7 +16,10 @@
 class ColladaWriter : public COLLADAFW::IWriter
 {
         public:
-                void doIt();
+		ColladaWriter();
+		virtual ~ColladaWriter();
+
+                bool readFile(const char *filename);
                 virtual void load();
                 virtual void cancel(const COLLADAFW::String& errorMessage);
                 virtual void start();

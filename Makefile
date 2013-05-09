@@ -4,13 +4,19 @@ ODIR    = obj
 LDIR    = lib
 TESTDIR = tests
 
-CC      = clang++
+CC      = g++
 CCFLAGS = -I$(IDIR) -Wextra -Wall
 CCFLAGS += `pkg-config --cflags glew gl sdl2 bullet assimp libxml-2.0`
 CCFLAGS += -I/usr/include/opencollada/COLLADAFramework/ -I/usr/include/opencollada/COLLADABaseUtils/ -I/usr/include/opencollada/COLLADASaxFrameworkLoader/
 
-LIBS = `pkg-config --libs glew gl sdl2 bullet assimp libxml-2.0`
-LIBS += -L/usr/lib/opencollada -lOpenCOLLADAFramework -lOpenCOLLADASaxFrameworkLoader
+LIBS = `pkg-config --libs glew gl sdl2 bullet assimp libxml-2.0 libpcre`
+LIBS += -L/usr/lib64/opencollada 
+LIBS += -lOpenCOLLADAFramework
+LIBS += -lOpenCOLLADASaxFrameworkLoader
+#LIBS += -lGeneratedSaxParser
+#LIBS += -lOpenCOLLADABaseUtils
+#LIBS += -lOpenCOLLADAStreamWriter
+#LIBS += -lMathMLSolver -lftoa -lbuffer -lUTF
 
 TEST_CCFLAGS = $(CCFLAGS)
 TEST_CCFLAGS += `pkg-config --cflags check`
@@ -38,24 +44,20 @@ $(ODIR)/%.o: $(TESTDIR)/%.cpp
 
 check_simulation: $(ODIR)/check_simulation.o $(OBJ) 
 	$(CC) -o $@ $^ $(TEST_CCFLAGS) $(TEST_LIBS)
-	./check_simulation
 
 check_model: $(ODIR)/check_model.o $(OBJ) 
 	$(CC) -o $@ $^ $(TEST_CCFLAGS) $(TEST_LIBS)
-	./check_model
 
 check_collada: $(ODIR)/check_collada.o $(OBJ) 
 	$(CC) -o $@ $^ $(TEST_CCFLAGS) $(TEST_LIBS)
-	./check_collada
 
 check_input: $(ODIR)/check_input.o $(OBJ) 
 	$(CC) -o $@ $^ $(TEST_CCFLAGS) $(TEST_LIBS)
-	./check_input
 
 main: $(MAIN)
 	$(CC) -o $@ $^ $(CCFLAGS) $(LIBS)
 
-.PHONY: clean check_input check_model
+.PHONY: clean check_input check_model check_collada
 
 clean:
 	rm -rf $(ODIR)/*.o 
