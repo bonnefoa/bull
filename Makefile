@@ -5,7 +5,7 @@ LDIR    = lib
 TESTDIR = tests
 
 CC      = g++
-CCFLAGS = -I$(IDIR) -Wextra -Wall
+CCFLAGS = -I$(IDIR) -Wextra -Wall -Werror
 CCFLAGS += `pkg-config --cflags glew gl sdl2 bullet assimp libxml-2.0`
 CCFLAGS += -I/usr/include/opencollada/COLLADAFramework/ -I/usr/include/opencollada/COLLADABaseUtils/ -I/usr/include/opencollada/COLLADASaxFrameworkLoader/
 

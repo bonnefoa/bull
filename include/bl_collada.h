@@ -1,16 +1,15 @@
 #ifndef BL_COLLADA_H
 #define BL_COLLADA_H
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wignored-qualifiers"
-#pragma clang diagnostic ignored "-W#warnings"
-#pragma clang diagnostic ignored "-Wstring-plus-int"
-#pragma clang diagnostic ignored "-Wunused-private-field"
+#pragma GCC diagnostic push
+
+#pragma GCC diagnostic ignored "-Wignored-qualifiers"
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 
 #include "COLLADAFW.h"
 #include <COLLADASaxFWLLoader.h>
 
-#pragma clang diagnostic pop
+#pragma GCC diagnostic pop
 
 
 class ColladaWriter : public COLLADAFW::IWriter
