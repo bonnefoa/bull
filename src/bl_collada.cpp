@@ -77,6 +77,7 @@ bool ColladaWriter::writeLibraryNodes(const COLLADAFW::LibraryNodes* libraryNode
 bool ColladaWriter::writeGeometry(const COLLADAFW::Geometry* geometry)
 {
         (void)geometry;
+        INFO("Got geometry %s\n", geometry->getName().c_str());
         return true;
 }
 
