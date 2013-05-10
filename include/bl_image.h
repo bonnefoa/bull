@@ -23,6 +23,10 @@ class BlImage {
                 unsigned int height;
                 unsigned char *pixels;
                 GLenum format;
+
+                void loadInBuffer(GLuint imageBuffer);
 };
+
+BlImage *readPngImage(const char *filename);
 
 #endif

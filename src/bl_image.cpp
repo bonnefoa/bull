@@ -2,8 +2,39 @@
 #include <bl_log.h>
 #include <png.h>
 
-BlImage *readPngImage(FILE *infile)
+void BlImage::loadInBuffer(GLuint textureBuffer)
 {
+        glBindTexture(GL_TEXTURE_2D, textureBuffer);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+        glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+        INFO("Loading in buffer %i image of size %i / %i\n", textureBuffer,
+                        width, height);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
+                        width, height,
+                        0, GL_RGBA, GL_UNSIGNED_BYTE,
+                        pixels);
+}
+
+BlImage *readPngImage(const char *filename)
+{
+        FILE * infile;
+        if ((infile = fopen(filename, "rb")) == NULL) {
+                ERROR("can't open %s\n", filename);
+                return NULL;
+        }
+        unsigned char sig[8];
+        fread(sig, 1, 8, infile);
+        if (png_sig_cmp(sig, 0, 8) != 0) {
+                ERROR("%s is not a png file\n", filename);
+                return NULL;
+        }
+
         int bit_depth;
         int color_type;
         png_uint_32  i, rowbytes;
@@ -48,34 +79,5 @@ BlImage *readPngImage(FILE *infile)
         png_read_end(png_ptr, NULL);
         png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
 
-        unsigned char *results = lines;
-        return new BlImage(width, height, results, format);
-}
-
-
-GLuint loadPng(const char *filename)
-{
-        FILE * infile;
-        if ((infile = fopen(filename, "rb")) == NULL) {
-                ERROR("can't open %s\n", filename);
-                return 0;
-        }
-        BlImage *blImage = readPngImage(infile);
-
-        GLuint imageBuffer;
-        glGenTextures(1, &imageBuffer);
-        glBindTexture(GL_TEXTURE_2D, imageBuffer);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
-                        blImage->width, blImage->height,
-                        0, blImage->format, GL_UNSIGNED_BYTE,
-                        blImage->pixels);
-        return imageBuffer;
+        return new BlImage(width, height, lines, format);
 }
