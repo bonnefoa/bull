@@ -1,0 +1,81 @@
+#include "bl_image.h"
+#include <bl_log.h>
+#include <png.h>
+
+BlImage *readPngImage(FILE *infile)
+{
+        int bit_depth;
+        int color_type;
+        png_uint_32  i, rowbytes;
+        png_uint_32 width;
+        png_uint_32 height;
+        int num_channel = RGB_CHANNEL;
+        GLenum format = GL_RGB;
+        png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING
+                        , NULL, NULL, NULL);
+        png_infop info_ptr = png_create_info_struct(png_ptr);
+
+        png_init_io(png_ptr, infile);
+        png_set_sig_bytes(png_ptr, 8);
+        png_read_info(png_ptr, info_ptr);
+        png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth,
+                        &color_type, NULL, NULL, NULL);
+        if (color_type == PNG_COLOR_TYPE_PALETTE)
+                png_set_expand(png_ptr);
+        if (color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8)
+                png_set_expand(png_ptr);
+        if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
+                png_set_expand(png_ptr);
+        if (bit_depth == 16)
+                png_set_strip_16(png_ptr);
+        if (color_type == PNG_COLOR_TYPE_GRAY ||
+                        color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
+                png_set_gray_to_rgb(png_ptr);
+        if(color_type == PNG_COLOR_TYPE_RGB_ALPHA) {
+                num_channel = RGBA_CHANNEL;
+                format = GL_RGBA;
+        }
+
+        png_bytep row_pointers[height];
+        png_read_update_info(png_ptr, info_ptr);
+        rowbytes = png_get_rowbytes(png_ptr, info_ptr);
+
+        unsigned char *lines = (unsigned char *) malloc(sizeof(unsigned char)
+                                * width * height * num_channel);
+        for (i = 0;  i < height;  ++i)
+                row_pointers[i] = lines + i*rowbytes;
+        png_read_image(png_ptr, row_pointers);
+        png_read_end(png_ptr, NULL);
+        png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+
+        unsigned char *results = lines;
+        return new BlImage(width, height, results, format);
+}
+
+
+GLuint loadPng(const char *filename)
+{
+        FILE * infile;
+        if ((infile = fopen(filename, "rb")) == NULL) {
+                ERROR("can't open %s\n", filename);
+                return 0;
+        }
+        BlImage *blImage = readPngImage(infile);
+
+        GLuint imageBuffer;
+        glGenTextures(1, &imageBuffer);
+        glBindTexture(GL_TEXTURE_2D, imageBuffer);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
+                        blImage->width, blImage->height,
+                        0, blImage->format, GL_UNSIGNED_BYTE,
+                        blImage->pixels);
+        return imageBuffer;
+}
