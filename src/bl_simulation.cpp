@@ -1,5 +1,6 @@
 #include "bl_simulation.h"
 #include <bl_log.h>
+#include <bl_shape.h>
 
 BlSimulation::BlSimulation()
 {
@@ -7,7 +8,8 @@ BlSimulation::BlSimulation()
 	dispatcher = new btCollisionDispatcher(collisionConfiguration);
 	overlappingPairCache = new btDbvtBroadphase();
 	solver = new btSequentialImpulseConstraintSolver;
-	dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher,overlappingPairCache,solver,collisionConfiguration);
+	dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher,overlappingPairCache,
+                        solver,collisionConfiguration);
         dynamicsWorld->setGravity(btVector3(0, -10, 0));
 }
 
@@ -40,9 +42,15 @@ btRigidBody *BlSimulation::addBlModel(BlModel *blModel)
                 btTransform startTransform;
                 startTransform.setIdentity();
                 startTransform.setOrigin(blModel->position);
-                btCollisionShape *shape = new btBoxShape(btVector3(btScalar(1.)
-                                        , btScalar(1.), btScalar(1.)));
-                INFO("Add rigid body with mass %f\n", blModel->mass);
+                btCollisionShape *shape = guessShape(blModel);
+                btVector3 center;
+                btScalar radius;
+                shape->getBoundingSphere(center, radius);
+                center += blModel->position;
+                INFO("Add rigid body with mass %f and shape %s\n",
+                                blModel->mass, shape->getName());
+                INFO("bouding sphere center %f %f %f, radius %f\n",
+                                center[0], center[1], center[2], radius);
                 return addBody(shape, startTransform, blModel->mass);
 }
 
