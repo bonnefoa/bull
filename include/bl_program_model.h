@@ -28,6 +28,8 @@ class  BlProgramModel : public BlProgram
                 GLuint uniformV;
                 GLuint uniformP;
                 GLuint locationVertexPositionWorldspace;
+                GLuint locationUv;
+                GLuint locationSampler;
 };
 
 #endif

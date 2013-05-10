@@ -11,8 +11,12 @@ void BlProgramModel::init()
         uniformM = glGetUniformLocation(programId, "M");
         uniformV = glGetUniformLocation(programId, "V");
         uniformP = glGetUniformLocation(programId, "P");
+        locationSampler = glGetUniformLocation(programId
+                        , "textureSampler");
         locationVertexPositionWorldspace = glGetAttribLocation(programId
                         , "vertexPosition_modelspace");
+        locationUv = glGetAttribLocation(programId
+                        , "vertexUV");
 }
 
 void sendMatrix(btTransform trans, GLuint uniform)
@@ -53,5 +57,6 @@ void BlProgramModel::displayModel(BlModel *blModel)
         glUseProgram(programId);
         bindModelMatrix(blModel);
         sendMatrix(blInput->view, uniformV);
-        blModel->drawElement(locationVertexPositionWorldspace);
+        blModel->drawElement(locationVertexPositionWorldspace, locationUv,
+                        locationSampler);
 }
