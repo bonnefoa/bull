@@ -1,5 +1,7 @@
 #include "bl_loader.h"
 #include <bl_log.h>
+#include <bl_image.h>
+#include <bl_util.h>
 #include <string.h>
 #include <vector>
 #include <assimp/Importer.hpp>
@@ -32,12 +34,17 @@ btVector3 readPositionNode(xmlNode *node)
         return btVector3(x, y, z);
 }
 
-void readModelNode(xmlNode *node, btVector3 *position, float *mass)
+void readModelNode(xmlNode *node, btVector3 *position, float *mass, char **image)
 {
         xmlNode *cur = node->xmlChildrenNode;
         while (cur != NULL) {
                 if ((!xmlStrcmp(cur->name, (const xmlChar *)"position"))) {
                         *position = readPositionNode(cur);
+                }
+                if ((!xmlStrcmp(cur->name, (const xmlChar *)"image"))) {
+                        const char *attr = (const char *)xmlGetProp(cur,
+                                        (const unsigned char *)"path");
+                        *image = strduplicate(attr);
                 }
                 getNodeFloat(cur, "mass", mass);
                 cur = cur->next;
@@ -95,9 +102,11 @@ std::vector< BlUvs > loadUvs(aiMesh *mesh)
 }
 
 std::vector<BlModel*> loadAssetFile(const char *modelPath,
-                btVector3 position, float mass)
+                btVector3 position, float mass,
+                char *image)
 {
-        INFO("Loading asset from file %s\n", modelPath);
+        INFO("Loading asset from file %s, mass %f, image %s\n", modelPath
+                        , mass, image);
         std::vector<BlModel*> res = std::vector<BlModel*>();
 
         Assimp::Importer importer;
@@ -124,7 +133,7 @@ std::vector<BlModel*> loadAssetFile(const char *modelPath,
                 std::vector <BlUvs> uvs = loadUvs(mesh);
 
                 BlModel *blModel = new BlModel(vertices, indices, uvs,
-                                        position, mass, modelPath);
+                                        position, mass, modelPath, image);
                 res.push_back(blModel);
         }
         return res;
@@ -137,8 +146,9 @@ std::vector<BlModel*> loadModelNode(xmlNode *node)
                         (const unsigned char *)"filename");
         btVector3 position = btVector3();
         float mass;
-        readModelNode(node, &position, &mass);
-        return loadAssetFile(modelPath, position, mass);
+        char *image = NULL;
+        readModelNode(node, &position, &mass, &image);
+        return loadAssetFile(modelPath, position, mass, image);
 }
 
 std::vector<BlModel*> *loadXmlScene(const char *filename)
