@@ -73,8 +73,8 @@ std::vector<BlModel*> loadAssetFile(const char *modelPath,
                 INFO("Process mesh %i %s\n", i, meshName);
                 for(unsigned int j=0; j < mesh->mNumVertices; j++){
                         aiVector3D meshVert = mesh->mVertices[j];
-                        btVector3 vertice = btVector3(meshVert.x
-                                        , meshVert.y, meshVert.z);
+                        btVector3 vertice = btVector3(-meshVert.y,
+                                        meshVert.z, -meshVert.x);
                         vertices.push_back(vertice);
                 }
 
