@@ -6,9 +6,9 @@
 
 ** DONE Left / right not working
 
-** DONE Check Position + direction 
+** DONE Check Position + direction
 
-* DONE Display asset 
+* DONE Display asset
 
 ** DONE Check vertices and indices from asset loaded
 
@@ -16,11 +16,17 @@
 
 ** DONE Create one blmodel by mesh
 ** DONE Allow position in xml configuration
-** DONE Handle reload 
+** DONE Handle reload
 
 * TODO Bullet integration
 ** DONE Add mass to asset loading
 ** DONE Update world with new state
-** IN PROGRESS Create simple plan / cube object
-*** IN PROGRESS Create shape from vertices
-** IN PROGRESS Read collada format directly
+** DONE Create simple plan / cube object
+*** DONE Create shape from vertices
+**** DONE Simple box shape
+** TODO More complex shape
+
+* IN PROGRESS Beautify
+** TODO Add texture
+** TODO Add shadow
+** TODO Add light position
