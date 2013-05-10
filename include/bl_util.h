@@ -12,6 +12,7 @@ void printBtTransform(btTransform *mat);
 
 int max(int a, int b);
 int min(int a, int b);
+char *strduplicate(const char *s);
 
 #endif
 

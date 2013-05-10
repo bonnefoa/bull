@@ -41,3 +41,13 @@ int min(int a, int b)
         if (a < b) return a;
         return b;
 }
+
+char *strduplicate(const char *s)
+{
+        char *res;
+        int numChars = strlen(s) + 1;
+        if((res = (char *)malloc(sizeof(char) * numChars)) == NULL)
+                return NULL;
+        strncpy(res,s, numChars);
+        return res;
+}
