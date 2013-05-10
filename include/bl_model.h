@@ -9,35 +9,41 @@
 
 class BlModel {
         public:
-                BlModel(std::vector<btVector3> verticesInput
-                                , std::vector<unsigned int> indicesInput
-                                , std::vector<BlUvs> uvsInput
-                                , btVector3 positionInput
-                                , float massInput
-                                , const char *nameInput) :
-                        vertices(verticesInput)
-                        , indices(indicesInput)
-                        , uvs(uvsInput)
-                        , position(positionInput)
-                        , mass(massInput)
-                        , name(nameInput) {};
+                BlModel(std::vector<btVector3> _vertices
+                                , std::vector<unsigned int> _indices
+                                , std::vector<BlUvs> _blUVs
+                                , btVector3 _position
+                                , float _mass
+                                , const char *_name
+                                , const char *_image) :
+                        vertices(_vertices)
+                        , indices(_indices)
+                        , blUVs(_blUVs)
+                        , position(_position)
+                        , mass(_mass)
+                        , name(_name)
+                        , image(_image) {};
                 void init();
                 void loadInBuffer();
                 bool loadAsset(void);
-                void drawElement(GLuint locationVertex);
+                void drawElement(GLuint locationVertex, GLuint locationUv,
+                                GLuint samplerLocation);
                 void clear(void);
 
                 std::vector <btVector3> vertices;
                 std::vector <unsigned int> indices;
-                std::vector <BlUvs> uvs;
+                std::vector <BlUvs> blUVs;
                 btVector3 position;
                 float mass;
                 const char *name;
+                const char *image;
                 btRigidBody *rigidBody;
 
         private:
                 GLuint vertexBuffer;
                 GLuint indiceBuffer;
+                GLuint uvBuffer;
+                GLuint textureBuffer;
 };
 
 #endif
