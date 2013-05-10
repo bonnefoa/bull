@@ -5,8 +5,9 @@
 
 START_TEST (test_model)
 {
-        BlModel *blModel = loadAssetFile("tests/simple.dae")[0];
-        fail_unless(blModel->uvs == NULL);
+        BlModel *blModel = loadAssetFile("tests/cubeTextured.dae")[0];
+        printf("Uvs size is %zu\n", blModel->uvs.size());
+        fail_unless(blModel->uvs.size() == 1);
 }
 END_TEST
 

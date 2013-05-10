@@ -44,6 +44,56 @@ void readModelNode(xmlNode *node, btVector3 *position, float *mass)
         }
 }
 
+std::vector <btVector3> loadVertices(aiMesh *mesh)
+{
+        std::vector <btVector3> vertices;
+        for(unsigned int j=0; j < mesh->mNumVertices; j++){
+                aiVector3D meshVert = mesh->mVertices[j];
+                btVector3 vertice = btVector3(-meshVert.y,
+                                meshVert.z, -meshVert.x);
+                vertices.push_back(vertice);
+        }
+        return vertices;
+}
+
+std::vector <unsigned int> loadIndices(aiMesh *mesh)
+{
+        std::vector <unsigned int > indices;
+        for(unsigned int j=0; j < mesh->mNumFaces; j++){
+                aiFace meshFace = mesh->mFaces[j];
+                for(unsigned int k=0; k < meshFace.mNumIndices; k+=3) {
+                        indices.push_back(meshFace.mIndices[k]);
+                        indices.push_back(meshFace.mIndices[k+1]);
+                        indices.push_back(meshFace.mIndices[k+2]);
+                }
+        }
+        return indices;
+}
+
+std::vector< BlUvs > loadUvs(aiMesh *mesh)
+{
+        int textureIndice = 0;
+        std::vector< BlUvs > uvs;
+
+        while(textureIndice < AI_MAX_NUMBER_OF_TEXTURECOORDS) {
+                if (!mesh->HasTextureCoords(textureIndice)){
+                        break;
+                }
+                unsigned int numComponent = mesh->mNumUVComponents[textureIndice];
+                std::vector <float> currentUvs;
+                aiVector3D *tex = mesh->mTextureCoords[textureIndice];
+                for(unsigned int i = 0; i < mesh->mNumVertices; i++) {
+                        aiVector3D currentVector = tex[i];
+                        for(unsigned j = 0; j < numComponent; j++) {
+                                currentUvs.push_back(currentVector[j]);
+                        }
+                }
+                uvs.push_back(BlUvs(currentUvs, numComponent));
+                textureIndice++;
+        }
+        return uvs;
+}
+
 std::vector<BlModel*> loadAssetFile(const char *modelPath,
                 btVector3 position, float mass)
 {
@@ -66,28 +116,16 @@ std::vector<BlModel*> loadAssetFile(const char *modelPath,
         }
 
         for (unsigned int i = 0; i < scene->mNumMeshes; i++){
-                std::vector <btVector3> vertices;
-                std::vector <unsigned int> indices;
                 aiMesh * mesh = scene->mMeshes[i];
-                const char *meshName = mesh->mName.C_Str();
-                INFO("Process mesh %i %s\n", i, meshName);
-                for(unsigned int j=0; j < mesh->mNumVertices; j++){
-                        aiVector3D meshVert = mesh->mVertices[j];
-                        btVector3 vertice = btVector3(-meshVert.y,
-                                        meshVert.z, -meshVert.x);
-                        vertices.push_back(vertice);
-                }
+                INFO("Process mesh %i\n", i);
 
-                for(unsigned int j=0; j < mesh->mNumFaces; j++){
-                        aiFace meshFace = mesh->mFaces[j];
-                        for(unsigned int k=0; k < meshFace.mNumIndices; k+=3) {
-                                indices.push_back(meshFace.mIndices[k]);
-                                indices.push_back(meshFace.mIndices[k+1]);
-                                indices.push_back(meshFace.mIndices[k+2]);
-                        }
-                }
-                res.push_back(new BlModel(vertices, indices, position
-                                        , mass, modelPath));
+                std::vector <btVector3> vertices = loadVertices(mesh);
+                std::vector <unsigned int> indices = loadIndices(mesh);
+                std::vector <BlUvs> uvs = loadUvs(mesh);
+
+                BlModel *blModel = new BlModel(vertices, indices, uvs,
+                                        position, mass, modelPath);
+                res.push_back(blModel);
         }
         return res;
 
