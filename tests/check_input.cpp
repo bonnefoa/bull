@@ -2,11 +2,7 @@
 #include <check.h>
 #include <bl_input.h>
 #include <bl_util.h>
-
-#define EPSILON 0.01f
-#define assert_float_equals(res, expected) \
-        fail_unless(fabs(res - expected) < EPSILON\
-                        , "Expected %f, got %f", expected, res)
+#include <common_tests.h>
 
 void setup (void)
 {
