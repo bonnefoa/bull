@@ -26,8 +26,7 @@ class BlModel {
                 void init();
                 void loadInBuffer();
                 bool loadAsset(void);
-                void drawElement(GLuint locationVertex, GLuint locationUv,
-                                GLuint samplerLocation);
+                void drawElement(GLuint locationVertex, GLuint locationUv);
                 void clear(void);
 
                 std::vector <btVector3> vertices;

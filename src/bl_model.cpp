@@ -55,8 +55,7 @@ void BlModel::loadInBuffer()
 
 }
 
-void BlModel::drawElement(GLuint locationVertex, GLuint locationUv,
-                GLuint samplerLocation)
+void BlModel::drawElement(GLuint locationVertex, GLuint locationUv)
 {
         glEnableVertexAttribArray(locationVertex);
 
@@ -70,7 +69,6 @@ void BlModel::drawElement(GLuint locationVertex, GLuint locationUv,
                 glVertexAttribPointer(locationUv, 2, GL_FLOAT, GL_FALSE,
                                 0, (void*)0);
 
-                glUniform1i(samplerLocation, 0);
                 glActiveTexture(GL_TEXTURE0);
                 glBindTexture(GL_TEXTURE_2D, textureBuffer);
         }
