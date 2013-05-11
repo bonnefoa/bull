@@ -133,6 +133,9 @@ std::vector<BlModel*> loadAssetFile(const char *modelPath,
                 std::vector <unsigned int> indices = loadIndices(mesh);
                 std::vector <BlUvs> uvs = loadUvs(mesh);
 
+                INFO("Got %i vertices, %i indices, %i uvs\n",
+                                vertices.size(), indices.size(), uvs.size());
+
                 BlModel *blModel = new BlModel(vertices, indices, uvs,
                                         position, mass, modelPath, image);
                 res.push_back(blModel);
