@@ -29,4 +29,7 @@
 * IN PROGRESS Beautify
 ** DONE Add texture
 ** TODO Add shadow
-** TODO Add light position
+** IN PROGRESS Add light 
+*** DONE Parse light from asset
+*** DONE Push light position + color in attribute
+*** IN PROGRESS Use light in glsl
