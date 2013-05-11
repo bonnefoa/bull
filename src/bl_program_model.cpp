@@ -11,7 +11,11 @@ void BlProgramModel::init()
         uniformM = glGetUniformLocation(programId, "M");
         uniformV = glGetUniformLocation(programId, "V");
         uniformP = glGetUniformLocation(programId, "P");
-        locVertexPositionModelspace = glGetAttribLocation(programId
+        uniformLightColor = glGetUniformLocation(programId
+                        , "lightColor");
+        uniformLightPosition = glGetUniformLocation(programId
+                        , "lightPosition_modelspace");
+        locVertexPosModelspace = glGetAttribLocation(programId
                         , "vertexPosition_modelspace");
         locUV = glGetAttribLocation(programId
                         , "vertexUV");
@@ -43,17 +47,10 @@ void BlProgramModel::bindProjectionMatrix()
         glUniformMatrix4fv(uniformP, 1, GL_FALSE, mat);
 }
 
-void BlProgramModel::loadModelInBuffer(BlModel *model)
-{
-        glUseProgram(programId);
-        model->loadInBuffer();
-        bindProjectionMatrix();
-}
-
 void BlProgramModel::displayModel(BlModel *blModel)
 {
         glUseProgram(programId);
         bindModelMatrix(blModel);
         sendMatrix(blInput->view, uniformV);
-        blModel->drawElement(locVertexPositionModelspace, locUV);
+        blModel->drawElement(locVertexPosModelspace, locUV);
 }

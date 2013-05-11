@@ -46,11 +46,13 @@ void initModels(char *filename)
         blSimulation->clearWorld();
 
         blScene = loadXmlScene(filename);
+        blProgramModel->bindProjectionMatrix();
         for (std::vector<BlModel*>::iterator it = blScene->blModels->begin();
                         it != blScene->blModels->end(); ++it) {
-                (*it)->init();
-                blProgramModel->loadModelInBuffer(*it);
-                (*it)->rigidBody = blSimulation->addBlModel(*it);
+                BlModel *model = *it;
+                model->init();
+                model->loadInBuffer();
+                model->rigidBody = blSimulation->addBlModel(model);
         }
 }
 
