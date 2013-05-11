@@ -140,8 +140,9 @@ std::vector<BlModel*> loadModelFile(const char *modelPath,
                 std::vector <btVector3> normals = loadNormals(mesh);
                 std::vector <unsigned int> indices = loadIndices(mesh);
                 std::vector <BlUvs> uvs = loadUvs(mesh);
-                INFO("Got %i vertices, %i indices, %i uvs\n",
-                                vertices.size(), indices.size(), uvs.size());
+                INFO("Got %i vertices, %i indices, %i uvs, %i normals\n",
+                                vertices.size(), indices.size(), uvs.size(),
+                                normals.size());
                 BlModel *blModel = new BlModel(vertices, indices, normals, uvs,
                                         position, mass, modelPath, image);
                 res.push_back(blModel);

@@ -6,6 +6,7 @@ void BlModel::init()
 {
         glGenBuffers(1, &indiceBuffer);
         glGenBuffers(1, &vertexBuffer);
+        glGenBuffers(1, &normalBuffer);
 
         if(blUVs.size() > 0){
                 glGenBuffers(1, &uvBuffer);
@@ -33,6 +34,7 @@ void BlModel::clear(void)
 {
         glDeleteBuffers(1, &indiceBuffer);
         glDeleteBuffers(1, &vertexBuffer);
+        glDeleteBuffers(1, &normalBuffer);
         if(uvBuffer > 0)
                 glDeleteBuffers(1, &uvBuffer);
         if(textureBuffer > 0)
@@ -47,17 +49,28 @@ void BlModel::loadInBuffer()
                         &vertices[0], GL_STATIC_DRAW);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
+        glBindBuffer(GL_ARRAY_BUFFER, normalBuffer);
+        glBufferData(GL_ARRAY_BUFFER
+                        , normals.size() * sizeof(btVector3)
+                        , &normals[0], GL_STATIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indiceBuffer);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER
                         , indices.size() * sizeof(unsigned int)
                         , &indices[0], GL_STATIC_DRAW);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
 }
 
-void BlModel::drawElement(GLuint locationVertex, GLuint locationUv)
+void BlModel::drawElement(GLuint locationVertex, GLuint locationUv,
+                GLuint locationNormal)
 {
         glEnableVertexAttribArray(locationVertex);
+        glEnableVertexAttribArray(locationNormal);
+
+        glBindBuffer(GL_ARRAY_BUFFER, normalBuffer);
+        glVertexAttribPointer(locationNormal, 4 , GL_FLOAT
+                        , GL_FALSE, 0, (void *)0);
 
         glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
         glVertexAttribPointer(locationVertex, 4 , GL_FLOAT

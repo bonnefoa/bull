@@ -28,7 +28,8 @@ class BlModel {
                 void init();
                 void loadInBuffer();
                 bool loadAsset(void);
-                void drawElement(GLuint locationVertex, GLuint locationUv);
+                void drawElement(GLuint locationVertex, GLuint locationUv,
+                                GLuint locationNormal);
                 void clear(void);
 
                 std::vector <btVector3> vertices;
@@ -46,6 +47,7 @@ class BlModel {
                 GLuint indiceBuffer;
                 GLuint uvBuffer;
                 GLuint textureBuffer;
+                GLuint normalBuffer;
 };
 
 #endif

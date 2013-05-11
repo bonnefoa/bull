@@ -29,6 +29,7 @@ class  BlProgramModel : public BlProgram
                 GLuint uniformV;
                 GLuint uniformP;
                 GLuint locVertexPosModelspace;
+                GLuint locNormalModelspace;
                 GLuint locUV;
 };
 

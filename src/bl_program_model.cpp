@@ -18,6 +18,8 @@ void BlProgramModel::init()
                         , "lightPosition_modelspace");
         locVertexPosModelspace = glGetAttribLocation(programId
                         , "vertexPosition_modelspace");
+        locNormalModelspace = glGetAttribLocation(programId
+                        , "normal_modelspace");
         locUV = glGetAttribLocation(programId
                         , "vertexUV");
 }
@@ -53,5 +55,6 @@ void BlProgramModel::displayModel(BlModel *blModel)
         glUseProgram(programId);
         bindModelMatrix(blModel);
         sendMatrix(blInput->view, uniformV);
-        blModel->drawElement(locVertexPosModelspace, locUV);
+        blModel->drawElement(locVertexPosModelspace, locUV,
+                        locNormalModelspace);
 }
