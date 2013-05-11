@@ -16,6 +16,9 @@ void BlProgram::loadProgram()
         GLint programOk;
         for(unsigned int i = 0; i < shaders.size(); i++){
                 GLuint shaderId = (*shaders[i]).loadShader();
+                if(shaderId==0) {
+                        exit(1);
+                }
                 glAttachShader(programId, shaderId);
         }
         glLinkProgram(programId);
