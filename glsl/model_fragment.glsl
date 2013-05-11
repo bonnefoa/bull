@@ -6,6 +6,5 @@ uniform sampler2D textureSampler;
 
 void main()
 {
-       /*color = vec3(UV, 1.0f);*/
-       color = texture(textureSampler, UV);
+       color = texture(textureSampler, UV).xyz;
 }
