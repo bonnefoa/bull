@@ -11,6 +11,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+btVector3 convertAiColorToBtVector(aiColor3D color)
+{
+        return btVector3(color[0], color[1], color[2]);
+}
+
+btVector3 convertAiVectorToBtVector(aiVector3D vec)
+{
+        return btVector3(vec[0], vec[1], vec[2]);
+}
+
 Assimp::Importer importer;
 
 void getNodeFloat(xmlNode *node, const char *nodeName, float *res)
@@ -47,6 +57,15 @@ std::vector <btVector3> loadVertices(aiMesh *mesh)
                 vertices.push_back(vertice);
         }
         return vertices;
+}
+
+std::vector <btVector3> loadNormals(aiMesh *mesh)
+{
+        std::vector <btVector3> normals;
+        for(unsigned int j=0; j < mesh->mNumVertices; j++){
+                normals.push_back(convertAiVectorToBtVector(mesh->mNormals[j]));
+        }
+        return normals;
 }
 
 std::vector <unsigned int> loadIndices(aiMesh *mesh)
@@ -118,25 +137,16 @@ std::vector<BlModel*> loadModelFile(const char *modelPath,
                 aiMesh * mesh = scene->mMeshes[i];
                 INFO("Process mesh %i\n", i);
                 std::vector <btVector3> vertices = loadVertices(mesh);
+                std::vector <btVector3> normals = loadNormals(mesh);
                 std::vector <unsigned int> indices = loadIndices(mesh);
                 std::vector <BlUvs> uvs = loadUvs(mesh);
                 INFO("Got %i vertices, %i indices, %i uvs\n",
                                 vertices.size(), indices.size(), uvs.size());
-                BlModel *blModel = new BlModel(vertices, indices, uvs,
+                BlModel *blModel = new BlModel(vertices, indices, normals, uvs,
                                         position, mass, modelPath, image);
                 res.push_back(blModel);
         }
         return res;
-}
-
-btVector3 convertAiColorToBtVector(aiColor3D color)
-{
-        return btVector3(color[0], color[1], color[2]);
-}
-
-btVector3 convertAiVectorToBtVector(aiVector3D vec)
-{
-        return btVector3(vec[0], vec[1], vec[2]);
 }
 
 std::vector<BlLight*> loadLightFile(const char *path, btVector3 position)
