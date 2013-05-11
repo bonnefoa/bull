@@ -11,6 +11,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+Assimp::Importer importer;
+
 void getNodeFloat(xmlNode *node, const char *nodeName, float *res)
 {
         char *end;
@@ -87,8 +89,7 @@ std::vector< BlUvs > loadUvs(aiMesh *mesh)
 
 const aiScene *loadScene(const char *path)
 {
-        Assimp::Importer importer;
-        const aiScene * scene = importer.ReadFile(path,
+        const aiScene *scene = importer.ReadFile(path,
                         aiProcess_CalcTangentSpace
                         | aiProcess_JoinIdenticalVertices
                         | aiProcess_Triangulate
@@ -112,6 +113,7 @@ std::vector<BlModel*> loadModelFile(const char *modelPath,
                         position[0], position[1], position[2]);
         std::vector<BlModel*> res = std::vector<BlModel*>();
         const aiScene *scene = loadScene(modelPath);
+
         for (unsigned int i = 0; i < scene->mNumMeshes; i++){
                 aiMesh * mesh = scene->mMeshes[i];
                 INFO("Process mesh %i\n", i);
