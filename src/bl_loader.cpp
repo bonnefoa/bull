@@ -105,8 +105,9 @@ std::vector<BlModel*> loadAssetFile(const char *modelPath,
                 btVector3 position, float mass,
                 char *image)
 {
-        INFO("Loading asset from file %s, mass %f, image %s\n", modelPath
-                        , mass, image);
+        INFO("Loading asset from file %s, mass %f, image %s, position %f %f %f\n",
+                        modelPath, mass, image,
+                        position[0], position[1], position[2]);
         std::vector<BlModel*> res = std::vector<BlModel*>();
 
         Assimp::Importer importer;
