@@ -35,23 +35,6 @@ btVector3 readPositionNode(xmlNode *node)
         return btVector3(x, y, z);
 }
 
-void readModelNode(xmlNode *node, btVector3 *position, float *mass, char **image)
-{
-        xmlNode *cur = node->xmlChildrenNode;
-        while (cur != NULL) {
-                if ((!xmlStrcmp(cur->name, (const xmlChar *)"position"))) {
-                        *position = readPositionNode(cur);
-                }
-                if ((!xmlStrcmp(cur->name, (const xmlChar *)"image"))) {
-                        const char *attr = (const char *)xmlGetProp(cur,
-                                        (const unsigned char *)"path");
-                        *image = strduplicate(attr);
-                }
-                getNodeFloat(cur, "mass", mass);
-                cur = cur->next;
-        }
-}
-
 std::vector <btVector3> loadVertices(aiMesh *mesh)
 {
         std::vector <btVector3> vertices;
@@ -102,17 +85,10 @@ std::vector< BlUvs > loadUvs(aiMesh *mesh)
         return uvs;
 }
 
-std::vector<BlModel*> loadModelFile(const char *modelPath,
-                btVector3 position, float mass,
-                char *image)
+const aiScene *loadScene(const char *path)
 {
-        INFO("Loading asset from file %s, mass %f, image %s, position %f %f %f\n",
-                        modelPath, mass, image,
-                        position[0], position[1], position[2]);
-        std::vector<BlModel*> res = std::vector<BlModel*>();
-
         Assimp::Importer importer;
-        const aiScene * scene = importer.ReadFile(modelPath,
+        const aiScene * scene = importer.ReadFile(path,
                         aiProcess_CalcTangentSpace
                         | aiProcess_JoinIdenticalVertices
                         | aiProcess_Triangulate
@@ -123,26 +99,58 @@ std::vector<BlModel*> loadModelFile(const char *modelPath,
         if (!scene) {
                 ERROR("Could not load scene. %s\n"
                                 , importer.GetErrorString());
-                return res;
+                return NULL;
         }
+        return scene;
+}
 
+std::vector<BlModel*> loadModelFile(const char *modelPath,
+                btVector3 position, float mass, char *image)
+{
+        INFO("Loading asset from file %s, mass %f, image %s, position %f %f %f\n",
+                        modelPath, mass, image,
+                        position[0], position[1], position[2]);
+        std::vector<BlModel*> res = std::vector<BlModel*>();
+        const aiScene *scene = loadScene(modelPath);
         for (unsigned int i = 0; i < scene->mNumMeshes; i++){
                 aiMesh * mesh = scene->mMeshes[i];
                 INFO("Process mesh %i\n", i);
-
                 std::vector <btVector3> vertices = loadVertices(mesh);
                 std::vector <unsigned int> indices = loadIndices(mesh);
                 std::vector <BlUvs> uvs = loadUvs(mesh);
-
                 INFO("Got %i vertices, %i indices, %i uvs\n",
                                 vertices.size(), indices.size(), uvs.size());
-
                 BlModel *blModel = new BlModel(vertices, indices, uvs,
                                         position, mass, modelPath, image);
                 res.push_back(blModel);
         }
         return res;
+}
 
+btVector3 convertAiColorToBtVector(aiColor3D color)
+{
+        return btVector3(color[0], color[1], color[2]);
+}
+
+btVector3 convertAiVectorToBtVector(aiVector3D vec)
+{
+        return btVector3(vec[0], vec[1], vec[2]);
+}
+
+std::vector<BlLight*> loadLightFile(const char *path, btVector3 position)
+{
+        INFO("Loading light from file %s, position %f %f %f\n",
+                        path, position[0], position[1], position[2]);
+        std::vector<BlLight*> res = std::vector<BlLight*>();
+        const aiScene *scene = loadScene(path);
+        for (unsigned int i = 0; i < scene->mNumLights; i++){
+                aiLight * light = scene->mLights[i];
+                btVector3 color = convertAiColorToBtVector(light->mColorDiffuse);
+                btVector3 lightPosition = convertAiVectorToBtVector(light->mPosition);
+                BlLight *blLight = new BlLight(position + lightPosition, color);
+                res.push_back(blLight);
+        }
+        return res;
 }
 
 std::vector<BlModel*> loadModelNode(xmlNode *node)
@@ -152,8 +160,35 @@ std::vector<BlModel*> loadModelNode(xmlNode *node)
         btVector3 position = btVector3();
         float mass;
         char *image = NULL;
-        readModelNode(node, &position, &mass, &image);
+        xmlNode *cur = node->xmlChildrenNode;
+        while (cur != NULL) {
+                if ((!xmlStrcmp(cur->name, (const xmlChar *)"position"))) {
+                        position = readPositionNode(cur);
+                }
+                if ((!xmlStrcmp(cur->name, (const xmlChar *)"image"))) {
+                        const char *attr = (const char *)xmlGetProp(cur,
+                                        (const unsigned char *)"path");
+                        image = strduplicate(attr);
+                }
+                getNodeFloat(cur, "mass", &mass);
+                cur = cur->next;
+        }
         return loadModelFile(modelPath, position, mass, image);
+}
+
+std::vector<BlLight*> loadLightNode(xmlNode *node)
+{
+        const char *modelPath = (const char *)xmlGetProp(node,
+                        (const unsigned char *)"filename");
+        btVector3 position = btVector3();
+        xmlNode *cur = node->xmlChildrenNode;
+        while (cur != NULL) {
+                if ((!xmlStrcmp(cur->name, (const xmlChar *)"position"))) {
+                        position = readPositionNode(cur);
+                }
+                cur = cur->next;
+        }
+        return loadLightFile(modelPath, position);
 }
 
 BlScene *loadXmlScene(const char *filename)
@@ -171,6 +206,12 @@ BlScene *loadXmlScene(const char *filename)
                         std::vector<BlModel*> nodeModels = loadModelNode(node);
                         for (unsigned int i = 0; i < nodeModels.size(); i++) {
                                 models->push_back(nodeModels[i]);
+                        }
+                }
+                if(strcmp((char *)node->name, "light") == 0) {
+                        std::vector<BlLight*> nodeLights = loadLightNode(node);
+                        for (unsigned int i = 0; i < nodeLights.size(); i++) {
+                                lights->push_back(nodeLights[i]);
                         }
                 }
         }
