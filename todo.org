@@ -27,6 +27,6 @@
 ** TODO More complex shape
 
 * IN PROGRESS Beautify
-** TODO Add texture
+** DONE Add texture
 ** TODO Add shadow
 ** TODO Add light position
