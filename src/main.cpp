@@ -3,6 +3,7 @@
 #include <bl_simulation.h>
 #include <bl_program_model.h>
 #include <bl_loader.h>
+#include <bl_scene.h>
 #include <bl_log.h>
 
 #define TICK_INTERVAL 1000
@@ -11,7 +12,7 @@ BlInput *blInput;
 BlWindow *blWindow;
 BlSimulation *blSimulation;
 BlProgramModel *blProgramModel;
-std::vector<BlModel*> *blModels;
+BlScene *blScene;
 Uint32 nextTime = 0;
 
 void init()
@@ -39,19 +40,14 @@ void initPrograms()
 
 void initModels(char *filename)
 {
-        if(blModels) {
-                for (std::vector<BlModel*>::iterator it = blModels->begin();
-                                it != blModels->end(); ++it) {
-                        (*it)->clear();
-                        delete (*it);
-                }
-                blModels->clear();
-                blSimulation->clearWorld();
+        if(blScene) {
+                delete blScene;
         }
+        blSimulation->clearWorld();
 
-        blModels = loadXmlScene(filename);
-        for (std::vector<BlModel*>::iterator it = blModels->begin();
-                        it != blModels->end(); ++it) {
+        blScene = loadXmlScene(filename);
+        for (std::vector<BlModel*>::iterator it = blScene->blModels->begin();
+                        it != blScene->blModels->end(); ++it) {
                 (*it)->init();
                 blProgramModel->loadModelInBuffer(*it);
                 (*it)->rigidBody = blSimulation->addBlModel(*it);
@@ -73,8 +69,8 @@ void mainLoop()
         blInput->handleInput();
         logState();
 
-        for (std::vector<BlModel*>::iterator it = blModels->begin();
-                        it != blModels->end(); ++it) {
+        for (std::vector<BlModel*>::iterator it = blScene->blModels->begin();
+                        it != blScene->blModels->end(); ++it) {
                 blProgramModel->displayModel(*it);
         }
 }

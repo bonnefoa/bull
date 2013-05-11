@@ -1,6 +1,7 @@
 #include "bl_loader.h"
 #include <bl_log.h>
 #include <bl_image.h>
+#include <bl_light.h>
 #include <bl_util.h>
 #include <string.h>
 #include <vector>
@@ -101,7 +102,7 @@ std::vector< BlUvs > loadUvs(aiMesh *mesh)
         return uvs;
 }
 
-std::vector<BlModel*> loadAssetFile(const char *modelPath,
+std::vector<BlModel*> loadModelFile(const char *modelPath,
                 btVector3 position, float mass,
                 char *image)
 {
@@ -152,15 +153,16 @@ std::vector<BlModel*> loadModelNode(xmlNode *node)
         float mass;
         char *image = NULL;
         readModelNode(node, &position, &mass, &image);
-        return loadAssetFile(modelPath, position, mass, image);
+        return loadModelFile(modelPath, position, mass, image);
 }
 
-std::vector<BlModel*> *loadXmlScene(const char *filename)
+BlScene *loadXmlScene(const char *filename)
 {
         xmlDoc         *document;
         xmlNode        *root, *node;
 
         std::vector<BlModel*> *models = new std::vector<BlModel*>();
+        std::vector<BlLight*> *lights = new std::vector<BlLight*>();
 
         document = xmlReadFile(filename, NULL, 0);
         root = xmlDocGetRootElement(document);
@@ -172,5 +174,5 @@ std::vector<BlModel*> *loadXmlScene(const char *filename)
                         }
                 }
         }
-        return models;
+        return new BlScene(models, lights);
 }

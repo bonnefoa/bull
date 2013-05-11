@@ -8,7 +8,7 @@
 START_TEST (test_shape)
 {
         btVector3 position = btVector3(-1.0f, -1.0f, -1.0f);
-        BlModel *model = loadAssetFile("tests/cube.dae", position, 0.0f)[0];
+        BlModel *model = loadModelFile("tests/cube.dae", position, 0.0f)[0];
         btBoxShape *shape = (btBoxShape *)guessShape(model);
         fail_unless(shape->isConvex() == true);
         btVector3 he = shape->getHalfExtentsWithMargin();
