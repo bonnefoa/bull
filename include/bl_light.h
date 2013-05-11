@@ -1,6 +1,8 @@
 #ifndef BL_LIGHT_H
 #define BL_LIGHT_H
 
+#include <GL/glew.h>
+#include <GL/gl.h>
 #include <bullet.h>
 
 class BlLight {
@@ -12,6 +14,9 @@ class BlLight {
 
                 btVector3 position;
                 btVector3 color;
+
+                void loadInBuffer(GLuint uniformLightPosition,
+                                GLuint uniformLightPositionLightColor);
 };
 
 #endif

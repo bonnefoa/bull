@@ -38,7 +38,7 @@ void initPrograms()
         blProgramModel->init();
 }
 
-void initModels(char *filename)
+void initScene(char *filename)
 {
         if(blScene) {
                 delete blScene;
@@ -53,6 +53,12 @@ void initModels(char *filename)
                 model->init();
                 model->loadInBuffer();
                 model->rigidBody = blSimulation->addBlModel(model);
+        }
+        for (std::vector<BlLight*>::iterator it = blScene->blLights->begin();
+                        it != blScene->blLights->end(); ++it) {
+                BlLight *light = *it;
+                light->loadInBuffer(blProgramModel->uniformLightPosition,
+                                blProgramModel->uniformLightColor);
         }
 }
 
@@ -84,7 +90,7 @@ int main(int argc, char **argv)
 
         init();
         initPrograms();
-        initModels(argv[1]);
+        initScene(argv[1]);
         while(true) {
                 mainLoop();
                 switch (blInput->state) {
@@ -92,7 +98,7 @@ int main(int argc, char **argv)
                                 blWindow->shutdown();
                                 return 0;
                         case RELOAD:
-                                initModels(argv[1]);
+                                initScene(argv[1]);
                                 blInput->state = NORMAL;
                                 break;
                         case NORMAL:

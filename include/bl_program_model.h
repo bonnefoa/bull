@@ -20,14 +20,14 @@ class  BlProgramModel : public BlProgram
                 void bindProjectionMatrix(void);
                 void displayModel(BlModel *model);
 
+                GLuint uniformLightPosition;
+                GLuint uniformLightColor;
         private:
                 BlInput *blInput;
                 GLuint uniformMVP;
                 GLuint uniformM;
                 GLuint uniformV;
                 GLuint uniformP;
-                GLuint uniformLightPosition;
-                GLuint uniformLightColor;
                 GLuint locVertexPosModelspace;
                 GLuint locUV;
 };
