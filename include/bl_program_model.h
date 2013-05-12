@@ -24,13 +24,12 @@ class  BlProgramModel : public BlProgram
                 GLuint uniformLightColor;
         private:
                 BlInput *blInput;
-                GLuint uniformMVP;
-                GLuint uniformM;
-                GLuint uniformV;
-                GLuint uniformP;
-                GLuint locVertexPosModelspace;
-                GLuint locNormalModelspace;
-                GLuint locUV;
+                GLint uniformM;
+                GLint uniformV;
+                GLint uniformP;
+                GLint locVertexPosModelspace;
+                GLint locNormalModelspace;
+                GLint locUV;
 };
 
 #endif

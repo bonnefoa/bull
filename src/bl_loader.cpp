@@ -18,7 +18,7 @@ btVector3 convertAiColorToBtVector(aiColor3D color)
 
 btVector3 convertAiVectorToBtVector(aiVector3D vec)
 {
-        return btVector3(vec[0], vec[1], vec[2]);
+        return btVector3(-vec.y, vec.z, -vec.x);
 }
 
 Assimp::Importer importer;
@@ -51,10 +51,7 @@ std::vector <btVector3> loadVertices(aiMesh *mesh)
 {
         std::vector <btVector3> vertices;
         for(unsigned int j=0; j < mesh->mNumVertices; j++){
-                aiVector3D meshVert = mesh->mVertices[j];
-                btVector3 vertice = btVector3(-meshVert.y,
-                                meshVert.z, -meshVert.x);
-                vertices.push_back(vertice);
+                vertices.push_back(convertAiVectorToBtVector(mesh->mVertices[j]));
         }
         return vertices;
 }
@@ -145,6 +142,14 @@ std::vector<BlModel*> loadModelFile(const char *modelPath,
                 std::vector <btVector3> vertices = loadVertices(mesh);
                 std::vector <btVector3> normals = loadVerticesInformation(
                                 mesh, mesh->mNormals);
+                for(unsigned int i = 0; i < vertices.size(); i++) {
+                        btVector3 vertice = vertices[i];
+                        btVector3 normal = normals[i];
+                        INFO("Vert %f %f %f, normals %f %f %f\n",
+                                        vertice[0], vertice[1], vertice[2],
+                                        normal[0], normal[1], normal[2]);
+                }
+
                 std::vector <btVector3> tangents = loadVerticesInformation(
                                 mesh, mesh->mTangents);
                 std::vector <btVector3> bitangents = loadVerticesInformation(

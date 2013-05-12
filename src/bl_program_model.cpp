@@ -8,7 +8,6 @@ void BlProgramModel::init()
 {
         glUseProgram(programId);
 
-        uniformMVP = glGetUniformLocation(programId, "MVP");
         uniformM = glGetUniformLocation(programId, "M");
         uniformV = glGetUniformLocation(programId, "V");
         uniformP = glGetUniformLocation(programId, "P");
@@ -19,9 +18,15 @@ void BlProgramModel::init()
         locVertexPosModelspace = glGetAttribLocation(programId
                         , "vertexPosition_modelspace");
         locNormalModelspace = glGetAttribLocation(programId
-                        , "normal_modelspace");
+                        , "vertexNormal_modelspace");
         locUV = glGetAttribLocation(programId
                         , "vertexUV");
+        INFO("vertex location %i\n", locVertexPosModelspace);
+        INFO("normal location %i\n", locNormalModelspace);
+        INFO("uv location %i\n", locUV);
+        if(locNormalModelspace < 0 || locUV < 0 || locVertexPosModelspace < 0){
+                ERROR("A location is unused");
+        }
 }
 
 void sendMatrix(btTransform trans, GLuint uniform)
