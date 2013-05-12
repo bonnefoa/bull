@@ -6,8 +6,9 @@
 #include <time.h>
 
 #define INFO(message, args...) logMessage(stdout, __FILE__, message, ##args)
-#define ERROR(message, args...) logMessage(stderr, __FILE__, message, ##args)
+#define ERROR(message, args...) dieMessage(__FILE__, message, ##args)
 
+void dieMessage(const char* tag, const char* fmt, ...);
 void logMessage(FILE *stream, const char* tag, const char* fmt, ...);
 
 #endif
