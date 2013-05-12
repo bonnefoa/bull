@@ -47,8 +47,9 @@ btRigidBody *BlSimulation::addBlModel(BlModel *blModel)
                 btScalar radius;
                 shape->getBoundingSphere(center, radius);
                 center += blModel->position;
-                INFO("Add rigid body with mass %f, shape %s, position %f %f %f\n",
-                                blModel->mass, shape->getName(), blModel->position[0],
+                INFO("Add rigid body for %s with mass %f, shape %s, position %f %f %f\n",
+                                blModel->name, blModel->mass,
+                                shape->getName(), blModel->position[0],
                                 blModel->position[1], blModel->position[2]);
                 INFO("bouding sphere center %f %f %f, radius %f\n",
                                 center[0], center[1], center[2], radius);
