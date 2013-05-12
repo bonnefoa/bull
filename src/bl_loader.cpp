@@ -59,6 +59,17 @@ std::vector <btVector3> loadVertices(aiMesh *mesh)
         return vertices;
 }
 
+std::vector <btVector3> loadVerticesInformation(aiMesh *mesh,
+                aiVector3D *infos)
+{
+        std::vector <btVector3> result;
+        if(infos == NULL) return result;
+        for(unsigned int j=0; j < mesh->mNumVertices; j++){
+                result.push_back(convertAiVectorToBtVector(infos[j]));
+        }
+        return result;
+}
+
 std::vector <btVector3> loadNormals(aiMesh *mesh)
 {
         std::vector <btVector3> normals;
@@ -110,11 +121,7 @@ const aiScene *loadScene(const char *path)
 {
         const aiScene *scene = importer.ReadFile(path,
                         aiProcess_CalcTangentSpace
-                        | aiProcess_JoinIdenticalVertices
                         | aiProcess_Triangulate
-                        | aiProcess_OptimizeMeshes
-                        | aiProcess_SortByPType
-                        | aiProcess_FindInstances
                         );
         if (!scene) {
                 ERROR("Could not load scene. %s\n"
@@ -135,16 +142,22 @@ std::vector<BlModel*> loadModelFile(const char *modelPath,
 
         for (unsigned int i = 0; i < scene->mNumMeshes; i++){
                 aiMesh * mesh = scene->mMeshes[i];
-                INFO("Process mesh %i\n", i);
                 std::vector <btVector3> vertices = loadVertices(mesh);
-                std::vector <btVector3> normals = loadNormals(mesh);
+                std::vector <btVector3> normals = loadVerticesInformation(
+                                mesh, mesh->mNormals);
+                std::vector <btVector3> tangents = loadVerticesInformation(
+                                mesh, mesh->mTangents);
+                std::vector <btVector3> bitangents = loadVerticesInformation(
+                                mesh, mesh->mBitangents);
                 std::vector <unsigned int> indices = loadIndices(mesh);
                 std::vector <BlUvs> uvs = loadUvs(mesh);
-                INFO("Got %i vertices, %i indices, %i uvs, %i normals\n",
+                INFO("Got %i vertices, %i indices, %i uvs, %i normals, %i tangents, %i bitangents\n",
                                 vertices.size(), indices.size(), uvs.size(),
-                                normals.size());
-                BlModel *blModel = new BlModel(vertices, indices, normals, uvs,
-                                        position, mass, modelPath, image);
+                                normals.size(), tangents.size(),
+                                bitangents.size());
+                BlModel *blModel = new BlModel(vertices, indices, normals,
+                                tangents, bitangents,
+                                uvs, position, mass, modelPath, image);
                 res.push_back(blModel);
         }
         return res;
