@@ -2,6 +2,8 @@
 
 uniform sampler2D textureSampler;
 
+uniform vec3 ambientColor;
+
 out vec3 color;
 
 in vec2 UV;
@@ -15,5 +17,5 @@ void main()
        float coef = max(dot(vertexNormal_worldspace
                 , lightDirection_worldspace), 0.0);
        coef = clamp(coef, 0.0, 1.0);
-       color = texColor * coef;
+       color = texColor * coef + ambientColor * texColor;
 }

@@ -3,6 +3,7 @@
 uniform mat4 M;
 uniform mat4 V;
 uniform mat4 P;
+
 uniform vec3 lightPosition_modelspace;
 uniform vec3 lightColor;
 

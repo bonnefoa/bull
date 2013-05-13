@@ -22,6 +22,8 @@ class  BlProgramModel : public BlProgram
 
                 GLuint uniformLightPosition;
                 GLuint uniformLightColor;
+                GLuint uniformAmbientColor;
+
         private:
                 BlInput *blInput;
                 GLint uniformM;

@@ -11,6 +11,8 @@ void BlProgramModel::init()
         uniformM = glGetUniformLocation(programId, "M");
         uniformV = glGetUniformLocation(programId, "V");
         uniformP = glGetUniformLocation(programId, "P");
+        uniformAmbientColor = glGetUniformLocation(programId
+                        , "ambientColor");
         uniformLightColor = glGetUniformLocation(programId
                         , "lightColor");
         uniformLightPosition = glGetUniformLocation(programId

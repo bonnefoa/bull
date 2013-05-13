@@ -60,6 +60,8 @@ void initScene(char *filename)
                 light->loadInBuffer(blProgramModel->uniformLightPosition,
                                 blProgramModel->uniformLightColor);
         }
+        blScene->blLightAmbient->loadInBuffer(blProgramModel->uniformAmbientColor);
+
 }
 
 void logState()
