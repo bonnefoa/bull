@@ -142,13 +142,6 @@ std::vector<BlModel*> loadModelFile(const char *modelPath,
                 std::vector <btVector3> vertices = loadVertices(mesh);
                 std::vector <btVector3> normals = loadVerticesInformation(
                                 mesh, mesh->mNormals);
-                for(unsigned int i = 0; i < vertices.size(); i++) {
-                        btVector3 vertice = vertices[i];
-                        btVector3 normal = normals[i];
-                        INFO("Vert %f %f %f, normals %f %f %f\n",
-                                        vertice[0], vertice[1], vertice[2],
-                                        normal[0], normal[1], normal[2]);
-                }
 
                 std::vector <btVector3> tangents = loadVerticesInformation(
                                 mesh, mesh->mTangents);
