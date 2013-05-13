@@ -25,6 +25,9 @@ void init()
 
 void initPrograms()
 {
+        if(blProgramModel) {
+                delete blProgramModel;
+        }
         std::vector<BlShader*> shaders;
         BlShader *modelVertexShader = new BlShader("glsl/model_vertex.glsl"
                         , GL_VERTEX_SHADER);
@@ -110,6 +113,7 @@ int main(int argc, char **argv)
                                 blWindow->shutdown();
                                 return 0;
                         case RELOAD:
+                                initPrograms();
                                 initScene(argv[1]);
                                 blInput->state = NORMAL;
                                 break;
