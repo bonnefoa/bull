@@ -5,7 +5,6 @@ uniform mat4 V;
 uniform mat4 P;
 
 uniform vec3 lightPosition_modelspace;
-uniform vec3 lightColor;
 
 attribute vec3 vertexPosition_modelspace;
 attribute vec2 vertexUV;
