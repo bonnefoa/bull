@@ -12,7 +12,7 @@ BlInput::BlInput()
         fov = M_PI_2;
         speed = 0.001f ;
         mouseSpeed = 0.0001f ;
-        position = btVector3(0.f, 0.f, -8.f);
+        position = btVector3(0.f, 0.f, 8.f);
         aspect = 4.0f/3.0f;
         zNear = 0.1f;
         zFar = 100.0f;
@@ -153,7 +153,7 @@ btTransform BlInput::computeView(const btVector3 &right
         basis[1] = up;
         basis[2] = -1.0f * direction;
         basis = basis.transpose();
-        view = btTransform(basis, -1.0f * position);
+        view = btTransform(basis, position);
         view = view.inverse();
         return view;
 }
@@ -200,6 +200,6 @@ void BlInput::handleMovement()
         up = right.cross(direction);
         computeView(right, up, direction, position);
 
-        position -= float(axisUp - axisDown) * direction * deltaTime * speed;
-        position += float(axisLeft - axisRight) * right * deltaTime * speed;
+        position += float(axisUp - axisDown) * direction * deltaTime * speed;
+        position += float(axisRight - axisLeft) * right * deltaTime * speed;
 }
