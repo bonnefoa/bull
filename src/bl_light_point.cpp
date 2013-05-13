@@ -9,11 +9,17 @@ void BlLightPoint::loadInBuffer(GLuint programId)
         GLint locQuadraticAttenuation = glGetUniformLocation(programId,
                     "lightQuadraticAttenuation");
         GLint locColor = glGetUniformLocation(programId, "lightColor");
-        GLint locPosition = glGetUniformLocation(programId, "lightPosition_modelspace");
+        GLint locPosition = glGetUniformLocation(programId, "lightPosition_worldspace");
 
         glUniform3fv(locPosition, 1, &position[0]);
         glUniform3fv(locColor, 1, &color[0]);
         glUniform1f(locConstantAttenuation, constantAttenuation);
         glUniform1f(locLinearAttenuation, lineraAttenuation);
         glUniform1f(locQuadraticAttenuation, quadraticAttenuation);
+}
+
+
+void drawLight(GLuint programId)
+{
+
 }

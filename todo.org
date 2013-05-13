@@ -1,7 +1,7 @@
 * DONE Generate one model by mesh from asset import
 
 * DONE Input handle
-
+  
 ** DONE Check theta and phi
 
 ** DONE Left / right not working
@@ -32,4 +32,8 @@
 ** IN PROGRESS Add light 
 *** DONE Parse light from asset
 *** DONE Push light position + color in attribute
-*** IN PROGRESS Use light in glsl
+*** DONE Use diffuse light in glsl
+**** DONE Add distance
+**** DONE Add color light
+*** TODO Add specular light
+*** DONE Add ambient lighting

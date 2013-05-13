@@ -27,6 +27,7 @@ class BlLightPoint {
                 float quadraticAttenuation;
 
                 void loadInBuffer(GLuint programId);
+                void drawLight(GLuint programId);
 };
 
 #endif
