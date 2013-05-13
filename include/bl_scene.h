@@ -2,16 +2,23 @@
 #define BL_SCENE_H
 
 #include <bl_model.h>
-#include <bl_light.h>
+#include <bl_light_point.h>
+#include <bl_light_ambient.h>
 
 class BlScene {
         public:
                 BlScene (std::vector<BlModel*> * _models
-                                , std::vector<BlLight*> *_lights) :
-                        blModels(_models), blLights(_lights) {} ;
+                                , std::vector<BlLightPoint*> *_lightPoints
+                                , BlLightAmbient *_ambient
+                                ) :
+                        blModels(_models),
+                        blLightPoints(_lightPoints),
+                        blLightAmbient(_ambient)
+        {} ;
 
                 std::vector<BlModel*> *blModels;
-                std::vector<BlLight*> *blLights;
+                std::vector<BlLightPoint*> *blLightPoints;
+                BlLightAmbient *blLightAmbient;
         virtual ~BlScene ();
 };
 

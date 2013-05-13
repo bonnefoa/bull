@@ -1,7 +1,7 @@
 #include "bl_loader.h"
 #include <bl_log.h>
 #include <bl_image.h>
-#include <bl_light.h>
+#include <bl_light_point.h>
 #include <bl_util.h>
 #include <string.h>
 #include <vector>
@@ -161,18 +161,30 @@ std::vector<BlModel*> loadModelFile(const char *modelPath,
         return res;
 }
 
-std::vector<BlLight*> loadLightFile(const char *path, btVector3 position)
+BlLightAmbient *loadAmbientFile(const char *path)
+{
+        INFO("Loading ambient from file %s\n", path);
+        const aiScene *scene = loadScene(path);
+        if (scene->mNumLights > 0 ) {
+                aiLight * light = scene->mLights[0];
+                btVector3 color = convertAiColorToBtVector(light->mColorDiffuse);
+                return new BlLightAmbient(color);
+        }
+        return new BlLightAmbient(btVector3());
+}
+
+std::vector<BlLightPoint*> loadLightFile(const char *path, btVector3 position)
 {
         INFO("Loading light from file %s, position %f %f %f\n",
                         path, position[0], position[1], position[2]);
-        std::vector<BlLight*> res = std::vector<BlLight*>();
+        std::vector<BlLightPoint*> res = std::vector<BlLightPoint*>();
         const aiScene *scene = loadScene(path);
         for (unsigned int i = 0; i < scene->mNumLights; i++){
                 aiLight * light = scene->mLights[i];
                 btVector3 color = convertAiColorToBtVector(light->mColorDiffuse);
                 btVector3 lightPosition = convertAiVectorToBtVector(light->mPosition);
-                BlLight *blLight = new BlLight(position + lightPosition, color);
-                res.push_back(blLight);
+                BlLightPoint *lightPoints = new BlLightPoint(position + lightPosition, color);
+                res.push_back(lightPoints);
         }
         return res;
 }
@@ -200,7 +212,14 @@ std::vector<BlModel*> loadModelNode(xmlNode *node)
         return loadModelFile(modelPath, position, mass, image);
 }
 
-std::vector<BlLight*> loadLightNode(xmlNode *node)
+BlLightAmbient *loadAmbientNode(xmlNode *node)
+{
+        const char *file = (const char *)xmlGetProp(node,
+                        (const unsigned char *)"filename");
+        return loadAmbientFile(file);
+}
+
+std::vector<BlLightPoint*> loadLightNode(xmlNode *node)
 {
         const char *modelPath = (const char *)xmlGetProp(node,
                         (const unsigned char *)"filename");
@@ -221,7 +240,8 @@ BlScene *loadXmlScene(const char *filename)
         xmlNode        *root, *node;
 
         std::vector<BlModel*> *models = new std::vector<BlModel*>();
-        std::vector<BlLight*> *lights = new std::vector<BlLight*>();
+        std::vector<BlLightPoint*> *lights = new std::vector<BlLightPoint*>();
+        BlLightAmbient* ambient = new BlLightAmbient(btVector3());
 
         document = xmlReadFile(filename, NULL, 0);
         root = xmlDocGetRootElement(document);
@@ -233,11 +253,14 @@ BlScene *loadXmlScene(const char *filename)
                         }
                 }
                 if(strcmp((char *)node->name, "light") == 0) {
-                        std::vector<BlLight*> nodeLights = loadLightNode(node);
+                        std::vector<BlLightPoint*> nodeLights = loadLightNode(node);
                         for (unsigned int i = 0; i < nodeLights.size(); i++) {
                                 lights->push_back(nodeLights[i]);
                         }
                 }
+                if(strcmp((char *)node->name, "ambient") == 0) {
+                        ambient = loadAmbientNode(node);
+                }
         }
-        return new BlScene(models, lights);
+        return new BlScene(models, lights, ambient);
 }

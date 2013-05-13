@@ -54,9 +54,9 @@ void initScene(char *filename)
                 model->loadInBuffer();
                 model->rigidBody = blSimulation->addBlModel(model);
         }
-        for (std::vector<BlLight*>::iterator it = blScene->blLights->begin();
-                        it != blScene->blLights->end(); ++it) {
-                BlLight *light = *it;
+        for (std::vector<BlLightPoint*>::iterator it = blScene->blLightPoints->begin();
+                        it != blScene->blLightPoints->end(); ++it) {
+                BlLightPoint *light = *it;
                 light->loadInBuffer(blProgramModel->uniformLightPosition,
                                 blProgramModel->uniformLightColor);
         }
@@ -70,6 +70,21 @@ void logState()
         }
 }
 
+void render()
+{
+        for (std::vector<BlModel*>::iterator it = blScene->blModels->begin();
+                        it != blScene->blModels->end(); ++it) {
+                blProgramModel->displayModel(*it);
+        }
+        if(blInput->lDown > 0) {
+                BlLightPoint *light = blScene->blLightPoints->at(0);
+                light->position = blInput->position;
+                light->loadInBuffer(blProgramModel->uniformLightPosition,
+                                blProgramModel->uniformLightColor);
+        }
+        SDL_GL_SwapWindow(blWindow->window);
+}
+
 void mainLoop()
 {
         glClearColor( 0.0, 0.0, 0.2, 1.0 );
@@ -77,18 +92,7 @@ void mainLoop()
         blInput->handleInput();
         blInput->handleMovement();
         logState();
-
-        for (std::vector<BlModel*>::iterator it = blScene->blModels->begin();
-                        it != blScene->blModels->end(); ++it) {
-                blProgramModel->displayModel(*it);
-        }
-        if(blInput->lDown > 0) {
-                BlLight *light = blScene->blLights->at(0);
-                light->position = blInput->position;
-                light->loadInBuffer(blProgramModel->uniformLightPosition,
-                                blProgramModel->uniformLightColor);
-        }
-
+        render();
 }
 
 int main(int argc, char **argv)
@@ -115,7 +119,6 @@ int main(int argc, char **argv)
                         case STOP:
                                 break;
                 }
-                SDL_GL_SwapWindow(blWindow->window);
         }
         return 1;
 }

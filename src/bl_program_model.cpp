@@ -1,6 +1,6 @@
 #include "bl_program_model.h"
 #include <bl_util.h>
-#include <bl_light.h>
+#include <bl_light_point.h>
 #include <bullet.h>
 #include <bl_log.h>
 
