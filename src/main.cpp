@@ -80,7 +80,7 @@ void render()
                         it != blScene->blModels->end(); ++it) {
                 blProgramModel->displayModel(*it);
         }
-        if(blInput->lDown > 0) {
+        if(blInput->lDown > 0 || blInput->rightMouse > 0) {
                 BlLightPoint *light = blScene->blLightPoints->at(0);
                 light->position = blInput->position;
                 light->loadInBuffer(blProgramModel->programId);
