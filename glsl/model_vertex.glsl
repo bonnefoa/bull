@@ -16,7 +16,7 @@ out vec2 UV;
 
 out vec3 vertexNormal_worldspace;
 out vec3 lightDirection_worldspace;
-out float lightDistance;
+out vec3 lightPosition_worldspace;
 
 void main()
 {
@@ -27,7 +27,7 @@ void main()
                 (M * vec4(vertexPosition_modelspace, 1.0f)).xyz;
         vertexNormal_worldspace =
                 (M * vec4(vertexNormal_modelspace, 1.0f)).xyz;
-        lightDirection_worldspace = normalize(
-                vertexPosition_worldspace - lightPosition_modelspace);
-        lightDistance = distance(vertexPosition_worldspace, lightPosition_modelspace);
+
+        lightPosition_worldspace = lightPosition_modelspace;
+        lightDirection_worldspace = normalize(vertexPosition_worldspace - lightPosition_worldspace);
 }
