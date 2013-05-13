@@ -21,7 +21,7 @@ class BlInput
         btScalar aspect;
         btScalar zNear;
         btScalar zFar;
-        btVector3 position;
+
         int axisRight;
         int axisLeft;
         int axisUp;
@@ -45,7 +45,9 @@ class BlInput
                 float theta;
                 Uint32 now;
                 int state;
+                int lDown;
 
+                btVector3 position;
                 btTransform view;
                 btTransform projection;
 

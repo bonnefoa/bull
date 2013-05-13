@@ -20,6 +20,7 @@ BlInput::BlInput()
         axisLeft = 0;
         axisUp = 0;
         axisDown = 0;
+        lDown = 0;
 
         sAxisRight = 0;
         sAxisLeft = 0;
@@ -51,6 +52,9 @@ void BlInput::handleUp(SDL_Event *event)
                 case SDLK_RIGHT:
                         axisRight = 0;
                         sAxisRight = 0;
+                        break;
+                case SDLK_l:
+                        lDown = 0;
                         break;
         }
 }
@@ -89,6 +93,9 @@ void BlInput::handleDown(SDL_Event *event)
                 case SDLK_r:
                         state = RELOAD;
                         break;
+                case SDLK_l:
+                        lDown = 1;
+                        break;
                 case SDLK_SPACE:
                         if(state == STOP) {
                                 state = NORMAL;
@@ -117,7 +124,6 @@ void BlInput::handleInput()
                                 break;
                 }
         }
-        handleMovement();
 }
 
 float BlInput::getDeltaTime()

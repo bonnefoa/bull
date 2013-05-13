@@ -75,12 +75,20 @@ void mainLoop()
         glClearColor( 0.0, 0.0, 0.2, 1.0 );
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         blInput->handleInput();
+        blInput->handleMovement();
         logState();
 
         for (std::vector<BlModel*>::iterator it = blScene->blModels->begin();
                         it != blScene->blModels->end(); ++it) {
                 blProgramModel->displayModel(*it);
         }
+        if(blInput->lDown > 0) {
+                BlLight *light = blScene->blLights->at(0);
+                light->position = blInput->position;
+                light->loadInBuffer(blProgramModel->uniformLightPosition,
+                                blProgramModel->uniformLightColor);
+        }
+
 }
 
 int main(int argc, char **argv)
