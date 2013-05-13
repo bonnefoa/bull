@@ -14,26 +14,18 @@ attribute vec3 vertexNormal_modelspace;
 out vec3 vertexPosition_worldspace;
 out vec2 UV;
 
-out vec3 vertexNormal_cameraspace;
-out vec3 lightDirection_cameraspace;
-
-vec3 getCameraspacePosition(vec3 pos)
-{
-        return (V * vec4(pos, 1.0f)).xyz;
-}
+out vec3 vertexNormal_worldspace;
+out vec3 lightDirection_worldspace;
 
 void main()
 {
         gl_Position = P * V * M * vec4(vertexPosition_modelspace, 1.0f);
         UV = vertexUV;
 
-        vec3 vertexPosition_cameraspace =
-                (V * M * vec4(vertexPosition_modelspace, 1.0f)).xyz;
-        vec3 lightPosition_cameraspace =
-                getCameraspacePosition(lightPosition_modelspace);
-        vertexNormal_cameraspace =
+        vec3 vertexPosition_worldspace =
+                (M * vec4(vertexPosition_modelspace, 1.0f)).xyz;
+        vertexNormal_worldspace =
                 (M * vec4(vertexNormal_modelspace, 1.0f)).xyz;
-                /*(V * M * vec4(vertexNormal_modelspace, 1.0f)).xyz;*/
-        lightDirection_cameraspace = normalize(
-                vertexPosition_cameraspace - lightPosition_cameraspace);
+        lightDirection_worldspace = normalize(
+                vertexPosition_worldspace - lightPosition_modelspace);
 }
