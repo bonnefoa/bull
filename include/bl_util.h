@@ -5,7 +5,7 @@
 #include <GL/gl.h>
 #include <bullet.h>
 
-void show_info_log(GLuint object,
+void showInfoLog(GLuint object,
                 PFNGLGETSHADERIVPROC glGet__iv,
                 PFNGLGETSHADERINFOLOGPROC glGet__InfoLog);
 void printBtTransform(btTransform *mat);

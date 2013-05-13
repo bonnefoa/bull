@@ -7,6 +7,7 @@
 
 GLuint BlShader::loadShader()
 {
+        INFO("Processing shader %s\n", shaderFile);
         int length;
         GLchar * source = (GLchar *)file_contents(shaderFile, &length);
         GLint shader_ok;
@@ -21,8 +22,8 @@ GLuint BlShader::loadShader()
         glCompileShader(shaderId);
         glGetShaderiv(shaderId, GL_COMPILE_STATUS, &shader_ok);
         if (!shader_ok) {
-                ERROR("Failed to compile %s:\n", shaderFile);
-                show_info_log(shaderId, glGetShaderiv, glGetShaderInfoLog);
+                INFO("Failed to compile %s:\n", shaderFile);
+                showInfoLog(shaderId, glGetShaderiv, glGetShaderInfoLog);
                 glDeleteShader(shaderId);
                 return 0;
         }

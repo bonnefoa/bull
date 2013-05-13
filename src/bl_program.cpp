@@ -26,8 +26,8 @@ void BlProgram::loadProgram()
         glGetProgramiv(programId, GL_LINK_STATUS, &programOk);
         if(!programOk)
         {
-                ERROR("Failed to link shader program:\n");
-                show_info_log(programId, glGetProgramiv, glGetProgramInfoLog);
+                INFO("Failed to link shader program:\n");
+                showInfoLog(programId, glGetProgramiv, glGetProgramInfoLog);
                 glDeleteProgram(programId);
         }
 }
