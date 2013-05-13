@@ -34,22 +34,22 @@ BlInput::BlInput()
         SDL_SetRelativeMouseMode(SDL_TRUE);
 }
 
-void BlInput::handleUp(SDL_Event *event)
+void BlInput::handleKeyUp(SDL_Event *event)
 {
         switch(event->key.keysym.sym) {
-                case SDLK_UP:
+                case SDLK_w:
                         sAxisUp = 0;
                         axisUp = 0;
                         break;
-                case SDLK_DOWN:
+                case SDLK_s:
                         axisDown = 0;
                         sAxisDown = 0;
                         break;
-                case SDLK_LEFT:
+                case SDLK_a:
                         axisLeft = 0;
                         sAxisLeft = 0;
                         break;
-                case SDLK_RIGHT:
+                case SDLK_d:
                         axisRight = 0;
                         sAxisRight = 0;
                         break;
@@ -68,20 +68,44 @@ void incrementAxis(SDL_Keymod mod, int *normalAxis, int *modAxis)
         }
 }
 
-void BlInput::handleDown(SDL_Event *event)
+void BlInput::handleMouseUp(SDL_Event *event)
+{
+        switch(event->button.button) {
+                case SDL_BUTTON_LEFT:
+                        leftMouse = 0;
+                        break;
+                case SDL_BUTTON_RIGHT:
+                        rightMouse = 0;
+                        break;
+        }
+}
+
+void BlInput::handleMouseDown(SDL_Event *event)
+{
+        switch(event->button.button) {
+                case SDL_BUTTON_LEFT:
+                        leftMouse = 1;
+                        break;
+                case SDL_BUTTON_RIGHT:
+                        rightMouse = 1;
+                        break;
+        }
+}
+
+void BlInput::handleKeyDown(SDL_Event *event)
 {
         SDL_Keymod mod = SDL_GetModState();
         switch(event->key.keysym.sym) {
-                case SDLK_UP:
+                case SDLK_w:
                         incrementAxis(mod, &axisUp, &sAxisUp);
                         break;
-                case SDLK_DOWN:
+                case SDLK_s:
                         incrementAxis(mod, &axisDown, &sAxisDown);
                         break;
-                case SDLK_LEFT:
+                case SDLK_a:
                         incrementAxis(mod, &axisLeft, &sAxisLeft);
                         break;
-                case SDLK_RIGHT:
+                case SDLK_d:
                         incrementAxis(mod, &axisRight, &sAxisRight);
                         break;
                 case SDLK_ESCAPE:
@@ -115,10 +139,16 @@ void BlInput::handleInput()
                                 state = 1;
                                 break;
                         case SDL_KEYDOWN:
-                                handleDown(&event);
+                                handleKeyDown(&event);
                                 break;
                         case SDL_KEYUP:
-                                handleUp(&event);
+                                handleKeyUp(&event);
+                                break;
+                        case SDL_MOUSEBUTTONDOWN:
+                                handleMouseDown(&event);
+                                break;
+                        case SDL_MOUSEBUTTONUP:
+                                handleMouseUp(&event);
                                 break;
                         default:
                                 break;

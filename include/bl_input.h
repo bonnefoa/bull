@@ -45,7 +45,10 @@ class BlInput
                 float theta;
                 Uint32 now;
                 int state;
+
                 int lDown;
+                int leftMouse;
+                int rightMouse;
 
                 btVector3 position;
                 btTransform view;
@@ -64,8 +67,10 @@ class BlInput
         private:
                 float getDeltaTime();
                 void computeNewAngles(float deltaTime);
-                void handleDown(SDL_Event *event);
-                void handleUp(SDL_Event *event);
+                void handleKeyDown(SDL_Event *event);
+                void handleKeyUp(SDL_Event *event);
+                void handleMouseDown(SDL_Event *event);
+                void handleMouseUp(SDL_Event *event);
 };
 
 #endif
