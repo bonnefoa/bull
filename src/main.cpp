@@ -57,10 +57,9 @@ void initScene(char *filename)
         for (std::vector<BlLightPoint*>::iterator it = blScene->blLightPoints->begin();
                         it != blScene->blLightPoints->end(); ++it) {
                 BlLightPoint *light = *it;
-                light->loadInBuffer(blProgramModel->uniformLightPosition,
-                                blProgramModel->uniformLightColor);
+                light->loadInBuffer(blProgramModel->programId);
         }
-        blScene->blLightAmbient->loadInBuffer(blProgramModel->uniformAmbientColor);
+        blScene->blLightAmbient->loadInBuffer(blProgramModel->programId);
 
 }
 
@@ -81,8 +80,7 @@ void render()
         if(blInput->lDown > 0) {
                 BlLightPoint *light = blScene->blLightPoints->at(0);
                 light->position = blInput->position;
-                light->loadInBuffer(blProgramModel->uniformLightPosition,
-                                blProgramModel->uniformLightColor);
+                light->loadInBuffer(blProgramModel->programId);
         }
         SDL_GL_SwapWindow(blWindow->window);
 }

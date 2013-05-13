@@ -11,12 +11,6 @@ void BlProgramModel::init()
         uniformM = glGetUniformLocation(programId, "M");
         uniformV = glGetUniformLocation(programId, "V");
         uniformP = glGetUniformLocation(programId, "P");
-        uniformAmbientColor = glGetUniformLocation(programId
-                        , "ambientColor");
-        uniformLightColor = glGetUniformLocation(programId
-                        , "lightColor");
-        uniformLightPosition = glGetUniformLocation(programId
-                        , "lightPosition_modelspace");
         locVertexPosModelspace = glGetAttribLocation(programId
                         , "vertexPosition_modelspace");
         locNormalModelspace = glGetAttribLocation(programId

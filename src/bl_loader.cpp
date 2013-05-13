@@ -183,7 +183,9 @@ std::vector<BlLightPoint*> loadLightFile(const char *path, btVector3 position)
                 aiLight * light = scene->mLights[i];
                 btVector3 color = convertAiColorToBtVector(light->mColorDiffuse);
                 btVector3 lightPosition = convertAiVectorToBtVector(light->mPosition);
-                BlLightPoint *lightPoints = new BlLightPoint(position + lightPosition, color);
+                BlLightPoint *lightPoints = new BlLightPoint(position + lightPosition
+                                , color, light->mAttenuationConstant, light->mAttenuationLinear,
+                                light->mAttenuationQuadratic);
                 res.push_back(lightPoints);
         }
         return res;

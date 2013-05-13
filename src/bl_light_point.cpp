@@ -1,7 +1,19 @@
 #include "bl_light_point.h"
 
-void BlLightPoint::loadInBuffer(GLuint uniformLightPosition, GLuint uniformLightColor)
+void BlLightPoint::loadInBuffer(GLuint programId)
 {
-        glUniform3fv(uniformLightPosition, 1, &position[0]);
-        glUniform3fv(uniformLightColor, 1, &color[0]);
+        GLint locConstantAttenuation = glGetUniformLocation(programId,
+                   "lightConstantAttenuation");
+        GLint locLinearAttenuation = glGetUniformLocation(programId,
+                    "lightLinearAttenuation");
+        GLint locQuadraticAttenuation = glGetUniformLocation(programId,
+                    "lightQuadraticAttenuation");
+        GLint locColor = glGetUniformLocation(programId, "lightColor");
+        GLint locPosition = glGetUniformLocation(programId, "lightPosition_modelspace");
+
+        glUniform3fv(locPosition, 1, &position[0]);
+        glUniform3fv(locColor, 1, &color[0]);
+        glUniform1f(locConstantAttenuation, constantAttenuation);
+        glUniform1f(locLinearAttenuation, lineraAttenuation);
+        glUniform1f(locQuadraticAttenuation, quadraticAttenuation);
 }
