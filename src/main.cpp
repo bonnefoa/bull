@@ -3,6 +3,7 @@
 #include <bl_simulation.h>
 #include <bl_program_model.h>
 #include <bl_program_shadow.h>
+#include <bl_program_texture.h>
 #include <bl_loader.h>
 #include <bl_scene.h>
 #include <bl_log.h>
@@ -14,6 +15,7 @@ BlWindow *blWindow;
 BlSimulation *blSimulation;
 BlProgramModel *blProgramModel;
 BlProgramShadow *blProgramShadow;
+BlProgramTexture *blProgramTexture;
 BlScene *blScene;
 Uint32 nextTime = 0;
 
@@ -27,12 +29,10 @@ void init()
 
 void clean()
 {
-        if(blProgramModel) {
-                delete blProgramModel;
-        }
-        if(blScene) {
-                delete blScene;
-        }
+        delete blProgramModel;
+        delete blProgramShadow;
+        delete blProgramTexture;
+        delete blScene;
         blSimulation->clearWorld();
 }
 
@@ -49,6 +49,7 @@ void initPrograms()
 {
         blProgramModel = getProgramModel(blInput);
         blProgramShadow = getProgramShadow();
+        blProgramTexture = getProgramTexture();
 }
 
 void initScene(char *filename)
@@ -86,20 +87,14 @@ void renderLight() {
                                 blProgramModel->programId);
                 blProgramShadow->moveLight(blInput->position);
         }
-        for (std::vector<BlModel*>::iterator
-                        it = light->blModels->begin();
-                        it != light->blModels->end(); ++it) {
-                blProgramModel->displayModel(*it);
-        }
 }
 
 void render()
 {
+        glViewport(0, 0, 1024, 1024);
         blProgramShadow->displaySceneForRender(blScene);
-        for (std::vector<BlModel*>::iterator it = blScene->blModels->begin();
-                        it != blScene->blModels->end(); ++it) {
-                blProgramModel->displayModel(*it);
-        }
+        //blProgramModel->displayScene(blScene);
+        blProgramTexture->displayTexture(blProgramShadow->depthTexture);
         SDL_GL_SwapWindow(blWindow->window);
 }
 

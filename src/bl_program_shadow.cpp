@@ -73,10 +73,9 @@ void BlProgramShadow::displaySceneForRender(BlScene *blScene)
 {
         glBindFramebuffer(GL_FRAMEBUFFER, shadowFramebuffer);
 
-        glClear(GL_DEPTH_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glUseProgram(programId);
 
-        (void) blScene;
         for (std::vector<BlModel*>::iterator it = blScene->blModels->begin();
                         it != blScene->blModels->end(); ++it) {
                 BlModel *model = (*it);
@@ -87,5 +86,3 @@ void BlProgramShadow::displaySceneForRender(BlScene *blScene)
         glDisableVertexAttribArray(locVertices);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
-
-

@@ -5,9 +5,9 @@
 #include <GL/gl.h>
 #include <bl_program.h>
 #include <bl_shader.h>
-#include <bl_model.h>
 #include <bl_input.h>
 #include <vector>
+#include <bl_scene.h>
 
 class  BlProgramModel : public BlProgram
 {
@@ -19,6 +19,7 @@ class  BlProgramModel : public BlProgram
                 void bindModelMatrix(BlModel *blModel);
                 void bindProjectionMatrix(void);
                 void displayModel(BlModel *model);
+                void displayScene(BlScene *blScene);
 
         private:
                 BlInput *blInput;

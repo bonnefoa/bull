@@ -28,14 +28,14 @@
 
 * IN PROGRESS Beautify
 ** DONE Add texture
-** TODO Add shadow
-** IN PROGRESS Add light 
+** IN PROGRESS Add shadow
+** DONE Add light 
 *** DONE Parse light from asset
 *** DONE Push light position + color in attribute
 *** DONE Use diffuse light in glsl
 **** DONE Add distance
 **** DONE Add color light
-*** TODO Add specular light
+*** DONE Add specular light
 *** DONE Add ambient lighting
-* IN PROGRESS Clean
-** IN PROGRESS Check memory leak
+* DONE Clean
+** DONE Check memory leak

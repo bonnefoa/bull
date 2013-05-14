@@ -69,8 +69,6 @@ void BlProgramModel::bindProjectionMatrix()
 
 void BlProgramModel::displayModel(BlModel *blModel)
 {
-        glUseProgram(programId);
-
         bindModelMatrix(blModel);
         sendTransform(blInput->view, uniformV);
 
@@ -78,6 +76,25 @@ void BlProgramModel::displayModel(BlModel *blModel)
         blModel->bindNormals(locNormals);
         blModel->bindUVs(locUVs);
         blModel->drawElement();
+}
+
+void BlProgramModel::displayScene(BlScene *blScene)
+{
+        glUseProgram(programId);
+
+        for (std::vector<BlLightPoint*>::iterator
+                        it = blScene->blLightPoints->begin();
+                        it != blScene->blLightPoints->end(); ++it) {
+                std::vector<BlModel*> *models = (*it)->blModels;
+                for (std::vector<BlModel*>::iterator it2 = models->begin();
+                                it2 != models->end(); ++it2) {
+                        displayModel(*it2);
+                }
+        }
+        for (std::vector<BlModel*>::iterator it = blScene->blModels->begin();
+                        it != blScene->blModels->end(); ++it) {
+                displayModel((*it));
+        }
 
         glDisableVertexAttribArray(locVertices);
         glDisableVertexAttribArray(locNormals);

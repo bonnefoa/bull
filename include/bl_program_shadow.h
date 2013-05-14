@@ -17,10 +17,10 @@ class BlProgramShadow : public BlProgram {
                 void displayTexture(GLuint textureId);
 
                 btVector3 lightPosition;
+                GLuint depthTexture;
 
         private:
                 GLuint shadowFramebuffer;
-                GLuint depthTexture;
 
                 GLint locDepthMVP;
                 GLint locVertices;

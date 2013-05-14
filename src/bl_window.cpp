@@ -59,7 +59,7 @@ void BlWindow::launch()
 
         window = SDL_CreateWindow("bullora"
                         , SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                        800, 600
+                        1024, 1024
                         , SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_INPUT_GRABBED);
         if (!window)
                 die("Unable to create window");
