@@ -276,5 +276,7 @@ BlScene *loadXmlScene(const char *filename)
                         ambient = loadAmbientNode(node);
                 }
         }
+
+        free(document);
         return new BlScene(models, lights, ambient);
 }

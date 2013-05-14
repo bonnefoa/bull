@@ -37,3 +37,5 @@
 **** DONE Add color light
 *** TODO Add specular light
 *** DONE Add ambient lighting
+* IN PROGRESS Clean
+** IN PROGRESS Check memory leak

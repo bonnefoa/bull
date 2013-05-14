@@ -31,3 +31,12 @@ void BlProgram::loadProgram()
                 glDeleteProgram(programId);
         }
 }
+
+BlProgram::~BlProgram(void)
+{
+        glDeleteProgram(programId);
+        for (std::vector<BlShader*>::iterator it = shaders.begin();
+                        it != shaders.end(); ++it) {
+                delete (*it);
+        }
+}

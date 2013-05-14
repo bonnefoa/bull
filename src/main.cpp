@@ -23,11 +23,28 @@ void init()
         blSimulation = new BlSimulation();
 }
 
-void initPrograms()
+void clean()
 {
         if(blProgramModel) {
                 delete blProgramModel;
         }
+        if(blScene) {
+                delete blScene;
+        }
+        blSimulation->clearWorld();
+}
+
+void shutdown()
+{
+        clean();
+        blWindow->shutdown();
+        delete blWindow;
+        delete blInput;
+        delete blSimulation;
+}
+
+void initPrograms()
+{
         std::vector<BlShader*> shaders;
         BlShader *modelVertexShader = new BlShader("glsl/model_vertex.glsl"
                         , GL_VERTEX_SHADER);
@@ -43,11 +60,6 @@ void initPrograms()
 
 void initScene(char *filename)
 {
-        if(blScene) {
-                delete blScene;
-        }
-        blSimulation->clearWorld();
-
         blScene = loadXmlScene(filename);
         blProgramModel->bindProjectionMatrix();
         for (std::vector<BlModel*>::iterator it = blScene->blModels->begin();
@@ -125,6 +137,7 @@ int main(int argc, char **argv)
                                 blWindow->shutdown();
                                 return 0;
                         case RELOAD:
+                                clean();
                                 initPrograms();
                                 initScene(argv[1]);
                                 blInput->state = NORMAL;
@@ -136,5 +149,6 @@ int main(int argc, char **argv)
                                 break;
                 }
         }
-        return 1;
+        shutdown();
+        return 0;
 }

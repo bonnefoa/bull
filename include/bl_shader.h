@@ -14,6 +14,7 @@ class BlShader {
                 BlShader(const char *shaderFile, const GLenum shaderType)
                         : shaderFile(shaderFile), shaderType(shaderType) {shaderId=0;};
                 GLuint loadShader(void);
+                ~BlShader(void);
         private:
 };
 

@@ -30,3 +30,10 @@ GLuint BlShader::loadShader()
         INFO("Shader source compiled %s:\n", shaderFile);
         return shaderId;
 }
+
+BlShader::~BlShader(void)
+{
+        if(shaderId>0) {
+                glDeleteShader(shaderId);
+        }
+}

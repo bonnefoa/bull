@@ -81,3 +81,8 @@ BlImage *readPngImage(const char *filename)
 
         return new BlImage(width, height, lines, format);
 }
+
+BlImage::~BlImage()
+{
+        free(pixels);
+}

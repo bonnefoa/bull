@@ -11,6 +11,8 @@ class BlProgram
                 BlProgram(std::vector<BlShader *> shaders)
                         : shaders(shaders) {programId=0;};
                 void loadProgram(void);
+
+                ~BlProgram(void);
         private:
                 std::vector<BlShader *> shaders;
 };

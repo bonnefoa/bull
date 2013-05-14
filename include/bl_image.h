@@ -25,6 +25,7 @@ class BlImage {
                 GLenum format;
 
                 void loadInBuffer(GLuint imageBuffer);
+                virtual ~BlImage(void);
 };
 
 BlImage *readPngImage(const char *filename);
