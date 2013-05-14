@@ -3,6 +3,7 @@
 #include <bl_light_point.h>
 #include <bullet.h>
 #include <bl_log.h>
+#include <bl_matrix.h>
 
 void BlProgramModel::init()
 {

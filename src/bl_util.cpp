@@ -16,27 +16,6 @@ void showInfoLog(GLuint object,
         free(log);
 }
 
-void sendTransform(btTransform trans, GLuint uniform)
-{
-        btScalar mat[16];
-        trans.getOpenGLMatrix(mat);
-        glUniformMatrix4fv(uniform, 1, GL_FALSE, mat);
-}
-
-void printBtTransform(btTransform *mat)
-{
-       btMatrix3x3 bas = mat->getBasis();
-       btVector3 ori = mat->getOrigin();
-       for (int n = 0; n < 3; n++) {
-                for (int m = 0; m < 3; m++) {
-                        printf("%f ", bas[n][m]);
-                }
-                printf("%f ", ori[n]);
-                printf("\n");
-       }
-       printf("%f %f %f %f\n\n", 0.f, 0.f, 0.f, 1.f);
-}
-
 int max(int a, int b)
 {
         if (a > b) return a;

@@ -9,9 +9,6 @@ void showInfoLog(GLuint object,
                 PFNGLGETSHADERIVPROC glGet__iv,
                 PFNGLGETSHADERINFOLOGPROC glGet__InfoLog);
 
-void sendTransform(btTransform trans, GLuint uniform);
-void printBtTransform(btTransform *mat);
-
 int max(int a, int b);
 int min(int a, int b);
 char *strduplicate(const char *s);
