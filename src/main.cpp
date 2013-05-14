@@ -2,6 +2,7 @@
 #include <bl_window.h>
 #include <bl_simulation.h>
 #include <bl_program_model.h>
+#include <bl_program_shadow.h>
 #include <bl_loader.h>
 #include <bl_scene.h>
 #include <bl_log.h>
@@ -12,6 +13,7 @@ BlInput *blInput;
 BlWindow *blWindow;
 BlSimulation *blSimulation;
 BlProgramModel *blProgramModel;
+BlProgramShadow *blProgramShadow;
 BlScene *blScene;
 Uint32 nextTime = 0;
 
@@ -43,7 +45,7 @@ void shutdown()
         delete blSimulation;
 }
 
-void initPrograms()
+void initProgramModel()
 {
         std::vector<BlShader*> shaders;
         BlShader *modelVertexShader = new BlShader("glsl/model_vertex.glsl"
@@ -56,6 +58,27 @@ void initPrograms()
         blProgramModel = new BlProgramModel(shaders, blInput);
         blProgramModel->loadProgram();
         blProgramModel->init();
+}
+
+void initProgramShadow()
+{
+        std::vector<BlShader*> shaders;
+        BlShader *modelVertexShader = new BlShader("glsl/shadow_vertex.glsl"
+                        , GL_VERTEX_SHADER);
+        BlShader *modelFragmentShader = new BlShader("glsl/shadow_fragment.glsl"
+                        , GL_FRAGMENT_SHADER);
+        shaders.push_back(modelVertexShader);
+        shaders.push_back(modelFragmentShader);
+
+        blProgramShadow = new BlProgramShadow(shaders, btVector3(0, 0, 0));
+        blProgramShadow->loadProgram();
+        blProgramShadow->init();
+}
+
+void initPrograms()
+{
+        initProgramModel();
+        initProgramShadow();
 }
 
 void initScene(char *filename)
@@ -92,6 +115,7 @@ void renderLight() {
         if(blInput->lDown > 0 || blInput->rightMouse > 0) {
                 light->moveLight(blInput->position,
                                 blProgramModel->programId);
+                blProgramShadow->moveLight(blInput->position);
         }
         for (std::vector<BlModel*>::iterator
                         it = light->blModels->begin();
@@ -118,6 +142,7 @@ void mainLoop()
         blInput->handleMovement();
         logState();
 
+        glUseProgram(blProgramModel->programId);
         renderLight();
         render();
 }
