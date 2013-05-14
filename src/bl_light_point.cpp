@@ -1,5 +1,24 @@
 #include "bl_light_point.h"
 
+void BlLightPoint::init()
+{
+        for (std::vector<BlModel*>::iterator it = blModels->begin();
+                        it != blModels->end(); ++it) {
+                (*it)->init();
+        }
+}
+
+void BlLightPoint::moveLight(btVector3 newPosition, GLuint programId)
+{
+        position = newPosition;
+        loadInBuffer(programId);
+        for (std::vector<BlModel*>::iterator
+                        it = blModels->begin();
+                        it != blModels->end(); ++it) {
+                (*it)->position = newPosition;
+        }
+}
+
 void BlLightPoint::loadInBuffer(GLuint programId)
 {
         GLint locConstantAttenuation = glGetUniformLocation(programId,
@@ -16,5 +35,10 @@ void BlLightPoint::loadInBuffer(GLuint programId)
         glUniform1f(locConstantAttenuation, constantAttenuation);
         glUniform1f(locLinearAttenuation, lineraAttenuation);
         glUniform1f(locQuadraticAttenuation, quadraticAttenuation);
-}
 
+
+        for (std::vector<BlModel*>::iterator it = blModels->begin();
+                        it != blModels->end(); ++it) {
+                (*it)->loadInBuffer();
+        }
+}

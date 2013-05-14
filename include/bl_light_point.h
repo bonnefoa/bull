@@ -14,14 +14,14 @@ class BlLightPoint {
                                 float _constantAttenuation,
                                 float _linearAttenuation,
                                 float _quadraticAttenuation,
-                                std::vector<BlModel*> *_models
+                                std::vector<BlModel*> *_blModels
                                 ) :
                         position(_position),
                         color(_color),
                         constantAttenuation(_constantAttenuation),
                         lineraAttenuation(_linearAttenuation),
                         quadraticAttenuation(_quadraticAttenuation),
-                        models(_models)
+                        blModels(_blModels)
                         {};
 
                 btVector3 position;
@@ -29,9 +29,11 @@ class BlLightPoint {
                 float constantAttenuation;
                 float lineraAttenuation;
                 float quadraticAttenuation;
-                std::vector<BlModel*> *models;
+                std::vector<BlModel*> *blModels;
 
                 void loadInBuffer(GLuint programId);
+                void init();
+                void moveLight(btVector3 position, GLuint programId);
 };
 
 #endif

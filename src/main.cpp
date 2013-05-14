@@ -60,6 +60,7 @@ void initScene(char *filename)
         for (std::vector<BlLightPoint*>::iterator it = blScene->blLightPoints->begin();
                         it != blScene->blLightPoints->end(); ++it) {
                 BlLightPoint *light = *it;
+                light->init();
                 light->loadInBuffer(blProgramModel->programId);
         }
         blScene->blLightAmbient->loadInBuffer(blProgramModel->programId);
@@ -74,13 +75,21 @@ void logState()
         }
 }
 
+void renderLight() {
+        BlLightPoint *light = blScene->blLightPoints->at(0);
+        if(blInput->lDown > 0 || blInput->rightMouse > 0) {
+                light->moveLight(blInput->position,
+                                blProgramModel->programId);
+        }
+        for (std::vector<BlModel*>::iterator
+                        it = light->blModels->begin();
+                        it != light->blModels->end(); ++it) {
+                blProgramModel->displayModel(*it);
+        }
+}
+
 void render()
 {
-        if(blInput->lDown > 0 || blInput->rightMouse > 0) {
-                BlLightPoint *light = blScene->blLightPoints->at(0);
-                light->position = blInput->position;
-                light->loadInBuffer(blProgramModel->programId);
-        }
         for (std::vector<BlModel*>::iterator it = blScene->blModels->begin();
                         it != blScene->blModels->end(); ++it) {
                 blProgramModel->displayModel(*it);
@@ -92,9 +101,12 @@ void mainLoop()
 {
         glClearColor( 0.0, 0.0, 0.2, 1.0 );
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
         blInput->handleInput();
         blInput->handleMovement();
         logState();
+
+        renderLight();
         render();
 }
 

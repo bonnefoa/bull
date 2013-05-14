@@ -28,7 +28,9 @@ class BlModel {
                         , position(_position)
                         , mass(_mass)
                         , name(_name)
-                        , image(_image) {};
+                        , image(_image) {
+                                rigidBody = NULL;
+                        };
                 void init();
                 void loadInBuffer();
                 bool loadAsset(void);

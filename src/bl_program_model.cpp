@@ -32,6 +32,8 @@ void BlProgramModel::bindModelMatrix(BlModel *blModel)
         trans.setIdentity();
         if(body && body->getMotionState()) {
                 body->getMotionState()->getWorldTransform(trans);
+        } else {
+                trans.setOrigin(blModel->position);
         }
         sendTransform(trans, uniformM);
 }
