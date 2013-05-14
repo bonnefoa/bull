@@ -5,6 +5,22 @@
 #include <bl_log.h>
 #include <bl_matrix.h>
 
+BlProgramModel *getProgramModel(BlInput *blInput)
+{
+        std::vector<BlShader*> shaders;
+        BlShader *vertexShader = new BlShader("glsl/model_vertex.glsl"
+                        , GL_VERTEX_SHADER);
+        BlShader *fragmentShader = new BlShader("glsl/model_fragment.glsl"
+                        , GL_FRAGMENT_SHADER);
+        shaders.push_back(vertexShader);
+        shaders.push_back(fragmentShader);
+
+        BlProgramModel *blProgramModel = new BlProgramModel(shaders, blInput);
+        blProgramModel->loadProgram();
+        blProgramModel->init();
+        return blProgramModel;
+}
+
 void BlProgramModel::init()
 {
         glUseProgram(programId);

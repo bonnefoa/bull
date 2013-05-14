@@ -30,4 +30,6 @@ class  BlProgramModel : public BlProgram
                 GLint locUVs;
 };
 
+BlProgramModel *getProgramModel(BlInput *blInput);
+
 #endif

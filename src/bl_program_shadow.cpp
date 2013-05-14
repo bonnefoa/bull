@@ -2,6 +2,22 @@
 #include <bl_log.h>
 #include <bl_matrix.h>
 
+BlProgramShadow *getProgramShadow()
+{
+        std::vector<BlShader*> shaders;
+        BlShader *modelVertexShader = new BlShader("glsl/shadow_vertex.glsl"
+                        , GL_VERTEX_SHADER);
+        BlShader *modelFragmentShader = new BlShader("glsl/shadow_fragment.glsl"
+                        , GL_FRAGMENT_SHADER);
+        shaders.push_back(modelVertexShader);
+        shaders.push_back(modelFragmentShader);
+
+        BlProgramShadow *blProgramShadow = new BlProgramShadow(shaders, btVector3(0, 0, 0));
+        blProgramShadow->loadProgram();
+        blProgramShadow->init();
+        return blProgramShadow;
+}
+
 void BlProgramShadow::init(void)
 {
         glGenFramebuffers(1, &shadowFramebuffer);
@@ -31,7 +47,13 @@ void BlProgramShadow::init(void)
         glUseProgram(programId);
 
         locDepthMVP = glGetUniformLocation(programId, "depthMVP");
-        locVertices = glGetUniformLocation(programId, "vertexPosition_modelspace");
+        locVertices = glGetAttribLocation(programId, "vertexPosition_modelspace");
+
+        INFO("depth mvp location %i\n", locDepthMVP);
+        INFO("vertex location %i\n", locVertices);
+        if(locDepthMVP < 0 || locVertices < 0) {
+                ERROR("A location is unused");
+        }
 
         depthProjectionMatrix = computeOrthogonal(-10, 10, -10, 10, -10, 20);
         moveLight(lightPosition);
@@ -50,13 +72,11 @@ void BlProgramShadow::moveLight(btVector3 position)
 void BlProgramShadow::displaySceneForRender(BlScene *blScene)
 {
         glBindFramebuffer(GL_FRAMEBUFFER, shadowFramebuffer);
-        glViewport(0, 0, 1024, 1024);
-        glEnable(GL_CULL_FACE);
-        glCullFace(GL_BACK);
 
         glClear(GL_DEPTH_BUFFER_BIT);
         glUseProgram(programId);
 
+        (void) blScene;
         for (std::vector<BlModel*>::iterator it = blScene->blModels->begin();
                         it != blScene->blModels->end(); ++it) {
                 BlModel *model = (*it);
@@ -67,3 +87,5 @@ void BlProgramShadow::displaySceneForRender(BlScene *blScene)
         glDisableVertexAttribArray(locVertices);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
+
+

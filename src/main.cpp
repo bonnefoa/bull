@@ -45,40 +45,10 @@ void shutdown()
         delete blSimulation;
 }
 
-void initProgramModel()
-{
-        std::vector<BlShader*> shaders;
-        BlShader *modelVertexShader = new BlShader("glsl/model_vertex.glsl"
-                        , GL_VERTEX_SHADER);
-        BlShader *modelFragmentShader = new BlShader("glsl/model_fragment.glsl"
-                        , GL_FRAGMENT_SHADER);
-        shaders.push_back(modelVertexShader);
-        shaders.push_back(modelFragmentShader);
-
-        blProgramModel = new BlProgramModel(shaders, blInput);
-        blProgramModel->loadProgram();
-        blProgramModel->init();
-}
-
-void initProgramShadow()
-{
-        std::vector<BlShader*> shaders;
-        BlShader *modelVertexShader = new BlShader("glsl/shadow_vertex.glsl"
-                        , GL_VERTEX_SHADER);
-        BlShader *modelFragmentShader = new BlShader("glsl/shadow_fragment.glsl"
-                        , GL_FRAGMENT_SHADER);
-        shaders.push_back(modelVertexShader);
-        shaders.push_back(modelFragmentShader);
-
-        blProgramShadow = new BlProgramShadow(shaders, btVector3(0, 0, 0));
-        blProgramShadow->loadProgram();
-        blProgramShadow->init();
-}
-
 void initPrograms()
 {
-        initProgramModel();
-        initProgramShadow();
+        blProgramModel = getProgramModel(blInput);
+        blProgramShadow = getProgramShadow();
 }
 
 void initScene(char *filename)
@@ -99,7 +69,6 @@ void initScene(char *filename)
                 light->loadInBuffer(blProgramModel->programId);
         }
         blScene->blLightAmbient->loadInBuffer(blProgramModel->programId);
-
 }
 
 void logState()
@@ -126,6 +95,7 @@ void renderLight() {
 
 void render()
 {
+        blProgramShadow->displaySceneForRender(blScene);
         for (std::vector<BlModel*>::iterator it = blScene->blModels->begin();
                         it != blScene->blModels->end(); ++it) {
                 blProgramModel->displayModel(*it);

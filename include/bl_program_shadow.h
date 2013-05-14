@@ -14,6 +14,7 @@ class BlProgramShadow : public BlProgram {
                 void init(void);
                 void displaySceneForRender(BlScene *scene);
                 void moveLight(btVector3 position);
+                void displayTexture(GLuint textureId);
 
                 btVector3 lightPosition;
 
@@ -26,5 +27,7 @@ class BlProgramShadow : public BlProgram {
 
                 btTransform depthProjectionMatrix;
 };
+
+BlProgramShadow *getProgramShadow();
 
 #endif
