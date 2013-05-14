@@ -2,16 +2,15 @@
 
 uniform sampler2D textureSampler;
 
-uniform vec3 ambientColor;
+uniform vec3 ambientColor = vec3(0.1, 0.1, 0.1);
 
 uniform vec3 lightColor;
-uniform float lightConstantAttenuation;
-uniform float lightLinearAttenuation;
-uniform float lightQuadraticAttenuation;
+uniform float lightConstantAttenuation = 1.0;
+uniform float lightLinearAttenuation = 0.0;
+uniform float lightQuadraticAttenuation = 0.0;
 uniform vec3 lightPosition_worldspace;
 
 out vec3 color;
-/*out vec3 ga2;*/
 
 in vec2 UV;
 

@@ -19,7 +19,7 @@ out vec3 lightDirection_worldspace;
 
 void main()
 {
-        vec3 vertexPosition_worldspace =
+        vertexPosition_worldspace =
                 (M * vec4(vertexPosition_modelspace, 1.0f)).xyz;
         vertexPosition_cameraspace =
                 (V * vec4(vertexPosition_worldspace, 1.0f)).xyz;
