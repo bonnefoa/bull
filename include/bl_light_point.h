@@ -34,6 +34,8 @@ class BlLightPoint {
                 void loadInBuffer(GLuint programId);
                 void init();
                 void moveLight(btVector3 position, GLuint programId);
+
+                virtual ~BlLightPoint ();
 };
 
 #endif

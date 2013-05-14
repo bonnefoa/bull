@@ -4,8 +4,13 @@ BlScene::~BlScene()
 {
         for (std::vector<BlModel*>::iterator it = blModels->begin();
                         it != blModels->end(); ++it) {
-                (*it)->clear();
                 delete (*it);
         }
-        blModels->clear();
+        delete blModels;
+        for (std::vector<BlLightPoint*>::iterator it = blLightPoints->begin();
+                        it != blLightPoints->end(); ++it) {
+                delete (*it);
+        }
+        delete blLightPoints;
+        delete blLightAmbient;
 }

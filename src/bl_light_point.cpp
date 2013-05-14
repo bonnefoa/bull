@@ -36,9 +36,17 @@ void BlLightPoint::loadInBuffer(GLuint programId)
         glUniform1f(locLinearAttenuation, lineraAttenuation);
         glUniform1f(locQuadraticAttenuation, quadraticAttenuation);
 
-
         for (std::vector<BlModel*>::iterator it = blModels->begin();
                         it != blModels->end(); ++it) {
                 (*it)->loadInBuffer();
         }
+}
+
+BlLightPoint::~BlLightPoint()
+{
+        for (std::vector<BlModel*>::iterator it = blModels->begin();
+                        it != blModels->end(); ++it) {
+                delete (*it);
+        }
+        delete blModels;
 }

@@ -33,7 +33,7 @@ void BlModel::init()
                         tangentBuffer, bitangentBuffer, uvBuffer, textureBuffer);
 }
 
-void BlModel::clear(void)
+BlModel::~BlModel(void)
 {
         glDeleteBuffers(1, &indiceBuffer);
         glDeleteBuffers(1, &vertexBuffer);

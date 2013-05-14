@@ -36,7 +36,6 @@ class BlModel {
                 bool loadAsset(void);
                 void drawElement(GLuint locationVertex, GLuint locationUv,
                                 GLuint locationNormal);
-                void clear(void);
 
                 std::vector <btVector3> vertices;
                 std::vector <unsigned int> indices;
@@ -49,6 +48,8 @@ class BlModel {
                 const char *name;
                 const char *image;
                 btRigidBody *rigidBody;
+
+                virtual ~BlModel ();
 
         private:
                 GLuint vertexBuffer;
