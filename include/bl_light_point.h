@@ -4,6 +4,8 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 #include <bullet.h>
+#include <vector>
+#include <bl_model.h>
 
 class BlLightPoint {
         public:
@@ -11,13 +13,15 @@ class BlLightPoint {
                                 btVector3 _color,
                                 float _constantAttenuation,
                                 float _linearAttenuation,
-                                float _quadraticAttenuation
+                                float _quadraticAttenuation,
+                                std::vector<BlModel*> *_models
                                 ) :
                         position(_position),
                         color(_color),
                         constantAttenuation(_constantAttenuation),
                         lineraAttenuation(_linearAttenuation),
-                        quadraticAttenuation(_quadraticAttenuation)
+                        quadraticAttenuation(_quadraticAttenuation),
+                        models(_models)
                         {};
 
                 btVector3 position;
@@ -25,9 +29,9 @@ class BlLightPoint {
                 float constantAttenuation;
                 float lineraAttenuation;
                 float quadraticAttenuation;
+                std::vector<BlModel*> *models;
 
                 void loadInBuffer(GLuint programId);
-                void drawLight(GLuint programId);
 };
 
 #endif

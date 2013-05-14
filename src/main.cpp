@@ -76,14 +76,14 @@ void logState()
 
 void render()
 {
-        for (std::vector<BlModel*>::iterator it = blScene->blModels->begin();
-                        it != blScene->blModels->end(); ++it) {
-                blProgramModel->displayModel(*it);
-        }
         if(blInput->lDown > 0 || blInput->rightMouse > 0) {
                 BlLightPoint *light = blScene->blLightPoints->at(0);
                 light->position = blInput->position;
                 light->loadInBuffer(blProgramModel->programId);
+        }
+        for (std::vector<BlModel*>::iterator it = blScene->blModels->begin();
+                        it != blScene->blModels->end(); ++it) {
+                blProgramModel->displayModel(*it);
         }
         SDL_GL_SwapWindow(blWindow->window);
 }
