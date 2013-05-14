@@ -173,22 +173,6 @@ void BlInput::computeNewAngles(float deltaTime)
         theta += mouseSpeed * deltaTime * float(-deltaY + sAxisUp - sAxisDown);
 }
 
-btTransform BlInput::computeView(const btVector3 &right
-                , const btVector3 &up
-                , const btVector3 &direction
-                , const btVector3 &position)
-{
-        btTransform transform;
-        btMatrix3x3 basis;
-        basis[0] = right;
-        basis[1] = up;
-        basis[2] = -1.0f * direction;
-        basis = basis.transpose();
-        view = btTransform(basis, position);
-        view = view.inverse();
-        return view;
-}
-
 void BlInput::logState()
 {
         INFO("theta %f, phi %f\n", theta, phi);
@@ -214,7 +198,7 @@ void BlInput::handleMovement()
 
         right = btVector3(sin(phi + M_PI_2), 0 , cos(phi + M_PI_2));
         up = right.cross(direction);
-        computeView(right, up, direction, position);
+        view = computeView(right, up, direction, position);
 
         position += float(axisUp - axisDown) * direction * deltaTime * speed;
         position += float(axisRight - axisLeft) * right * deltaTime * speed;

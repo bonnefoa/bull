@@ -36,3 +36,34 @@ btTransform computeProjection(btScalar fov, btScalar aspect,
         return btTransform(basis, origin);
 }
 
+btTransform computeOrthogonal(btScalar left, btScalar right,
+                btScalar bottom, btScalar top,
+                btScalar zNear, btScalar zFar)
+{
+        btMatrix3x3 basis(
+                        2.0f / (right - left), 0, 0
+                        , 0, 2.0f / (top - bottom), 0
+                        , 0, 0, -2.0f / (zFar - zNear)
+                        );
+        btScalar xTrans = - (right + left) / (right - left);
+        btScalar yTrans = - (top + bottom) / (top - bottom);
+        btScalar zTrans = - (zFar + zNear) / (zFar - zNear);
+        btVector3 origin = btVector3(xTrans, yTrans, zTrans);
+        return btTransform(basis, origin);
+}
+
+btTransform computeView(const btVector3 &right
+                , const btVector3 &up
+                , const btVector3 &direction
+                , const btVector3 &position)
+{
+        btTransform transform;
+        btMatrix3x3 basis;
+        basis[0] = right;
+        basis[1] = up;
+        basis[2] = -1.0f * direction;
+        basis = basis.transpose();
+        btTransform view = btTransform(basis, position);
+        view = view.inverse();
+        return view;
+}

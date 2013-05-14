@@ -10,5 +10,9 @@ btTransform computeProjection(btScalar fov, btScalar aspect,
 
 void sendTransform(btTransform trans, GLuint uniform);
 void printBtTransform(btTransform *mat);
+btTransform computeView(const btVector3 &right
+                , const btVector3 &up
+                , const btVector3 &direction
+                , const btVector3 &position);
 
 #endif
