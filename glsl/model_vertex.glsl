@@ -14,8 +14,8 @@ out vec3 vertexPosition_worldspace;
 out vec3 vertexPosition_cameraspace;
 out vec2 UV;
 
-out vec3 vertexNormal_worldspace;
-out vec3 lightDirection_worldspace;
+out vec3 lightDirection_cameraspace;
+out vec3 vertexNormal_cameraspace;
 
 void main()
 {
@@ -27,6 +27,6 @@ void main()
         gl_Position = P * vec4(vertexPosition_cameraspace, 1.0f);
         UV = vertexUV;
 
-        vertexNormal_worldspace = mat3(M) * vertexNormal_modelspace;
-        lightDirection_worldspace = normalize(lightPosition_worldspace - vertexPosition_worldspace);
+        vertexNormal_cameraspace = normalize(mat3(V) * mat3(M) * vertexNormal_modelspace);
+        lightDirection_cameraspace = normalize(mat3(V) * (lightPosition_worldspace - vertexPosition_worldspace));
 }

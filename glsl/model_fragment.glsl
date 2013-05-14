@@ -1,5 +1,6 @@
 #version 130
 
+uniform mat4 V;
 uniform sampler2D textureSampler;
 
 uniform vec3 ambientColor = vec3(0.1, 0.1, 0.1);
@@ -15,21 +16,21 @@ out vec3 color;
 in vec2 UV;
 
 in vec3 vertexPosition_cameraspace;
-in vec3 vertexNormal_worldspace;
+in vec3 vertexNormal_cameraspace;
 in vec3 vertexPosition_worldspace;
-in vec3 lightDirection_worldspace;
+in vec3 lightDirection_cameraspace;
 
 float getSpecularCoefficient()
 {
-        vec3 eyeDirection_cameraspace = normalize(- vertexPosition_cameraspace);
-        vec3 reflectedLight = reflect(lightDirection_worldspace, vertexNormal_worldspace);
+        vec3 eyeDirection_cameraspace = normalize(vec3(0,0,0) - vertexPosition_cameraspace);
+        vec3 reflectedLight = reflect(-lightDirection_cameraspace, vertexNormal_cameraspace);
         float coef = clamp(dot(reflectedLight, eyeDirection_cameraspace), 0, 1);
         return coef;
 }
 
 float getDiffuseCoefficient()
 {
-        float coef = dot(lightDirection_worldspace, vertexNormal_worldspace);
+        float coef = dot(lightDirection_cameraspace, vertexNormal_cameraspace);
         coef = clamp(coef, 0.0, 1.0);
         return coef;
 }
@@ -51,7 +52,7 @@ void main()
         float attenuation = getAttenuation();
 
         vec3 diffusePart = texColor * lightColor * diffuseCoef * attenuation;
-        vec3 specularPart = texColor * lightColor * pow(specularCoef, 5) ;
+        vec3 specularPart = texColor * lightColor * pow(specularCoef, 5) * attenuation;
 
         color = ambientPart + diffusePart + specularPart;
 }
