@@ -34,8 +34,11 @@ class BlModel {
                 void init();
                 void loadInBuffer();
                 bool loadAsset(void);
-                void drawElement(GLuint locationVertex, GLuint locationUv,
-                                GLuint locationNormal);
+
+                void bindVertices(GLint locationVertex);
+                void bindNormals(GLint locNormals);
+                void bindUVs(GLint locUVs);
+                void drawElement();
 
                 std::vector <btVector3> vertices;
                 std::vector <unsigned int> indices;
@@ -51,9 +54,10 @@ class BlModel {
 
                 virtual ~BlModel ();
 
-        private:
                 GLuint vertexBuffer;
                 GLuint indiceBuffer;
+
+        private:
                 GLuint uvBuffer;
                 GLuint textureBuffer;
                 GLuint normalBuffer;

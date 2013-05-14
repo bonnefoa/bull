@@ -79,33 +79,34 @@ void BlModel::loadInBuffer()
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-void BlModel::drawElement(GLuint locationVertex, GLuint locationUv,
-                GLuint locationNormal)
-{
-        glEnableVertexAttribArray(locationVertex);
+void BlModel::bindVertices(GLint locVertices) {
+        glEnableVertexAttribArray(locVertices);
         glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-        glVertexAttribPointer(locationVertex, 4 , GL_FLOAT
+        glVertexAttribPointer(locVertices, 4 , GL_FLOAT
                         , GL_FALSE, 0, (void *)0);
+}
 
-        glEnableVertexAttribArray(locationNormal);
+void BlModel::bindNormals(GLint locNormals) {
+        glEnableVertexAttribArray(locNormals);
         glBindBuffer(GL_ARRAY_BUFFER, normalBuffer);
-        glVertexAttribPointer(locationNormal, 4 , GL_FLOAT
+        glVertexAttribPointer(locNormals, 4 , GL_FLOAT
                         , GL_FALSE, 0, (void *)0);
+}
 
-        if(uvBuffer > 0) {
-                glEnableVertexAttribArray(locationUv);
-                glBindBuffer(GL_ARRAY_BUFFER, uvBuffer);
-                glVertexAttribPointer(locationUv, 2, GL_FLOAT, GL_FALSE,
-                                0, (void*)0);
-
-                glActiveTexture(GL_TEXTURE0);
-                glBindTexture(GL_TEXTURE_2D, textureBuffer);
+void BlModel::bindUVs(GLint locUVs) {
+        if(uvBuffer == 0) {
+                return;
         }
+        glEnableVertexAttribArray(locUVs);
+        glBindBuffer(GL_ARRAY_BUFFER, uvBuffer);
+        glVertexAttribPointer(locUVs, 2, GL_FLOAT, GL_FALSE,
+                        0, (void*)0);
 
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, textureBuffer);
+}
+
+void BlModel::drawElement() {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indiceBuffer);
         glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (void *)0);
-
-        glDisableVertexAttribArray(locationVertex);
-        glDisableVertexAttribArray(locationNormal);
-        if(uvBuffer > 0) glDisableVertexAttribArray(locationUv);
 }

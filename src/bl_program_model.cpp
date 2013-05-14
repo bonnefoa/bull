@@ -12,22 +12,24 @@ void BlProgramModel::init()
         uniformM = glGetUniformLocation(programId, "M");
         uniformV = glGetUniformLocation(programId, "V");
         uniformP = glGetUniformLocation(programId, "P");
-        locVertexPosModelspace = glGetAttribLocation(programId
+        locVertices = glGetAttribLocation(programId
                         , "vertexPosition_modelspace");
-        locNormalModelspace = glGetAttribLocation(programId
+        locNormals = glGetAttribLocation(programId
                         , "vertexNormal_modelspace");
-        locUV = glGetAttribLocation(programId
+        locUVs = glGetAttribLocation(programId
                         , "vertexUV");
-        INFO("vertex location %i\n", locVertexPosModelspace);
-        INFO("normal location %i\n", locNormalModelspace);
-        INFO("uv location %i\n", locUV);
-        if(locNormalModelspace < 0 || locUV < 0 || locVertexPosModelspace < 0){
+        INFO("vertex location %i\n", locVertices);
+        INFO("normal location %i\n", locNormals);
+        INFO("uv location %i\n", locUVs);
+        if(locNormals < 0 || locUVs < 0 || locVertices < 0){
                 ERROR("A location is unused");
         }
 }
 
 void BlProgramModel::bindModelMatrix(BlModel *blModel)
 {
+        glUseProgram(programId);
+
         btRigidBody *body = blModel->rigidBody;
         btTransform trans;
         trans.setIdentity();
@@ -41,6 +43,8 @@ void BlProgramModel::bindModelMatrix(BlModel *blModel)
 
 void BlProgramModel::bindProjectionMatrix()
 {
+        glUseProgram(programId);
+
         btScalar mat[16];
         blInput->projection.getOpenGLMatrix(mat);
         mat[11] = -1.0f;
@@ -50,8 +54,16 @@ void BlProgramModel::bindProjectionMatrix()
 void BlProgramModel::displayModel(BlModel *blModel)
 {
         glUseProgram(programId);
+
         bindModelMatrix(blModel);
         sendTransform(blInput->view, uniformV);
-        blModel->drawElement(locVertexPosModelspace, locUV,
-                        locNormalModelspace);
+
+        blModel->bindVertices(locVertices);
+        blModel->bindNormals(locNormals);
+        blModel->bindUVs(locUVs);
+        blModel->drawElement();
+
+        glDisableVertexAttribArray(locVertices);
+        glDisableVertexAttribArray(locNormals);
+        glDisableVertexAttribArray(locUVs);
 }
