@@ -16,6 +16,13 @@ void showInfoLog(GLuint object,
         free(log);
 }
 
+void sendTransform(btTransform trans, GLuint uniform)
+{
+        btScalar mat[16];
+        trans.getOpenGLMatrix(mat);
+        glUniformMatrix4fv(uniform, 1, GL_FALSE, mat);
+}
+
 void printBtTransform(btTransform *mat)
 {
        btMatrix3x3 bas = mat->getBasis();

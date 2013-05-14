@@ -25,13 +25,6 @@ void BlProgramModel::init()
         }
 }
 
-void sendMatrix(btTransform trans, GLuint uniform)
-{
-        btScalar mat[16];
-        trans.getOpenGLMatrix(mat);
-        glUniformMatrix4fv(uniform, 1, GL_FALSE, mat);
-}
-
 void BlProgramModel::bindModelMatrix(BlModel *blModel)
 {
         btRigidBody *body = blModel->rigidBody;
@@ -40,7 +33,7 @@ void BlProgramModel::bindModelMatrix(BlModel *blModel)
         if(body && body->getMotionState()) {
                 body->getMotionState()->getWorldTransform(trans);
         }
-        sendMatrix(trans, uniformM);
+        sendTransform(trans, uniformM);
 }
 
 void BlProgramModel::bindProjectionMatrix()
@@ -55,7 +48,7 @@ void BlProgramModel::displayModel(BlModel *blModel)
 {
         glUseProgram(programId);
         bindModelMatrix(blModel);
-        sendMatrix(blInput->view, uniformV);
+        sendTransform(blInput->view, uniformV);
         blModel->drawElement(locVertexPosModelspace, locUV,
                         locNormalModelspace);
 }
