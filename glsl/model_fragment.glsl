@@ -11,7 +11,7 @@ uniform float lightQuadraticAttenuation;
 uniform vec3 lightPosition_worldspace;
 
 out vec3 color;
-out vec3 color2;
+/*out vec3 ga2;*/
 
 in vec2 UV;
 
@@ -19,8 +19,6 @@ in vec3 vertexPosition_cameraspace;
 in vec3 vertexNormal_worldspace;
 in vec3 vertexPosition_worldspace;
 in vec3 lightDirection_worldspace;
-
-in vec3 ga;
 
 float getSpecularCoefficient()
 {
@@ -56,8 +54,5 @@ void main()
         vec3 diffusePart = texColor * lightColor * diffuseCoef * attenuation;
         vec3 specularPart = texColor * lightColor * pow(specularCoef, 5) ;
 
-        color2 = ambientPart + diffusePart + specularPart + ga;
-
-        float lightDistance = length(lightPosition_worldspace - vertexPosition_worldspace);
-        color = vec3(1 / lightDistance,0 ,0);
+        color = ambientPart + diffusePart + specularPart;
 }

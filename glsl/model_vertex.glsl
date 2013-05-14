@@ -17,12 +17,8 @@ out vec2 UV;
 out vec3 vertexNormal_worldspace;
 out vec3 lightDirection_worldspace;
 
-out vec3 ga;
-
 void main()
 {
-        ga = vertexPosition_modelspace;
-
         vec3 vertexPosition_worldspace =
                 (M * vec4(vertexPosition_modelspace, 1.0f)).xyz;
         vertexPosition_cameraspace =
