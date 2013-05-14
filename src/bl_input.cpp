@@ -2,6 +2,7 @@
 #include <bl_util.h>
 #include <math.h>
 #include <bl_log.h>
+#include <bl_matrix.h>
 
 #define MAX_AXIS 20
 
@@ -186,21 +187,6 @@ btTransform BlInput::computeView(const btVector3 &right
         view = btTransform(basis, position);
         view = view.inverse();
         return view;
-}
-
-btTransform BlInput::computeProjection(btScalar fov, btScalar aspect,
-                btScalar zNear, btScalar zFar)
-{
-        btScalar f = 1.f / tan(fov / 2.f);
-        btScalar xRot = f / aspect;
-        btScalar yRot = f;
-        btScalar zRot = (zFar + zNear) / (zNear - zFar);
-        btScalar zTrans = (2.0f * zFar * zNear) / (zNear - zFar);
-        btMatrix3x3 basis(xRot, 0, 0
-                        , 0, yRot, 0
-                        , 0, 0, zRot);
-        btVector3 origin = btVector3(0, 0, zTrans);
-        return btTransform(basis, origin);
 }
 
 void BlInput::logState()

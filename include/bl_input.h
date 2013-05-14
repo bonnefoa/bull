@@ -59,8 +59,6 @@ class BlInput
                                 , const btVector3 &direction
                                 , const btVector3 &position);
 
-                btTransform computeProjection(btScalar fov, btScalar aspect
-                                , btScalar zNear, btScalar zFar);
                 void logState();
                 void handleMovement();
 
