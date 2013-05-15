@@ -2,6 +2,7 @@
 
 uniform mat4 V;
 uniform sampler2D textureSampler;
+uniform sampler2DShadow shadowSampler;
 
 uniform vec3 ambientColor = vec3(0.1, 0.1, 0.1);
 
@@ -19,6 +20,8 @@ in vec3 vertexPosition_cameraspace;
 in vec3 vertexNormal_cameraspace;
 in vec3 vertexPosition_worldspace;
 in vec3 lightDirection_cameraspace;
+
+in vec4 shadowCoord;
 
 float getSpecularCoefficient()
 {
@@ -54,5 +57,7 @@ void main()
         vec3 diffusePart = texColor * lightColor * diffuseCoef * attenuation;
         vec3 specularPart = texColor * lightColor * pow(specularCoef, 5) * attenuation;
 
-        color = ambientPart + diffusePart + specularPart;
+        float visibility = texture(shadowSampler, shadowCoord.xyz);
+
+        color = ambientPart + (diffusePart + specularPart) * visibility;
 }

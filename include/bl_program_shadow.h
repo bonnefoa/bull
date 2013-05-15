@@ -29,6 +29,6 @@ class BlProgramShadow : public BlProgram {
                 btTransform depthProjectionMatrix;
 };
 
-BlProgramShadow *getProgramShadow();
+BlProgramShadow *getProgramShadow(btVector3 lightPosition);
 
 #endif

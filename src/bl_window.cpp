@@ -15,6 +15,7 @@ void errorCallback( GLenum source,
         (void) id;
         (void) length;
         (void) severity;
+        INFO("Source %x, type %x, id %i\n", source, type, id);
         INFO("%s\n",message);
 }
 

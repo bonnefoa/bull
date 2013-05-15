@@ -14,6 +14,7 @@ class BlProgramTexture : public BlProgram {
         private:
                 GLuint quadVertexBuffer;
                 GLint locVertices;
+                GLint samplerTexture;
 };
 
 BlProgramTexture *getProgramTexture();

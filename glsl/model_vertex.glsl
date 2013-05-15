@@ -5,6 +5,13 @@ uniform mat4 V;
 uniform mat4 P;
 uniform mat4 shadowVP;
 
+uniform mat4 biasMatrix = mat4(
+          0.5, 0, 0, 0
+        , 0, 0.5, 0, 0
+        , 0, 0, 0.5, 0
+        , 0.5, 0.5, 0.5, 1.0
+);
+
 uniform vec3 lightPosition_worldspace;
 
 attribute vec3 vertexPosition_modelspace;
@@ -33,5 +40,5 @@ void main()
         vertexNormal_cameraspace = normalize(mat3(V) * mat3(M) * vertexNormal_modelspace);
         lightDirection_cameraspace = normalize(mat3(V) * (lightPosition_worldspace - vertexPosition_worldspace));
 
-        shadowCoord = shadowVP * M * vec4(vertexPosition_modelspace, 1.0f);
+        shadowCoord = (biasMatrix * (shadowVP * M) * vec4(vertexPosition_modelspace, 1.0f));
 }

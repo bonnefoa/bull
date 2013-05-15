@@ -2,7 +2,7 @@
 #include <bl_log.h>
 #include <bl_matrix.h>
 
-BlProgramShadow *getProgramShadow()
+BlProgramShadow *getProgramShadow(btVector3 lightPosition)
 {
         std::vector<BlShader*> shaders;
         BlShader *modelVertexShader = new BlShader("glsl/shadow_vertex.glsl"
@@ -12,7 +12,7 @@ BlProgramShadow *getProgramShadow()
         shaders.push_back(modelVertexShader);
         shaders.push_back(modelFragmentShader);
 
-        BlProgramShadow *blProgramShadow = new BlProgramShadow(shaders, btVector3(0, 0, 0));
+        BlProgramShadow *blProgramShadow = new BlProgramShadow(shaders, lightPosition);
         blProgramShadow->loadProgram();
         blProgramShadow->init();
         return blProgramShadow;
@@ -29,12 +29,13 @@ void BlProgramShadow::init(void)
         glBindTexture(GL_TEXTURE_2D, depthTexture);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, 1024,
                         1024, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
 
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
                         GL_TEXTURE_2D, depthTexture, 0);
@@ -53,7 +54,7 @@ void BlProgramShadow::init(void)
         INFO("depth vp location %i\n", locDepthVP);
         INFO("depth M location %i\n", locDepthM);
         INFO("vertex location %i\n", locVertices);
-        if(locDepthVP < 0 || locVertices < 0) {
+        if(locDepthVP < 0 || locVertices < 0 || locDepthM < 0) {
                 ERROR("A location is unused");
         }
 

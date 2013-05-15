@@ -32,6 +32,8 @@ void BlProgramTexture::init()
         };
 
         locVertices = glGetAttribLocation(programId, "vertexPosition");
+        samplerTexture = glGetUniformLocation(programId, "samplerTexture");
+        glUniform1i(samplerTexture, 4);
 
         glBindBuffer(GL_ARRAY_BUFFER, quadVertexBuffer);
         glBufferData(GL_ARRAY_BUFFER, sizeof(quadBufferData)
@@ -46,7 +48,7 @@ void BlProgramTexture::displayTexture(GLuint textureId)
 
         glUseProgram(programId);
 
-        glActiveTexture(GL_TEXTURE0);
+        glActiveTexture(GL_TEXTURE4);
         glBindTexture(GL_TEXTURE_2D, textureId);
 
         glEnableVertexAttribArray(locVertices);

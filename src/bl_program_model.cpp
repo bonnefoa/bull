@@ -35,10 +35,20 @@ void BlProgramModel::init()
                         , "vertexNormal_modelspace");
         locUVs = glGetAttribLocation(programId
                         , "vertexUV");
+        samplerTexture = glGetUniformLocation(programId
+                        , "textureSampler");
+        samplerShadow = glGetUniformLocation(programId
+                        , "shadowSampler");
+        glUniform1i(samplerTexture, 0);
+        glUniform1i(samplerShadow, 2);
         INFO("vertex location %i\n", locVertices);
         INFO("normal location %i\n", locNormals);
         INFO("uv location %i\n", locUVs);
-        if(locNormals < 0 || locUVs < 0 || locVertices < 0){
+        INFO("shadow vp %i\n", locShadowVP);
+        INFO("texture sampler %i\n", samplerTexture);
+        INFO("shadow sampler %i\n", samplerShadow);
+        if(locNormals < 0 || locUVs < 0 || locVertices < 0 || locShadowVP < 0
+                        || samplerTexture < 0 || samplerShadow < 0 ){
                 ERROR("A location is unused");
         }
 }
@@ -66,19 +76,16 @@ void BlProgramModel::displayModel(BlModel *blModel)
 
 void BlProgramModel::moveLight(btVector3 position)
 {
-        btTransform trans;
-        trans.setIdentity();
-        trans.setOrigin(position);
+        glUseProgram(programId);
+        btTransform trans = computeVPShadowMatrix(position);
         sendTransform(trans, locShadowVP);
-
 }
 
 void BlProgramModel::displayScene(BlScene *blScene, GLuint depthTexture)
 {
         glUseProgram(programId);
-        (void) depthTexture;
 
-        glActiveTexture(GL_TEXTURE1);
+        glActiveTexture(GL_TEXTURE2);
         glBindTexture(GL_TEXTURE_2D, depthTexture);
 
         for (std::vector<BlLightPoint*>::iterator

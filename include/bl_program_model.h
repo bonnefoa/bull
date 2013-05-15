@@ -32,7 +32,9 @@ class  BlProgramModel : public BlProgram
                 GLint locVertices;
                 GLint locNormals;
                 GLint locUVs;
-                GLint shadowMap;
+
+                GLint samplerTexture;
+                GLint samplerShadow;
 };
 
 BlProgramModel *getProgramModel(BlInput *blInput);

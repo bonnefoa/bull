@@ -48,8 +48,8 @@ void shutdown()
 void initPrograms()
 {
         blProgramModel = getProgramModel(blInput);
-        blProgramShadow = getProgramShadow();
         blProgramTexture = getProgramTexture();
+        blProgramShadow = getProgramShadow(btVector3());
 }
 
 void initScene(char *filename)
@@ -80,14 +80,17 @@ void logState()
         }
 }
 
-void moveLigh() {
+void setLight() {
         BlLightPoint *light = blScene->blLightPoints->at(0);
+        blProgramShadow->moveLight(blInput->position);
+        blProgramModel->moveLight(blInput->position);
+        light->moveLight(blInput->position,
+                        blProgramModel->programId);
+}
+
+void moveLight() {
         if(blInput->lDown > 0 || blInput->rightMouse > 0) {
-                glUseProgram(blProgramModel->programId);
-                light->moveLight(blInput->position,
-                                blProgramModel->programId);
-                blProgramShadow->moveLight(blInput->position);
-                blProgramModel->moveLight(blInput->position);
+                setLight();
         }
 }
 
@@ -109,7 +112,7 @@ void mainLoop()
         blInput->handleMovement();
         logState();
 
-        moveLigh();
+        moveLight();
         render();
 }
 
@@ -121,6 +124,8 @@ int main(int argc, char **argv)
         init();
         initPrograms();
         initScene(argv[1]);
+        setLight();
+
         while(true) {
                 mainLoop();
                 switch (blInput->state) {
