@@ -1,6 +1,7 @@
 #include "bl_model.h"
 #include <bl_log.h>
 #include <bl_image.h>
+#include <bl_matrix.h>
 
 void BlModel::init()
 {
@@ -104,6 +105,19 @@ void BlModel::bindUVs(GLint locUVs) {
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, textureBuffer);
+}
+
+void BlModel::bindModelMatrix(GLint uniformM)
+{
+        btRigidBody *body = rigidBody;
+        btTransform trans;
+        trans.setIdentity();
+        if(body && body->getMotionState()) {
+                body->getMotionState()->getWorldTransform(trans);
+        } else {
+                trans.setOrigin(position);
+        }
+        sendTransform(trans, uniformM);
 }
 
 void BlModel::drawElement() {

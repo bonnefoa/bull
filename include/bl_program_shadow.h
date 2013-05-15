@@ -21,9 +21,9 @@ class BlProgramShadow : public BlProgram {
 
         private:
                 GLuint shadowFramebuffer;
-                GLuint depthrenderBuffer;
 
-                GLint locDepthMVP;
+                GLint locDepthVP;
+                GLint locDepthM;
                 GLint locVertices;
 
                 btTransform depthProjectionMatrix;

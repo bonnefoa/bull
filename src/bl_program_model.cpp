@@ -42,21 +42,6 @@ void BlProgramModel::init()
         }
 }
 
-void BlProgramModel::bindModelMatrix(BlModel *blModel)
-{
-        glUseProgram(programId);
-
-        btRigidBody *body = blModel->rigidBody;
-        btTransform trans;
-        trans.setIdentity();
-        if(body && body->getMotionState()) {
-                body->getMotionState()->getWorldTransform(trans);
-        } else {
-                trans.setOrigin(blModel->position);
-        }
-        sendTransform(trans, uniformM);
-}
-
 void BlProgramModel::bindProjectionMatrix()
 {
         glUseProgram(programId);
@@ -69,7 +54,7 @@ void BlProgramModel::bindProjectionMatrix()
 
 void BlProgramModel::displayModel(BlModel *blModel)
 {
-        bindModelMatrix(blModel);
+        blModel->bindModelMatrix(uniformM);
         sendTransform(blInput->view, uniformV);
 
         blModel->bindVertices(locVertices);

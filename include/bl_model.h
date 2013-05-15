@@ -39,6 +39,7 @@ class BlModel {
                 void bindNormals(GLint locNormals);
                 void bindUVs(GLint locUVs);
                 void drawElement();
+                void bindModelMatrix(GLint uniformM);
 
                 std::vector <btVector3> vertices;
                 std::vector <unsigned int> indices;

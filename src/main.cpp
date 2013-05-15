@@ -93,7 +93,7 @@ void moveLigh() {
 void render()
 {
         glViewport(0, 0, 1024, 1024);
-        //blProgramModel->displayScene(blScene);
+        blProgramModel->displayScene(blScene);
         blProgramShadow->displaySceneForRender(blScene);
         blProgramTexture->displayTexture(blProgramShadow->depthTexture);
         SDL_GL_SwapWindow(blWindow->window);

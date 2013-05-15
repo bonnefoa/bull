@@ -27,20 +27,14 @@ void BlProgramShadow::init(void)
 
         glGenTextures(1, &depthTexture);
         glBindTexture(GL_TEXTURE_2D, depthTexture);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1024,
-                        1024, 0, GL_RGB, GL_FLOAT, 0);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, 1024,
+                        1024, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
-
-        glGenRenderbuffers(1, &depthrenderBuffer);
-        glBindRenderbuffer(GL_RENDERBUFFER, depthrenderBuffer);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, 1024, 1024);
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-                        GL_RENDERBUFFER, depthrenderBuffer);
 
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
                         GL_TEXTURE_2D, depthTexture, 0);
@@ -52,29 +46,35 @@ void BlProgramShadow::init(void)
                 ERROR("Framebuffer not complete\n");
         }
 
-        locDepthMVP = glGetUniformLocation(programId, "depthMVP");
+        locDepthVP = glGetUniformLocation(programId, "depthVP");
+        locDepthM = glGetUniformLocation(programId, "depthM");
         locVertices = glGetAttribLocation(programId, "vertexPosition_modelspace");
 
-        INFO("depth mvp location %i\n", locDepthMVP);
+        INFO("depth vp location %i\n", locDepthVP);
+        INFO("depth M location %i\n", locDepthM);
         INFO("vertex location %i\n", locVertices);
-        if(locDepthMVP < 0 || locVertices < 0) {
+        if(locDepthVP < 0 || locVertices < 0) {
                 ERROR("A location is unused");
         }
 
-        depthProjectionMatrix = computeOrthogonal(-10, 10, -10, 10, -10, 20);
+        depthProjectionMatrix = computeOrthogonal(-10, 10, -10, 10, -10, 10);
         moveLight(lightPosition);
 
         glUseProgram(0);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void BlProgramShadow::moveLight(btVector3 position)
+void BlProgramShadow::moveLight(btVector3 newPosition)
 {
+        lightPosition = newPosition;
+
         glUseProgram(programId);
-        lightPosition = position;
-        btTransform depthViewMatrix = computeView(btVector3(1, 0, 0), btVector3(0, 1, 0),
-                        -lightPosition, lightPosition);
-        sendTransform(depthProjectionMatrix * depthViewMatrix, locDepthMVP);
+        btVector3 direction = -btVector3(lightPosition).normalize();
+        btVector3 right = btVector3(1, 0, 0);
+        btVector3 up = right.cross(direction);
+        btTransform depthViewMatrix = computeView(right, up,
+                        direction, lightPosition);
+        sendTransform(depthProjectionMatrix * depthViewMatrix, locDepthVP);
 }
 
 void BlProgramShadow::displaySceneForRender(BlScene *blScene)
@@ -90,6 +90,7 @@ void BlProgramShadow::displaySceneForRender(BlScene *blScene)
         for (std::vector<BlModel*>::iterator it = blScene->blModels->begin();
                         it != blScene->blModels->end(); ++it) {
                 BlModel *model = (*it);
+                model->bindModelMatrix(locDepthM);
                 model->bindVertices(locVertices);
                 model->drawElement();
         }
