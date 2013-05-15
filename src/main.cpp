@@ -80,9 +80,10 @@ void logState()
         }
 }
 
-void renderLight() {
+void moveLigh() {
         BlLightPoint *light = blScene->blLightPoints->at(0);
         if(blInput->lDown > 0 || blInput->rightMouse > 0) {
+                glUseProgram(blProgramModel->programId);
                 light->moveLight(blInput->position,
                                 blProgramModel->programId);
                 blProgramShadow->moveLight(blInput->position);
@@ -92,8 +93,8 @@ void renderLight() {
 void render()
 {
         glViewport(0, 0, 1024, 1024);
-        blProgramShadow->displaySceneForRender(blScene);
         //blProgramModel->displayScene(blScene);
+        blProgramShadow->displaySceneForRender(blScene);
         blProgramTexture->displayTexture(blProgramShadow->depthTexture);
         SDL_GL_SwapWindow(blWindow->window);
 }
@@ -107,8 +108,7 @@ void mainLoop()
         blInput->handleMovement();
         logState();
 
-        glUseProgram(blProgramModel->programId);
-        renderLight();
+        moveLigh();
         render();
 }
 

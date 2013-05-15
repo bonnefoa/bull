@@ -56,10 +56,10 @@ class BlModel {
 
                 GLuint vertexBuffer;
                 GLuint indiceBuffer;
+                GLuint textureBuffer;
 
         private:
                 GLuint uvBuffer;
-                GLuint textureBuffer;
                 GLuint normalBuffer;
                 GLuint tangentBuffer;
                 GLuint bitangentBuffer;

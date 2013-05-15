@@ -48,7 +48,6 @@ void BlProgramTexture::displayTexture(GLuint textureId)
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, textureId);
-        //glUniform1i(textureId, 0);
 
         glEnableVertexAttribArray(locVertices);
         glBindBuffer(GL_ARRAY_BUFFER, quadVertexBuffer);
