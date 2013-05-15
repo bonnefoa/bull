@@ -18,18 +18,25 @@ BlProgramTexture *getProgramTexture()
 
 void BlProgramTexture::init()
 {
+        glUseProgram(programId);
+
         glGenBuffers(1, &quadVertexBuffer);
         static const GLfloat quadBufferData[] = {
                 -1.0f, -1.0f,  0.0f,
                  1.0f, -1.0f,  0.0f,
-                -1.0f,  1.0f,  0.0f,
-                -1.0f,  1.0f,  0.0f,
-                 1.0f, -1.0f,  0.0f,
+                1.0f,  1.0f,  0.0f,
+
+                -1.0f, -1.0f,  0.0f,
                  1.0f,  1.0f,  0.0f,
+                -1.0f,  1.0f,  0.0f,
         };
+
+        locVertices = glGetAttribLocation(programId, "vertexPosition");
+
         glBindBuffer(GL_ARRAY_BUFFER, quadVertexBuffer);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertexBuffer)
+        glBufferData(GL_ARRAY_BUFFER, sizeof(quadBufferData)
                         , quadBufferData, GL_STATIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 void BlProgramTexture::displayTexture(GLuint textureId)
@@ -43,11 +50,11 @@ void BlProgramTexture::displayTexture(GLuint textureId)
         glBindTexture(GL_TEXTURE_2D, textureId);
         //glUniform1i(textureId, 0);
 
-        glEnableVertexAttribArray(0);
+        glEnableVertexAttribArray(locVertices);
         glBindBuffer(GL_ARRAY_BUFFER, quadVertexBuffer);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
+        glVertexAttribPointer(locVertices, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
         glDrawArrays(GL_TRIANGLES, 0, 6);
 
-        glDisableVertexAttribArray(0);
+        glDisableVertexAttribArray(locVertices);
         glUseProgram(0);
 }

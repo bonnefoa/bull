@@ -13,6 +13,7 @@ class BlProgramTexture : public BlProgram {
                 void displayTexture(GLuint textureId);
         private:
                 GLuint quadVertexBuffer;
+                GLint locVertices;
 };
 
 BlProgramTexture *getProgramTexture();
