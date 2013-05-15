@@ -19,16 +19,20 @@ class  BlProgramModel : public BlProgram
                 void bindModelMatrix(BlModel *blModel);
                 void bindProjectionMatrix(void);
                 void displayModel(BlModel *model);
-                void displayScene(BlScene *blScene);
+                void displayScene(BlScene *blScene, GLuint depthTexture);
+                void moveLight(btVector3 position);
 
         private:
                 BlInput *blInput;
-                GLint uniformM;
-                GLint uniformV;
-                GLint uniformP;
+                GLint locModel;
+                GLint locView;
+                GLint locProjection;
+                GLint locShadowVP;
+
                 GLint locVertices;
                 GLint locNormals;
                 GLint locUVs;
+                GLint shadowMap;
 };
 
 BlProgramModel *getProgramModel(BlInput *blInput);

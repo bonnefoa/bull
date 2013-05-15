@@ -57,7 +57,6 @@ void BlProgramShadow::init(void)
                 ERROR("A location is unused");
         }
 
-        depthProjectionMatrix = computeOrthogonal(-10, 10, -10, 10, -10, 10);
         moveLight(lightPosition);
 
         glUseProgram(0);
@@ -67,14 +66,9 @@ void BlProgramShadow::init(void)
 void BlProgramShadow::moveLight(btVector3 newPosition)
 {
         lightPosition = newPosition;
-
         glUseProgram(programId);
-        btVector3 direction = -btVector3(lightPosition).normalize();
-        btVector3 right = btVector3(1, 0, 0);
-        btVector3 up = right.cross(direction);
-        btTransform depthViewMatrix = computeView(right, up,
-                        direction, lightPosition);
-        sendTransform(depthProjectionMatrix * depthViewMatrix, locDepthVP);
+        btTransform shadowVP = computeVPShadowMatrix(newPosition);
+        sendTransform(shadowVP, locDepthVP);
 }
 
 void BlProgramShadow::displaySceneForRender(BlScene *blScene)

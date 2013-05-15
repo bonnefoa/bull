@@ -67,3 +67,15 @@ btTransform computeView(const btVector3 &right
         view = view.inverse();
         return view;
 }
+
+btTransform computeVPShadowMatrix(btVector3 position)
+{
+        btTransform depthProjectionMatrix = computeOrthogonal(-10, 10, -10,
+                        10, -10, 10);
+        btVector3 direction = -btVector3(position).normalize();
+        btVector3 right = btVector3(1, 0, 0);
+        btVector3 up = right.cross(direction);
+        btTransform depthViewMatrix = computeView(right, up,
+                        direction, position);
+        return depthProjectionMatrix * depthViewMatrix;
+}

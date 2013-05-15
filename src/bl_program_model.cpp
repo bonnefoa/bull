@@ -25,9 +25,10 @@ void BlProgramModel::init()
 {
         glUseProgram(programId);
 
-        uniformM = glGetUniformLocation(programId, "M");
-        uniformV = glGetUniformLocation(programId, "V");
-        uniformP = glGetUniformLocation(programId, "P");
+        locModel = glGetUniformLocation(programId, "M");
+        locView = glGetUniformLocation(programId, "V");
+        locProjection = glGetUniformLocation(programId, "P");
+        locShadowVP = glGetUniformLocation(programId, "shadowVP");
         locVertices = glGetAttribLocation(programId
                         , "vertexPosition_modelspace");
         locNormals = glGetAttribLocation(programId
@@ -49,13 +50,13 @@ void BlProgramModel::bindProjectionMatrix()
         btScalar mat[16];
         blInput->projection.getOpenGLMatrix(mat);
         mat[11] = -1.0f;
-        glUniformMatrix4fv(uniformP, 1, GL_FALSE, mat);
+        glUniformMatrix4fv(locProjection, 1, GL_FALSE, mat);
 }
 
 void BlProgramModel::displayModel(BlModel *blModel)
 {
-        blModel->bindModelMatrix(uniformM);
-        sendTransform(blInput->view, uniformV);
+        blModel->bindModelMatrix(locModel);
+        sendTransform(blInput->view, locView);
 
         blModel->bindVertices(locVertices);
         blModel->bindNormals(locNormals);
@@ -63,9 +64,22 @@ void BlProgramModel::displayModel(BlModel *blModel)
         blModel->drawElement();
 }
 
-void BlProgramModel::displayScene(BlScene *blScene)
+void BlProgramModel::moveLight(btVector3 position)
+{
+        btTransform trans;
+        trans.setIdentity();
+        trans.setOrigin(position);
+        sendTransform(trans, locShadowVP);
+
+}
+
+void BlProgramModel::displayScene(BlScene *blScene, GLuint depthTexture)
 {
         glUseProgram(programId);
+        (void) depthTexture;
+
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, depthTexture);
 
         for (std::vector<BlLightPoint*>::iterator
                         it = blScene->blLightPoints->begin();

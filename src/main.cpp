@@ -87,14 +87,15 @@ void moveLigh() {
                 light->moveLight(blInput->position,
                                 blProgramModel->programId);
                 blProgramShadow->moveLight(blInput->position);
+                blProgramModel->moveLight(blInput->position);
         }
 }
 
 void render()
 {
         glViewport(0, 0, 1024, 1024);
-        blProgramModel->displayScene(blScene);
         blProgramShadow->displaySceneForRender(blScene);
+        blProgramModel->displayScene(blScene, blProgramShadow->depthTexture);
         blProgramTexture->displayTexture(blProgramShadow->depthTexture);
         SDL_GL_SwapWindow(blWindow->window);
 }

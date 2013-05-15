@@ -3,6 +3,7 @@
 uniform mat4 M;
 uniform mat4 V;
 uniform mat4 P;
+uniform mat4 shadowVP;
 
 uniform vec3 lightPosition_worldspace;
 
@@ -17,6 +18,8 @@ out vec2 UV;
 out vec3 lightDirection_cameraspace;
 out vec3 vertexNormal_cameraspace;
 
+out vec4 shadowCoord;
+
 void main()
 {
         vertexPosition_worldspace =
@@ -29,4 +32,6 @@ void main()
 
         vertexNormal_cameraspace = normalize(mat3(V) * mat3(M) * vertexNormal_modelspace);
         lightDirection_cameraspace = normalize(mat3(V) * (lightPosition_worldspace - vertexPosition_worldspace));
+
+        shadowCoord = shadowVP * M * vec4(vertexPosition_modelspace, 1.0f);
 }
