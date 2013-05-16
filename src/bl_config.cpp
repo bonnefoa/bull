@@ -2,6 +2,16 @@
 #include <iniparser.h>
 #include <bl_log.h>
 
+int getKeyFromName(dictionary *ini, const char *key, const char *def)
+{
+        char *keyStr = iniparser_getstring(ini, key, (char*)def);
+        int res = SDL_GetKeyFromName(keyStr);
+        if (res == SDLK_UNKNOWN) {
+                ERROR("Key %s is unknown\n", keyStr);
+        }
+        return res;
+}
+
 BlConfig *loadBlConfig(const char *configurationFile)
 {
         INFO("Loading configuration from file %s\n", configurationFile);
@@ -16,15 +26,15 @@ BlConfig *loadBlConfig(const char *configurationFile)
         float zNear = iniparser_getdouble(ini, "camera:zNear", 0.1f);
         float zFar = iniparser_getdouble(ini, "camera:zFar", 100.0f);
 
-        int key_forward = SDLK_w;
-        int key_back = SDLK_s;
-        int key_left = SDLK_a;
-        int key_right = SDLK_d;
-        int key_escape = SDLK_ESCAPE;
-        int key_alt_escape = SDLK_q;
-        int key_reload = SDLK_r;
-        int key_light = SDLK_l;
-        int key_pause = SDLK_SPACE;
+        int key_forward = getKeyFromName(ini, "keys:forward", "w");
+        int key_back = getKeyFromName(ini, "keys:back", "s");
+        int key_left = getKeyFromName(ini, "keys:left", "a");
+        int key_right = getKeyFromName(ini, "keys:right", "d");
+        int key_escape = getKeyFromName(ini, "keys:escape", "escape");
+        int key_alt_escape = getKeyFromName(ini, "keys:alt_escape", "q");
+        int key_reload = getKeyFromName(ini, "keys:reload", "r");
+        int key_light = getKeyFromName(ini, "keys:light", "l");
+        int key_pause = getKeyFromName(ini, "keys:pause", "space");
 
         BlConfig *blConfig = new BlConfig(mouseSpeed,
                      speed,
