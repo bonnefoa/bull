@@ -24,7 +24,7 @@
 ** DONE Create simple plan / cube object
 *** DONE Create shape from vertices
 **** DONE Simple box shape
-** TODO Allow to draw shapes
+** IN PROGRESS Allow to draw shapes
 ** IN PROGRESS More complex shape
 
 * DONE Beautify
@@ -40,3 +40,5 @@
 *** DONE Add ambient lighting
 * DONE Clean
 ** DONE Check memory leak
+* DONE Configuration
+** DONE Allow configurable binding

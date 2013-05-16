@@ -61,6 +61,7 @@ btRigidBody *BlSimulation::addBlModel(BlModel *blModel)
 void BlSimulation::step(void)
 {
         dynamicsWorld->stepSimulation(1.f/60.f);
+        dynamicsWorld->debugDrawWorld();
 }
 
 void BlSimulation::clearWorld()
