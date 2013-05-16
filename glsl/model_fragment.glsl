@@ -22,6 +22,7 @@ in vec3 vertexPosition_worldspace;
 in vec3 lightDirection_cameraspace;
 
 in vec4 shadowCoord;
+float biais = 0.05f;
 
 float getSpecularCoefficient()
 {
@@ -57,7 +58,8 @@ void main()
         vec3 diffusePart = texColor * lightColor * diffuseCoef * attenuation;
         vec3 specularPart = texColor * lightColor * pow(specularCoef, 5) * attenuation;
 
-        float visibility = texture(shadowSampler, shadowCoord.xyz);
+        float visibility = texture(shadowSampler,
+                vec3(shadowCoord.xy, (shadowCoord.z-biais) / shadowCoord.w));
 
         color = ambientPart + (diffusePart + specularPart) * visibility;
 }
