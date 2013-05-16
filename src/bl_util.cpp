@@ -37,3 +37,10 @@ char *strduplicate(const char *s)
         strncpy(res,s, numChars);
         return res;
 }
+
+void setIfMax(btScalar point, btScalar ref,
+                btVector3 &p, void (btVector3::*f)(btScalar))
+{
+        point = abs(point);
+        if (ref < point) { (p.*f)(point); }
+}

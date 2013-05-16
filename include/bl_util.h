@@ -12,6 +12,8 @@ void showInfoLog(GLuint object,
 int max(int a, int b);
 int min(int a, int b);
 char *strduplicate(const char *s);
+void setIfMax(btScalar point, btScalar ref,
+                btVector3 &p, void (btVector3::*f)(btScalar));
 
 #endif
 

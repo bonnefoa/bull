@@ -4,80 +4,29 @@
 #include <bl_log.h>
 #include <bl_matrix.h>
 
-#define MAX_AXIS 20
-
-BlInput::BlInput(BlState *config)
+BlInput::BlInput(BlState *state, BlConfig *config)
 {
         phi = 0.0f;
         theta = M_PI_2;
-        fov = M_PI_2;
-        speed = 0.001f ;
-        mouseSpeed = 0.0001f ;
         position = btVector3(0.f, 0.f, 8.f);
-        aspect = 4.0f/3.0f;
-        zNear = 0.1f;
-        zFar = 100.0f;
-        axisRight = 0;
-        axisLeft = 0;
-        axisUp = 0;
-        axisDown = 0;
-        lDown = 0;
-
-        sAxisRight = 0;
-        sAxisLeft = 0;
-        sAxisUp = 0;
-        sAxisDown = 0;
 
         lastTicks = 0 ;
         now = 0;
-        blState = config;
+        blState = state;
+        blConfig = config;
 
-        projection = computeProjection(fov, aspect, zNear, zFar);
+        projection = computeProjection(config->fov, config->aspect, config->zNear, config->zFar);
         SDL_SetRelativeMouseMode(SDL_TRUE);
-}
-
-void BlInput::handleKeyUp(SDL_Event *event)
-{
-        switch(event->key.keysym.sym) {
-                case SDLK_w:
-                        sAxisUp = 0;
-                        axisUp = 0;
-                        break;
-                case SDLK_s:
-                        axisDown = 0;
-                        sAxisDown = 0;
-                        break;
-                case SDLK_a:
-                        axisLeft = 0;
-                        sAxisLeft = 0;
-                        break;
-                case SDLK_d:
-                        axisRight = 0;
-                        sAxisRight = 0;
-                        break;
-                case SDLK_l:
-                        lDown = 0;
-                        break;
-        }
-}
-
-void incrementAxis(SDL_Keymod mod, int *normalAxis, int *modAxis)
-{
-        if(mod == KMOD_LSHIFT) {
-                *modAxis = min(*modAxis+1, MAX_AXIS);
-        } else {
-                *normalAxis = min(*normalAxis+1, MAX_AXIS);
-        }
 }
 
 void BlInput::handleMouseUp(SDL_Event *event)
 {
         switch(event->button.button) {
                 case SDL_BUTTON_LEFT:
-                        leftMouse = 0;
+                        blState->leftMouse = 0;
                         break;
                 case SDL_BUTTON_RIGHT:
-                        rightMouse = 0;
+                        blState->rightMouse = 0;
                         break;
         }
 }
@@ -86,49 +35,52 @@ void BlInput::handleMouseDown(SDL_Event *event)
 {
         switch(event->button.button) {
                 case SDL_BUTTON_LEFT:
-                        leftMouse = 1;
+                        blState->leftMouse = 1;
                         break;
                 case SDL_BUTTON_RIGHT:
-                        rightMouse = 1;
+                        blState->rightMouse = 1;
                         break;
+        }
+}
+
+void BlInput::handleKeyUp(SDL_Event *event)
+{
+        int sym = event->key.keysym.sym;
+        if(sym == blConfig->key_forward) {
+                blState->stopForward();
+        } else if(sym == blConfig->key_back) {
+                blState->stopBack();
+        } else if(sym == blConfig->key_left) {
+                blState->stopLeft();
+        } else if(sym == blConfig->key_right) {
+                blState->stopRight();
+        } else if(sym == blConfig->key_light) {
+                blState->stopLight();
         }
 }
 
 void BlInput::handleKeyDown(SDL_Event *event)
 {
         SDL_Keymod mod = SDL_GetModState();
-        switch(event->key.keysym.sym) {
-                case SDLK_w:
-                        incrementAxis(mod, &axisUp, &sAxisUp);
-                        break;
-                case SDLK_s:
-                        incrementAxis(mod, &axisDown, &sAxisDown);
-                        break;
-                case SDLK_a:
-                        incrementAxis(mod, &axisLeft, &sAxisLeft);
-                        break;
-                case SDLK_d:
-                        incrementAxis(mod, &axisRight, &sAxisRight);
-                        break;
-                case SDLK_ESCAPE:
-                        blState->gamestate = QUIT;
-                        break;
-                case SDLK_q:
-                        blState->gamestate = QUIT;
-                        break;
-                case SDLK_r:
-                        blState->gamestate = RELOAD;
-                        break;
-                case SDLK_l:
-                        lDown = 1;
-                        break;
-                case SDLK_SPACE:
-                        if(blState->gamestate == STOP) {
-                                blState->gamestate = NORMAL;
-                        } else {
-                                blState->gamestate = STOP;
-                        };
-                        break;
+        int sym = event->key.keysym.sym;
+        if(sym == blConfig->key_forward) {
+                blState->forward(mod);
+        } else if(sym == blConfig->key_back) {
+                blState->back(mod);
+        } else if(sym == blConfig->key_left) {
+                blState->left(mod);
+        } else if(sym == blConfig->key_right) {
+                blState->right(mod);
+        } else if(sym == blConfig->key_escape) {
+                blState->gamestate = QUIT;
+        } else if(sym == blConfig->key_alt_escape) {
+                blState->gamestate = QUIT;
+        } else if(sym == blConfig->key_reload) {
+                blState->gamestate = RELOAD;
+        } else if(sym == blConfig->key_light) {
+                blState->light();
+        } else if(sym == blConfig->key_pause) {
+                blState->pause();
         }
 }
 
@@ -170,8 +122,10 @@ void BlInput::computeNewAngles(float deltaTime)
 {
         int deltaX, deltaY;
         SDL_GetRelativeMouseState(&deltaX, &deltaY);
-        phi -= mouseSpeed * deltaTime * float(deltaX + sAxisRight - sAxisLeft);
-        theta += mouseSpeed * deltaTime * float(-deltaY + sAxisUp - sAxisDown);
+        phi -= blConfig->mouseSpeed * deltaTime *
+                float(deltaX + blState->sAxisRight - blState->sAxisLeft);
+        theta += blConfig->mouseSpeed * deltaTime
+                * float(-deltaY + blState->sAxisUp - blState->sAxisDown);
 }
 
 void BlInput::logState()
@@ -201,6 +155,8 @@ void BlInput::handleMovement()
         up = right.cross(direction);
         view = computeView(right, up, direction, position);
 
-        position += float(axisUp - axisDown) * direction * deltaTime * speed;
-        position += float(axisRight - axisLeft) * right * deltaTime * speed;
+        position += float(blState->axisUp - blState->axisDown)
+                * direction * deltaTime * blConfig->speed;
+        position += float(blState->axisRight - blState->axisLeft)
+                * right * deltaTime * blConfig->speed;
 }

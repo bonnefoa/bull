@@ -4,6 +4,7 @@
 #include <bullet.h>
 #include <SDL.h>
 #include <bl_state.h>
+#include <bl_config.h>
 
 btVector3 convertCoordinate(btScalar theta, btScalar phi);
 
@@ -11,16 +12,12 @@ class BlInput
 {
 
         public:
-                BlInput(BlState *blState);
+                BlInput(BlState *blState, BlConfig *config);
                 void handleInput();
 
                 float phi;
                 float theta;
                 Uint32 now;
-
-                int lDown;
-                int leftMouse;
-                int rightMouse;
 
                 btVector3 position;
                 btTransform view;
@@ -37,29 +34,13 @@ class BlInput
                 void handleMouseDown(SDL_Event *event);
                 void handleMouseUp(SDL_Event *event);
 
-
-                float mouseSpeed;
-                float speed;
-                btScalar fov;
-                btScalar aspect;
-                btScalar zNear;
-                btScalar zFar;
-
-                int axisRight;
-                int axisLeft;
-                int axisUp;
-                int axisDown;
-
-                int sAxisRight;
-                int sAxisLeft;
-                int sAxisUp;
-                int sAxisDown;
-
                 Uint32 lastTicks;
                 btVector3 direction;
                 btVector3 right;
                 btVector3 up;
+
                 BlState *blState;
+                BlConfig *blConfig;
 };
 
 #endif

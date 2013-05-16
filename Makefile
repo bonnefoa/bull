@@ -8,14 +8,14 @@ CC      = clang++
 CCFLAGS = -I$(IDIR) -Wextra -Wall -Werror
 CCFLAGS += `pkg-config --cflags glew gl sdl2 bullet assimp libxml-2.0 libpng`
 
-LIBS = `pkg-config --libs glew gl sdl2 bullet assimp libxml-2.0 libpng`
+LIBS = `pkg-config --libs glew gl sdl2 bullet assimp libxml-2.0 libpng` -liniparser
 
 TEST_CCFLAGS = $(CCFLAGS)
 TEST_CCFLAGS += `pkg-config --cflags check`
 TEST_LIBS = $(LIBS)
 TEST_LIBS += `pkg-config --libs check`
 
-_OBJ = bl_window.o bl_input.o bl_simulation.o bl_file.o bl_shader.o bl_model.o bl_program.o bl_util.o bl_program_model.o bl_log.o bl_loader.o bl_shape.o bl_image.o bl_light_point.o bl_scene.o bl_light_ambient.o bl_matrix.o bl_program_shadow.o bl_program_texture.o bl_state.o
+_OBJ = bl_window.o bl_input.o bl_simulation.o bl_file.o bl_shader.o bl_model.o bl_program.o bl_util.o bl_program_model.o bl_log.o bl_loader.o bl_shape.o bl_image.o bl_light_point.o bl_scene.o bl_light_ambient.o bl_matrix.o bl_program_shadow.o bl_program_texture.o bl_state.o bl_config.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 MAIN = $(ODIR)/main.o $(OBJ) 

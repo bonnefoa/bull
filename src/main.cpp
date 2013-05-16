@@ -19,6 +19,7 @@ BlProgramShadow *blProgramShadow;
 BlProgramTexture *blProgramTexture;
 BlScene *blScene;
 BlState *blState;
+BlConfig *blConfig;
 Uint32 nextTime = 0;
 
 void init()
@@ -27,7 +28,8 @@ void init()
         blWindow->launch();
         blSimulation = new BlSimulation();
         blState = new BlState(NORMAL);
-        blInput = new BlInput(blState);
+        blConfig = loadBlConfig("conf.ini");
+        blInput = new BlInput(blState, blConfig);
 }
 
 void clean()
@@ -92,7 +94,7 @@ void setLight() {
 }
 
 void moveLight() {
-        if(blInput->lDown > 0 || blInput->rightMouse > 0) {
+        if(blState->lightState > 0) {
                 setLight();
         }
 }

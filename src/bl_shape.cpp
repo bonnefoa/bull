@@ -1,12 +1,6 @@
 #include "bl_shape.h"
 #include <bl_log.h>
-
-void setIfMax(btScalar point, btScalar ref,
-                btVector3 &p, void (btVector3::*f)(btScalar))
-{
-        point = abs(point);
-        if (ref < point) { (p.*f)(point); }
-}
+#include <bl_util.h>
 
 btCollisionShape *guessShape(BlModel *blModel)
 {
@@ -28,3 +22,11 @@ btCollisionShape *guessShape(BlModel *blModel)
                         maxPoint[0], maxPoint[1], maxPoint[2]);
         return shape;
 }
+
+//void drawShape(BlModel *blModel)
+//{
+        //GLuint shapeBuffer;
+        //glGenBuffers(1, &shapeBuffer);
+        //glBindBuffer(GL_ARRAY_BUFFER, shapeBuffer);
+        //glDeleteBuffers(1, &shapeBuffer);
+//}
