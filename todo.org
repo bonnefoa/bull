@@ -24,11 +24,12 @@
 ** DONE Create simple plan / cube object
 *** DONE Create shape from vertices
 **** DONE Simple box shape
-** TODO More complex shape
+** TODO Allow to draw shapes
+** IN PROGRESS More complex shape
 
-* IN PROGRESS Beautify
+* DONE Beautify
 ** DONE Add texture
-** IN PROGRESS Add shadow
+** DONE Add shadow
 ** DONE Add light 
 *** DONE Parse light from asset
 *** DONE Push light position + color in attribute
