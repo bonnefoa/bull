@@ -1,4 +1,5 @@
 #include "bl_matrix.h"
+#include <math.h>
 
 void sendTransform(btTransform trans, GLuint uniform)
 {
@@ -72,8 +73,11 @@ btTransform computeVPShadowMatrix(btVector3 position)
 {
         btTransform depthProjectionMatrix = computeOrthogonal(-10, 10, -10,
                         10, -10, 10);
-        btVector3 direction = -btVector3(position).normalize();
-        btVector3 right = btVector3(1, 0, 0);
+        position = position.normalize();
+
+        btVector3 direction = -btVector3(position);
+        float phi = atan(position.getY() / position.getZ());
+        btVector3 right = btVector3(sin(phi + M_PI_2), 0 , cos(phi + M_PI_2));
         btVector3 up = right.cross(direction);
         btTransform depthViewMatrix = computeView(right, up,
                         direction, position);
