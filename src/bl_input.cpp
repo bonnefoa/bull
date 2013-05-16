@@ -6,7 +6,7 @@
 
 #define MAX_AXIS 20
 
-BlInput::BlInput()
+BlInput::BlInput(BlState *config)
 {
         phi = 0.0f;
         theta = M_PI_2;
@@ -30,6 +30,7 @@ BlInput::BlInput()
 
         lastTicks = 0 ;
         now = 0;
+        blState = config;
 
         projection = computeProjection(fov, aspect, zNear, zFar);
         SDL_SetRelativeMouseMode(SDL_TRUE);
@@ -110,22 +111,22 @@ void BlInput::handleKeyDown(SDL_Event *event)
                         incrementAxis(mod, &axisRight, &sAxisRight);
                         break;
                 case SDLK_ESCAPE:
-                        state = QUIT;
+                        blState->gamestate = QUIT;
                         break;
                 case SDLK_q:
-                        state = QUIT;
+                        blState->gamestate = QUIT;
                         break;
                 case SDLK_r:
-                        state = RELOAD;
+                        blState->gamestate = RELOAD;
                         break;
                 case SDLK_l:
                         lDown = 1;
                         break;
                 case SDLK_SPACE:
-                        if(state == STOP) {
-                                state = NORMAL;
+                        if(blState->gamestate == STOP) {
+                                blState->gamestate = NORMAL;
                         } else {
-                                state = STOP;
+                                blState->gamestate = STOP;
                         };
                         break;
         }
@@ -137,7 +138,7 @@ void BlInput::handleInput()
         while (SDL_PollEvent(&event)) {
                 switch (event.type) {
                         case SDL_QUIT:
-                                state = 1;
+                                blState->gamestate = QUIT;
                                 break;
                         case SDL_KEYDOWN:
                                 handleKeyDown(&event);

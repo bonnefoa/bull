@@ -27,9 +27,11 @@ btRigidBody *BlSimulation::addBody(btCollisionShape *colShape
 {
         bool isDynamic = (mass != 0.f);
         btVector3 localInertia(0,0,0);
-        if(isDynamic)
+        btDefaultMotionState *motionState = NULL;
+        if(isDynamic) {
                 colShape->calculateLocalInertia(mass, localInertia);
-        btDefaultMotionState *motionState = new btDefaultMotionState(transform);
+                motionState = new btDefaultMotionState(transform);
+        }
         btRigidBody::btRigidBodyConstructionInfo rbInfo(mass
                         , motionState, colShape, localInertia);
         btRigidBody *body = new btRigidBody(rbInfo);

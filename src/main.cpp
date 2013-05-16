@@ -7,6 +7,7 @@
 #include <bl_loader.h>
 #include <bl_scene.h>
 #include <bl_log.h>
+#include <bl_state.h>
 
 #define TICK_INTERVAL 1000
 
@@ -17,14 +18,16 @@ BlProgramModel *blProgramModel;
 BlProgramShadow *blProgramShadow;
 BlProgramTexture *blProgramTexture;
 BlScene *blScene;
+BlState *blState;
 Uint32 nextTime = 0;
 
 void init()
 {
         blWindow = new BlWindow();
         blWindow->launch();
-        blInput = new BlInput();
         blSimulation = new BlSimulation();
+        blState = new BlState(NORMAL);
+        blInput = new BlInput(blState);
 }
 
 void clean()
@@ -99,7 +102,6 @@ void render()
         glViewport(0, 0, 1024, 1024);
         blProgramShadow->displaySceneForRender(blScene);
         blProgramModel->displayScene(blScene, blProgramShadow->depthTexture);
-        blProgramTexture->displayTexture(blProgramShadow->depthTexture);
         SDL_GL_SwapWindow(blWindow->window);
 }
 
@@ -128,15 +130,15 @@ int main(int argc, char **argv)
 
         while(true) {
                 mainLoop();
-                switch (blInput->state) {
+                switch (blState->gamestate) {
                         case QUIT:
                                 blWindow->shutdown();
                                 return 0;
                         case RELOAD:
                                 clean();
                                 initPrograms();
-                                initScene(argv[1]);
-                                blInput->state = NORMAL;
+                               initScene(argv[1]);
+                                blState->gamestate = NORMAL;
                                 break;
                         case NORMAL:
                                 blSimulation->step();

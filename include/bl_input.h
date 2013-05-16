@@ -3,48 +3,20 @@
 
 #include <bullet.h>
 #include <SDL.h>
-
-enum gamestate {
-        NORMAL,
-        QUIT,
-        RELOAD,
-        STOP,
-};
+#include <bl_state.h>
 
 btVector3 convertCoordinate(btScalar theta, btScalar phi);
 
 class BlInput
 {
-        float mouseSpeed;
-        float speed;
-        btScalar fov;
-        btScalar aspect;
-        btScalar zNear;
-        btScalar zFar;
-
-        int axisRight;
-        int axisLeft;
-        int axisUp;
-        int axisDown;
-
-        int sAxisRight;
-        int sAxisLeft;
-        int sAxisUp;
-        int sAxisDown;
-
-        Uint32 lastTicks;
-        btVector3 direction;
-        btVector3 right;
-        btVector3 up;
 
         public:
-                BlInput();
+                BlInput(BlState *blState);
                 void handleInput();
 
                 float phi;
                 float theta;
                 Uint32 now;
-                int state;
 
                 int lDown;
                 int leftMouse;
@@ -64,6 +36,30 @@ class BlInput
                 void handleKeyUp(SDL_Event *event);
                 void handleMouseDown(SDL_Event *event);
                 void handleMouseUp(SDL_Event *event);
+
+
+                float mouseSpeed;
+                float speed;
+                btScalar fov;
+                btScalar aspect;
+                btScalar zNear;
+                btScalar zFar;
+
+                int axisRight;
+                int axisLeft;
+                int axisUp;
+                int axisDown;
+
+                int sAxisRight;
+                int sAxisLeft;
+                int sAxisUp;
+                int sAxisDown;
+
+                Uint32 lastTicks;
+                btVector3 direction;
+                btVector3 right;
+                btVector3 up;
+                BlState *blState;
 };
 
 #endif
