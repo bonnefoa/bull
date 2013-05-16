@@ -3,9 +3,9 @@
 out vec3 color;
 in vec2 UV;
 
-uniform sampler2D samplerTexture;
+uniform sampler2DShadow samplerTexture;
 
 void main()
 {
-        color = vec3(texture(samplerTexture, UV).r);
+        color.x = texture(samplerTexture, vec3(UV, 1));
 }
