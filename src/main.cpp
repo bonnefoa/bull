@@ -40,8 +40,8 @@ void clean()
 {
         delete blProgramModel;
         delete blProgramShadow;
-        delete blProgramDebug;
         delete blProgramTexture;
+        delete blProgramDebug;
         delete blScene;
         blSimulation->clearWorld();
 }

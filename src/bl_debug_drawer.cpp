@@ -7,6 +7,12 @@ void BlDebugDrawer::init()
         glGenBuffers(1, &colorBuffer);
 }
 
+BlDebugDrawer::~BlDebugDrawer()
+{
+        glDeleteBuffers(1, &lineBuffer);
+        glDeleteBuffers(1, &colorBuffer);
+}
+
 void BlDebugDrawer::setDebugMode(int _debugMode)
 {
         debugMode = _debugMode;
@@ -52,8 +58,8 @@ void BlDebugDrawer::drawLine(const btVector3& from,const btVector3& to,const btV
         glBindBuffer(GL_COLOR_ARRAY, colorBuffer);
         glBufferData(GL_COLOR_ARRAY, 6 * sizeof(GL_FLOAT), &colors[0], GL_STATIC_DRAW);
 
-        //glBindBuffer(GL_ARRAY_BUFFER, lineBuffer);
-        //glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(GL_FLOAT), &lines[0], GL_STATIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER, lineBuffer);
+        glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(GL_FLOAT), &lines[0], GL_STATIC_DRAW);
 
         //glDrawArrays(GL_LINE, 0, 2);
 }
