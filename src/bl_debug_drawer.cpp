@@ -47,6 +47,8 @@ void BlDebugDrawer::reportErrorWarning(const char* warningString)
 
 void BlDebugDrawer::drawLine(const btVector3& from,const btVector3& to,const btVector3& color)
 {
+        glUseProgram(blProgramDebug->programId);
+
         colors.clear();
         colors.push_back(color);
         colors.push_back(color);
@@ -55,8 +57,8 @@ void BlDebugDrawer::drawLine(const btVector3& from,const btVector3& to,const btV
         lines.push_back(from);
         lines.push_back(to);
 
-        glBindBuffer(GL_COLOR_ARRAY, colorBuffer);
-        glBufferData(GL_COLOR_ARRAY, 6 * sizeof(GL_FLOAT), &colors[0], GL_STATIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
+        glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(GL_FLOAT), &colors[0], GL_STATIC_DRAW);
 
         glBindBuffer(GL_ARRAY_BUFFER, lineBuffer);
         glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(GL_FLOAT), &lines[0], GL_STATIC_DRAW);

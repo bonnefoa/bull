@@ -2,8 +2,9 @@
 #include <bl_log.h>
 #include <bl_shape.h>
 #include <bl_debug_drawer.h>
+#include <bl_program_debug.h>
 
-BlSimulation::BlSimulation()
+BlSimulation::BlSimulation(BlConfig *blConfig)
 {
         collisionConfiguration = new btDefaultCollisionConfiguration();
 	dispatcher = new btCollisionDispatcher(collisionConfiguration);
@@ -12,7 +13,9 @@ BlSimulation::BlSimulation()
 	dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher,overlappingPairCache,
                         solver,collisionConfiguration);
         dynamicsWorld->setGravity(btVector3(0, -10, 0));
-        BlDebugDrawer *debugDrawer = new BlDebugDrawer();
+
+        BlProgramDebug *blProgramDebug = getProgramDebug(blConfig);
+        BlDebugDrawer *debugDrawer = new BlDebugDrawer(blProgramDebug);
         debugDrawer->init();
         dynamicsWorld->setDebugDrawer(debugDrawer);
 }

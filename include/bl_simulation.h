@@ -3,10 +3,11 @@
 
 #include <bullet.h>
 #include <bl_model.h>
+#include <bl_config.h>
 
 class BlSimulation {
         public:
-                BlSimulation(void);
+                BlSimulation(BlConfig *blConfig);
                 void doSimulation();
                 virtual ~BlSimulation();
                 btRigidBody *addBody(btCollisionShape *colShape
