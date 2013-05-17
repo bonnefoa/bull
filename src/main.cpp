@@ -4,6 +4,7 @@
 #include <bl_program_model.h>
 #include <bl_program_shadow.h>
 #include <bl_program_texture.h>
+#include <bl_program_debug.h>
 #include <bl_loader.h>
 #include <bl_scene.h>
 #include <bl_log.h>
@@ -13,10 +14,13 @@
 
 BlInput *blInput;
 BlWindow *blWindow;
+
 BlSimulation *blSimulation;
 BlProgramModel *blProgramModel;
 BlProgramShadow *blProgramShadow;
 BlProgramTexture *blProgramTexture;
+BlProgramDebug *blProgramDebug;
+
 BlScene *blScene;
 BlState *blState;
 BlConfig *blConfig;
@@ -36,6 +40,7 @@ void clean()
 {
         delete blProgramModel;
         delete blProgramShadow;
+        delete blProgramDebug;
         delete blProgramTexture;
         delete blScene;
         blSimulation->clearWorld();
@@ -55,6 +60,7 @@ void initPrograms()
         blProgramModel = getProgramModel(blInput, blConfig);
         blProgramTexture = getProgramTexture();
         blProgramShadow = getProgramShadow(btVector3());
+        blProgramDebug = getProgramDebug(blConfig);
 }
 
 void initScene(char *filename)
