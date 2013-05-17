@@ -26,14 +26,23 @@ BlState *blState;
 BlConfig *blConfig;
 Uint32 nextTime = 0;
 
-void init()
+void initWindow()
 {
         blWindow = new BlWindow();
         blWindow->launch();
+}
+
+void initBullora()
+{
         blSimulation = new BlSimulation();
         blState = new BlState(blSimulation);
         blConfig = loadBlConfig("conf.ini");
         blInput = new BlInput(blState, blConfig);
+
+        blProgramModel = getProgramModel(blInput, blConfig);
+        blProgramTexture = getProgramTexture();
+        blProgramShadow = getProgramShadow(btVector3());
+        blProgramDebug = getProgramDebug(blConfig);
 }
 
 void clean()
@@ -43,7 +52,9 @@ void clean()
         delete blProgramTexture;
         delete blProgramDebug;
         delete blScene;
-        blSimulation->clearWorld();
+        delete blSimulation;
+        delete blInput;
+        delete blConfig;
 }
 
 void shutdown()
@@ -51,16 +62,6 @@ void shutdown()
         clean();
         blWindow->shutdown();
         delete blWindow;
-        delete blInput;
-        delete blSimulation;
-}
-
-void initPrograms()
-{
-        blProgramModel = getProgramModel(blInput, blConfig);
-        blProgramTexture = getProgramTexture();
-        blProgramShadow = getProgramShadow(btVector3());
-        blProgramDebug = getProgramDebug(blConfig);
 }
 
 void initScene(char *filename)
@@ -131,8 +132,8 @@ int main(int argc, char **argv)
         (void) argc;
         (void) argv;
 
-        init();
-        initPrograms();
+        initWindow();
+        initBullora();
         initScene(argv[1]);
         setLight();
 
@@ -144,8 +145,8 @@ int main(int argc, char **argv)
                                 return 0;
                         case RELOAD:
                                 clean();
-                                initPrograms();
-                               initScene(argv[1]);
+                                initBullora();
+                                initScene(argv[1]);
                                 blState->gamestate = NORMAL;
                                 break;
                         case NORMAL:
