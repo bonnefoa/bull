@@ -14,9 +14,9 @@ uniform mat4 biasMatrix = mat4(
 
 uniform vec3 lightPosition_worldspace;
 
-attribute vec3 vertexPosition_modelspace;
-attribute vec2 vertexUV;
-attribute vec3 vertexNormal_modelspace;
+in vec3 vertexPosition_modelspace;
+in vec2 vertexUV;
+in vec3 vertexNormal_modelspace;
 
 out vec3 vertexPosition_worldspace;
 out vec3 vertexPosition_cameraspace;
