@@ -5,7 +5,7 @@
 #include <bl_log.h>
 #include <bl_matrix.h>
 
-BlProgramModel *getProgramModel(BlInput *blInput)
+BlProgramModel *getProgramModel(BlInput *blInput, BlConfig *blConfig)
 {
         std::vector<BlShader*> shaders;
         BlShader *vertexShader = new BlShader("glsl/model_vertex.glsl"
@@ -15,7 +15,7 @@ BlProgramModel *getProgramModel(BlInput *blInput)
         shaders.push_back(vertexShader);
         shaders.push_back(fragmentShader);
 
-        BlProgramModel *blProgramModel = new BlProgramModel(shaders, blInput);
+        BlProgramModel *blProgramModel = new BlProgramModel(shaders, blInput, blConfig);
         blProgramModel->loadProgram();
         blProgramModel->init();
         return blProgramModel;
@@ -53,14 +53,9 @@ void BlProgramModel::init()
         }
 }
 
-void BlProgramModel::bindProjectionMatrix()
+void BlProgramModel::bindProjection()
 {
-        glUseProgram(programId);
-
-        btScalar mat[16];
-        blInput->projection.getOpenGLMatrix(mat);
-        mat[11] = -1.0f;
-        glUniformMatrix4fv(locProjection, 1, GL_FALSE, mat);
+        bindProjectionMatrix(programId, locProjection, blConfig->projection);
 }
 
 void BlProgramModel::displayModel(BlModel *blModel)

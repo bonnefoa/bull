@@ -52,7 +52,7 @@ void shutdown()
 
 void initPrograms()
 {
-        blProgramModel = getProgramModel(blInput);
+        blProgramModel = getProgramModel(blInput, blConfig);
         blProgramTexture = getProgramTexture();
         blProgramShadow = getProgramShadow(btVector3());
 }
@@ -60,7 +60,7 @@ void initPrograms()
 void initScene(char *filename)
 {
         blScene = loadXmlScene(filename);
-        blProgramModel->bindProjectionMatrix();
+        blProgramModel->bindProjection();
         for (std::vector<BlModel*>::iterator it = blScene->blModels->begin();
                         it != blScene->blModels->end(); ++it) {
                 BlModel *model = *it;

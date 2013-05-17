@@ -21,7 +21,6 @@ class BlInput
 
                 btVector3 position;
                 btTransform view;
-                btTransform projection;
 
                 void logState();
                 void handleMovement();

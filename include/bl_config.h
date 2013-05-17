@@ -2,6 +2,7 @@
 #define BL_CONFIG_H
 
 #include <SDL.h>
+#include <bullet.h>
 
 class BlConfig {
         public:
@@ -9,10 +10,7 @@ class BlConfig {
                                 float _mouseSpeed,
                                 float _speed,
 
-                                float _fov,
-                                float _aspect,
-                                float _zNear,
-                                float _zFar,
+                                btTransform _projection,
 
                                 int _key_pause,
                                 int _key_light,
@@ -28,10 +26,7 @@ class BlConfig {
 
                                 mouseSpeed(_mouseSpeed),
                                 speed(_speed),
-                                fov(_fov),
-                                aspect(_aspect),
-                                zNear(_zNear),
-                                zFar(_zFar),
+                                projection(_projection),
                                 key_pause(_key_pause),
                                 key_light(_key_light),
                                 key_reload(_key_reload),
@@ -47,10 +42,7 @@ class BlConfig {
                 float mouseSpeed;
                 float speed;
 
-                float fov;
-                float aspect;
-                float zNear;
-                float zFar;
+                btTransform projection;
 
                 int key_pause;
                 int key_light;

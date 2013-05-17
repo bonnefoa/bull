@@ -1,6 +1,7 @@
 #include "bl_config.h"
 #include <iniparser.h>
 #include <bl_log.h>
+#include <bl_matrix.h>
 
 int getKeyFromName(dictionary *ini, const char *key, const char *def)
 {
@@ -37,14 +38,13 @@ BlConfig *loadBlConfig(const char *configurationFile)
         int key_pause = getKeyFromName(ini, "keys:pause", "space");
         int key_debug = getKeyFromName(ini, "keys:debug", "?");
 
+        btTransform projection = computeProjection(fov, aspect, zNear, zFar);
+
         BlConfig *blConfig = new BlConfig(
                      mouseSpeed,
                      speed,
 
-                     fov,
-                     aspect,
-                     zNear,
-                     zFar,
+                     projection,
 
                      key_pause,
                      key_light,
@@ -61,3 +61,4 @@ BlConfig *loadBlConfig(const char *configurationFile)
         iniparser_freedict(ini);
         return blConfig;
 }
+

@@ -19,5 +19,6 @@ btTransform computeView(const btVector3 &right
                 , const btVector3 &direction
                 , const btVector3 &position);
 btTransform computeVPShadowMatrix(btVector3 position);
+void bindProjectionMatrix(GLint programId, GLuint locProjection, btTransform projection);
 
 #endif

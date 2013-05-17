@@ -84,3 +84,14 @@ btTransform computeVPShadowMatrix(btVector3 position)
                         direction, position);
         return depthProjectionMatrix * depthViewMatrix;
 }
+
+
+void bindProjectionMatrix(GLint programId, GLuint locProjection, btTransform projection)
+{
+        glUseProgram(programId);
+
+        btScalar mat[16];
+        projection.getOpenGLMatrix(mat);
+        mat[11] = -1.0f;
+        glUniformMatrix4fv(locProjection, 1, GL_FALSE, mat);
+}

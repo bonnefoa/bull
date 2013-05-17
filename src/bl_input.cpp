@@ -15,7 +15,6 @@ BlInput::BlInput(BlState *state, BlConfig *config)
         blState = state;
         blConfig = config;
 
-        projection = computeProjection(config->fov, config->aspect, config->zNear, config->zFar);
         SDL_SetRelativeMouseMode(SDL_TRUE);
 }
 
@@ -139,8 +138,6 @@ void BlInput::logState()
         INFO("position %f %f %f\n", position[0], position[1], position[2]);
         INFO("V\n");
         printBtTransform(&view);
-        INFO("P\n");
-        printBtTransform(&projection);
 }
 
 void BlInput::handleMovement()
