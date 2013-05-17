@@ -64,6 +64,16 @@ void BlState::stopLight()
         lightState = 0;
 }
 
+void BlState::debug()
+{
+        if(debugState == 0) {
+                debugState = 1;
+        } else {
+                debugState = 0;
+        };
+        blSimulation->toggleDebug(debugState);
+}
+
 void BlState::pause()
 {
         if(gamestate == STOP) {

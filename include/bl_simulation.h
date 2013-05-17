@@ -14,6 +14,7 @@ class BlSimulation {
                 void step(void);
                 btRigidBody *addBlModel(BlModel *blModel);
                 void clearWorld(void);
+                void toggleDebug(int debugState);
         private:
                 btAlignedObjectArray<btCollisionShape*> collisionShapes;
                 btDiscreteDynamicsWorld* dynamicsWorld;

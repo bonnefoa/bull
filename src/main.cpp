@@ -27,7 +27,7 @@ void init()
         blWindow = new BlWindow();
         blWindow->launch();
         blSimulation = new BlSimulation();
-        blState = new BlState(NORMAL);
+        blState = new BlState(blSimulation);
         blConfig = loadBlConfig("conf.ini");
         blInput = new BlInput(blState, blConfig);
 }

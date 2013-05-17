@@ -81,6 +81,8 @@ void BlInput::handleKeyDown(SDL_Event *event)
                 blState->light();
         } else if(sym == blConfig->key_pause) {
                 blState->pause();
+        } else if(sym == blConfig->key_debug) {
+                blState->debug();
         }
 }
 

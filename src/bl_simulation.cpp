@@ -58,6 +58,15 @@ btRigidBody *BlSimulation::addBlModel(BlModel *blModel)
                 return addBody(shape, startTransform, blModel->mass);
 }
 
+void BlSimulation::toggleDebug(int debugState)
+{
+        if (debugState==0) {
+                dynamicsWorld->getDebugDrawer()->setDebugMode(btIDebugDraw::DBG_NoDebug);
+        } else {
+                dynamicsWorld->getDebugDrawer()->setDebugMode(btIDebugDraw::DBG_MAX_DEBUG_DRAW_MODE);
+        }
+}
+
 void BlSimulation::step(void)
 {
         dynamicsWorld->stepSimulation(1.f/60.f);
