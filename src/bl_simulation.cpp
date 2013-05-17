@@ -1,6 +1,7 @@
 #include "bl_simulation.h"
 #include <bl_log.h>
 #include <bl_shape.h>
+#include <bl_debug_drawer.h>
 
 BlSimulation::BlSimulation()
 {
@@ -11,10 +12,14 @@ BlSimulation::BlSimulation()
 	dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher,overlappingPairCache,
                         solver,collisionConfiguration);
         dynamicsWorld->setGravity(btVector3(0, -10, 0));
+        BlDebugDrawer *debugDrawer = new BlDebugDrawer();
+        debugDrawer->init();
+        dynamicsWorld->setDebugDrawer(debugDrawer);
 }
 
 BlSimulation::~BlSimulation()
 {
+        delete dynamicsWorld->getDebugDrawer();
         delete dynamicsWorld;
         delete solver;
         delete overlappingPairCache;
@@ -63,6 +68,7 @@ void BlSimulation::toggleDebug(int debugState)
         if (debugState==0) {
                 dynamicsWorld->getDebugDrawer()->setDebugMode(btIDebugDraw::DBG_NoDebug);
         } else {
+                INFO("Toggle debug on");
                 dynamicsWorld->getDebugDrawer()->setDebugMode(btIDebugDraw::DBG_MAX_DEBUG_DRAW_MODE);
         }
 }
@@ -70,7 +76,9 @@ void BlSimulation::toggleDebug(int debugState)
 void BlSimulation::step(void)
 {
         dynamicsWorld->stepSimulation(1.f/60.f);
-        dynamicsWorld->debugDrawWorld();
+        if(dynamicsWorld->getDebugDrawer()->getDebugMode() > 0) {
+                dynamicsWorld->debugDrawWorld();
+        }
 }
 
 void BlSimulation::clearWorld()
