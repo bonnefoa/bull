@@ -3,11 +3,12 @@
 
 #include <bullet.h>
 #include <bl_model.h>
+#include <bl_state.h>
 #include <bl_config.h>
 
 class BlSimulation {
         public:
-                BlSimulation(BlConfig *blConfig);
+                BlSimulation(BlConfig *blConfig, BlState *blState);
                 void doSimulation();
                 virtual ~BlSimulation();
                 btRigidBody *addBody(btCollisionShape *colShape
@@ -19,6 +20,8 @@ class BlSimulation {
                 void debugDraw();
 
         private:
+                BlState *blState;
+
                 btAlignedObjectArray<btCollisionShape*> collisionShapes;
                 btDiscreteDynamicsWorld* dynamicsWorld;
                 btDefaultCollisionConfiguration *collisionConfiguration;

@@ -6,11 +6,12 @@
 #include <GL/gl.h>
 #include <vector>
 #include <bl_program_debug.h>
+#include <bl_state.h>
 
 class BlDebugDrawer : public btIDebugDraw {
         public:
-                BlDebugDrawer(BlProgramDebug *_blProgramDebug)
-                        : blProgramDebug(_blProgramDebug) {} ;
+                BlDebugDrawer(BlProgramDebug *_blProgramDebug, BlState *_blState)
+                        : blProgramDebug(_blProgramDebug), blState(_blState) {} ;
                 void init();
                 virtual void drawLine(const btVector3& from,
                                 const btVector3& to,const btVector3& color);
@@ -25,8 +26,8 @@ class BlDebugDrawer : public btIDebugDraw {
                 virtual ~BlDebugDrawer();
 
         private:
-                int debugMode;
                 BlProgramDebug *blProgramDebug;
+                BlState *blState;
 
                 GLuint lineBuffer;
                 GLuint colorBuffer;

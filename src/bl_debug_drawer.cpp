@@ -13,14 +13,14 @@ BlDebugDrawer::~BlDebugDrawer()
         glDeleteBuffers(1, &colorBuffer);
 }
 
-void BlDebugDrawer::setDebugMode(int _debugMode)
+void BlDebugDrawer::setDebugMode(int debugMode)
 {
-        debugMode = _debugMode;
+        blState->debugState = debugMode;
 }
 
 int BlDebugDrawer::getDebugMode() const
 {
-        return debugMode;
+        return blState->debugState;
 }
 
 void BlDebugDrawer::drawContactPoint(const btVector3& PointOnB,

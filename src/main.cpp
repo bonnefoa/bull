@@ -1,13 +1,13 @@
+#include <bl_state.h>
 #include <bl_input.h>
-#include <bl_window.h>
-#include <bl_simulation.h>
+#include <bl_loader.h>
+#include <bl_log.h>
 #include <bl_program_model.h>
 #include <bl_program_shadow.h>
 #include <bl_program_texture.h>
-#include <bl_loader.h>
 #include <bl_scene.h>
-#include <bl_log.h>
-#include <bl_state.h>
+#include <bl_simulation.h>
+#include <bl_window.h>
 
 #define TICK_INTERVAL 1000
 
@@ -37,7 +37,7 @@ void initBullora()
         blState = new BlState(btVector3(0,0,8));
         blInput = new BlInput(blState, blConfig);
 
-        blSimulation = new BlSimulation(blConfig);
+        blSimulation = new BlSimulation(blConfig, blState);
         blProgramModel = getProgramModel(blInput, blConfig, blState);
         blProgramTexture = getProgramTexture();
         blProgramShadow = getProgramShadow(btVector3());

@@ -2,7 +2,7 @@
 #define BL_STATE_H
 
 #include <SDL.h>
-#include <bl_simulation.h>
+#include <bullet.h>
 
 #define MAX_AXIS 20
 
