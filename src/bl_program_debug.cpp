@@ -26,7 +26,6 @@ void BlProgramDebug::init()
 {
         glUseProgram(programId);
 
-        locModel = glGetUniformLocation(programId, "locModel");
         locView = glGetUniformLocation(programId, "locView");
         locProjection = glGetUniformLocation(programId, "locProjection");
 

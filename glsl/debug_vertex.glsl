@@ -1,6 +1,5 @@
 #version 130
 
-uniform mat4 M;
 uniform mat4 V;
 uniform mat4 P;
 
@@ -11,6 +10,6 @@ out vec3 fragmentColor;
 
 void main()
 {
-        gl_Position = P * V * M * vec4(vertexPosition_modelspace, 1.0f);
+        gl_Position = P * V * vec4(vertexPosition_modelspace, 1.0f);
         fragmentColor = vertexColor;
 }
