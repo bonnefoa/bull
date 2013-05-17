@@ -22,7 +22,9 @@ class BlConfig {
                                 int _key_forward,
                                 int _key_back,
                                 int _key_left,
-                                int _key_right) :
+                                int _key_right,
+                                int _key_debug
+                                ) :
 
                                 mouseSpeed(_mouseSpeed),
                                 speed(_speed),
@@ -38,7 +40,8 @@ class BlConfig {
                                 key_forward(_key_forward),
                                 key_back(_key_back),
                                 key_left(_key_left),
-                                key_right(_key_right)
+                                key_right(_key_right),
+                                key_debug(_key_debug)
                 {} ;
 
                 float mouseSpeed;
@@ -58,6 +61,8 @@ class BlConfig {
                 int key_back;
                 int key_left;
                 int key_right;
+
+                int key_debug;
 };
 
 BlConfig *loadBlConfig(const char *configurationFile);

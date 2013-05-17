@@ -35,8 +35,10 @@ BlConfig *loadBlConfig(const char *configurationFile)
         int key_reload = getKeyFromName(ini, "keys:reload", "r");
         int key_light = getKeyFromName(ini, "keys:light", "l");
         int key_pause = getKeyFromName(ini, "keys:pause", "space");
+        int key_debug = getKeyFromName(ini, "keys:debug", "?");
 
-        BlConfig *blConfig = new BlConfig(mouseSpeed,
+        BlConfig *blConfig = new BlConfig(
+                     mouseSpeed,
                      speed,
 
                      fov,
@@ -52,7 +54,9 @@ BlConfig *loadBlConfig(const char *configurationFile)
                      key_forward,
                      key_back,
                      key_left,
-                     key_right);
+                     key_right,
+                     key_debug
+                     );
 
         iniparser_freedict(ini);
         return blConfig;
