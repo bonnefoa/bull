@@ -17,18 +17,15 @@ BlProgramDebug *getProgramDebug(BlConfig *blConfig)
         return blProgramDebug;
 }
 
-void BlProgramDebug::bindProjection()
-{
-        bindProjectionMatrix(programId, locProjection, blConfig->projection);
-}
-
 void BlProgramDebug::init()
 {
         glUseProgram(programId);
 
-        locView = glGetUniformLocation(programId, "locView");
-        locProjection = glGetUniformLocation(programId, "locProjection");
+        locView = glGetUniformLocation(programId, "V");
+        locProjection = glGetUniformLocation(programId, "P");
 
-        locVertices = glGetAttribLocation(programId, "locVertices");
-        locColor = glGetAttribLocation(programId, "locColor");
+        locVertices = glGetAttribLocation(programId, "vertexPosition_modelspace");
+        locColor = glGetAttribLocation(programId, "vertexColor");
+
+        bindProjectionMatrix(programId, locProjection, blConfig->projection);
 }

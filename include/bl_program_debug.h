@@ -11,7 +11,6 @@ class BlProgramDebug : public BlProgram
                         BlProgram(shaders), blConfig(_blConfig) {};
 
                 void init(void);
-                void bindProjection();
 
                 GLint locView;
                 GLint locProjection;
