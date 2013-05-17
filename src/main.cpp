@@ -4,7 +4,6 @@
 #include <bl_program_model.h>
 #include <bl_program_shadow.h>
 #include <bl_program_texture.h>
-#include <bl_program_debug.h>
 #include <bl_loader.h>
 #include <bl_scene.h>
 #include <bl_log.h>
@@ -19,7 +18,6 @@ BlSimulation *blSimulation;
 BlProgramModel *blProgramModel;
 BlProgramShadow *blProgramShadow;
 BlProgramTexture *blProgramTexture;
-BlProgramDebug *blProgramDebug;
 
 BlScene *blScene;
 BlState *blState;
@@ -34,15 +32,15 @@ void initWindow()
 
 void initBullora()
 {
-        blSimulation = new BlSimulation();
-        blState = new BlState(blSimulation);
         blConfig = loadBlConfig("conf.ini");
+
+        blState = new BlState(btVector3(0,0,8));
         blInput = new BlInput(blState, blConfig);
 
-        blProgramModel = getProgramModel(blInput, blConfig);
+        blSimulation = new BlSimulation(blConfig);
+        blProgramModel = getProgramModel(blInput, blConfig, blState);
         blProgramTexture = getProgramTexture();
         blProgramShadow = getProgramShadow(btVector3());
-        blProgramDebug = getProgramDebug(blConfig);
 }
 
 void clean()
@@ -50,7 +48,6 @@ void clean()
         delete blProgramModel;
         delete blProgramShadow;
         delete blProgramTexture;
-        delete blProgramDebug;
         delete blScene;
         delete blSimulation;
         delete blInput;
@@ -88,15 +85,15 @@ void logState()
 {
         if(nextTime <= blInput->now) {
                 nextTime = blInput->now + TICK_INTERVAL;
-                blInput->logState();
+                blState->logState();
         }
 }
 
 void setLight() {
         BlLightPoint *light = blScene->blLightPoints->at(0);
-        blProgramShadow->moveLight(blInput->position);
-        blProgramModel->moveLight(blInput->position);
-        light->moveLight(blInput->position,
+        blProgramShadow->moveLight(blState->position);
+        blProgramModel->moveLight(blState->position);
+        light->moveLight(blState->position,
                         blProgramModel->programId);
 }
 

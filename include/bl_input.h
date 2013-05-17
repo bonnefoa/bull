@@ -19,9 +19,6 @@ class BlInput
                 float theta;
                 Uint32 now;
 
-                btVector3 position;
-                btTransform view;
-
                 void logState();
                 void handleMovement();
 

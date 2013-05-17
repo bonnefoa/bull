@@ -13,14 +13,13 @@ class BlProgramDebug : public BlProgram
                 void init(void);
                 void bindProjection();
 
-        private:
-                BlConfig *blConfig;
-                GLint locModel;
                 GLint locView;
                 GLint locProjection;
 
                 GLint locVertices;
                 GLint locColor;
+        private:
+                BlConfig *blConfig;
 };
 
 BlProgramDebug *getProgramDebug(BlConfig *blConfig);

@@ -15,8 +15,11 @@ class  BlProgramModel : public BlProgram
         public:
                 BlProgramModel(std::vector<BlShader *> shaders
                                 , BlInput *_blInput
-                                , BlConfig *_blConfig) :
-                        BlProgram(shaders), blInput(_blInput), blConfig(_blConfig) {};
+                                , BlConfig *_blConfig
+                                , BlState *_blState
+                                ) :
+                        BlProgram(shaders), blInput(_blInput), blConfig(_blConfig),
+                        blState(_blState) {};
                 void init(void);
                 void bindModelMatrix(BlModel *blModel);
                 void displayModel(BlModel *model);
@@ -27,6 +30,8 @@ class  BlProgramModel : public BlProgram
         private:
                 BlInput *blInput;
                 BlConfig *blConfig;
+                BlState *blState;
+
                 GLint locModel;
                 GLint locView;
                 GLint locProjection;
@@ -40,6 +45,6 @@ class  BlProgramModel : public BlProgram
                 GLint samplerShadow;
 };
 
-BlProgramModel *getProgramModel(BlInput *blInput, BlConfig *blConfig);
+BlProgramModel *getProgramModel(BlInput *blInput, BlConfig *blConfig, BlState *blState);
 
 #endif

@@ -1,5 +1,7 @@
 #include "bl_state.h"
 #include <bl_util.h>
+#include <bl_log.h>
+#include <bl_matrix.h>
 
 void BlState::incrementAxis(SDL_Keymod mod, int *normalAxis, int *modAxis)
 {
@@ -71,7 +73,6 @@ void BlState::debug()
         } else {
                 debugState = 0;
         };
-        blSimulation->toggleDebug(debugState);
 }
 
 void BlState::pause()
@@ -81,4 +82,12 @@ void BlState::pause()
         } else {
                 gamestate = STOP;
         };
+}
+
+
+void BlState::logState()
+{
+        INFO("position %f %f %f\n", position[0], position[1], position[2]);
+        INFO("V\n");
+        printBtTransform(&view);
 }

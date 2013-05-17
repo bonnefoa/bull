@@ -15,11 +15,15 @@ enum gamestate_enum {
 
 class BlState {
         public:
-                BlState(BlSimulation *_blSimulation) :
-                        blSimulation(_blSimulation),
+                BlState(btVector3 _position) :
                         gamestate(NORMAL),
+
+                        position(_position),
+                        view(btTransform()),
+
                         lightState(0),
                         debugState(0),
+
                         axisRight(0),
                         axisLeft(0),
                         axisUp(0),
@@ -31,9 +35,10 @@ class BlState {
                         leftMouse(0),
                         rightMouse(0) {};
 
-                BlSimulation *blSimulation;
-
                 gamestate_enum gamestate;
+
+                btVector3 position;
+                btTransform view;
 
                 int lightState;
                 int debugState;
@@ -65,6 +70,7 @@ class BlState {
                 void stopLight();
 
                 void debug();
+                void logState();
 
         private:
                 void incrementAxis(SDL_Keymod mod, int *normalAxis, int *modAxis);

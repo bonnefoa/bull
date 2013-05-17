@@ -8,7 +8,6 @@ BlInput::BlInput(BlState *state, BlConfig *config)
 {
         phi = 0.0f;
         theta = M_PI_2;
-        position = btVector3(0.f, 0.f, 8.f);
 
         lastTicks = 0 ;
         now = 0;
@@ -129,17 +128,6 @@ void BlInput::computeNewAngles(float deltaTime)
                 * float(-deltaY + blState->sAxisUp - blState->sAxisDown);
 }
 
-void BlInput::logState()
-{
-        INFO("theta %f, phi %f\n", theta, phi);
-        INFO("right %f %f %f\n", right[0], right[1], right[2]);
-        INFO("up %f %f %f\n", up[0], up[1], up[2]);
-        INFO("direction %f %f %f\n", direction[0], direction[1], direction[2]);
-        INFO("position %f %f %f\n", position[0], position[1], position[2]);
-        INFO("V\n");
-        printBtTransform(&view);
-}
-
 void BlInput::handleMovement()
 {
         float deltaTime;
@@ -152,10 +140,10 @@ void BlInput::handleMovement()
 
         right = btVector3(sin(phi + M_PI_2), 0 , cos(phi + M_PI_2));
         up = right.cross(direction);
-        view = computeView(right, up, direction, position);
+        blState->view = computeView(right, up, direction, blState->position);
 
-        position += float(blState->axisUp - blState->axisDown)
+        blState->position += float(blState->axisUp - blState->axisDown)
                 * direction * deltaTime * blConfig->speed;
-        position += float(blState->axisRight - blState->axisLeft)
+        blState->position += float(blState->axisRight - blState->axisLeft)
                 * right * deltaTime * blConfig->speed;
 }
