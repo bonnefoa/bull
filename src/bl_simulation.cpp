@@ -79,10 +79,15 @@ void BlSimulation::toggleDebug(int debugState)
 void BlSimulation::step(void)
 {
         dynamicsWorld->stepSimulation(1.f/60.f);
+}
+
+void BlSimulation::debugDraw()
+{
         if(dynamicsWorld->getDebugDrawer()->getDebugMode() > 0) {
                 dynamicsWorld->debugDrawWorld();
         }
 }
+
 
 void BlSimulation::clearWorld()
 {

@@ -108,6 +108,7 @@ void render()
         glViewport(0, 0, 1024, 1024);
         blProgramShadow->displaySceneForRender(blScene);
         blProgramModel->displayScene(blScene, blProgramShadow->depthTexture);
+        blSimulation->debugDraw();
         SDL_GL_SwapWindow(blWindow->window);
 }
 
