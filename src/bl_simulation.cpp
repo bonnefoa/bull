@@ -15,9 +15,9 @@ BlSimulation::BlSimulation(BlConfig *blConfig, BlState *blState)
         dynamicsWorld->setGravity(btVector3(0, -10, 0));
 
         BlProgramDebug *blProgramDebug = getProgramDebug(blConfig);
-        BlDebugDrawer *debugDrawer = new BlDebugDrawer(blProgramDebug, blState);
-        debugDrawer->init();
-        dynamicsWorld->setDebugDrawer(debugDrawer);
+        blDebugDrawer = new BlDebugDrawer(blProgramDebug, blState);
+        blDebugDrawer->init();
+        dynamicsWorld->setDebugDrawer(blDebugDrawer);
 }
 
 BlSimulation::~BlSimulation()
@@ -84,6 +84,7 @@ void BlSimulation::step(void)
 void BlSimulation::debugDraw()
 {
         if(dynamicsWorld->getDebugDrawer()->getDebugMode() > 0) {
+                blDebugDrawer->initDebugRender();
                 dynamicsWorld->debugDrawWorld();
         }
 }

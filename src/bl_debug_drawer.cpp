@@ -48,6 +48,7 @@ void BlDebugDrawer::reportErrorWarning(const char* warningString)
 
 void BlDebugDrawer::initDebugRender()
 {
+        glUseProgram(blProgramDebug->programId);
         sendTransform(blState->view, blProgramDebug->locView);
 }
 

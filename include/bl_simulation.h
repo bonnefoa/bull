@@ -5,6 +5,7 @@
 #include <bl_model.h>
 #include <bl_state.h>
 #include <bl_config.h>
+#include <bl_debug_drawer.h>
 
 class BlSimulation {
         public:
@@ -21,6 +22,7 @@ class BlSimulation {
 
         private:
                 BlState *blState;
+                BlDebugDrawer *blDebugDrawer;
 
                 btAlignedObjectArray<btCollisionShape*> collisionShapes;
                 btDiscreteDynamicsWorld* dynamicsWorld;
