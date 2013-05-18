@@ -43,6 +43,9 @@ btRigidBody *BlSimulation::addBody(btCollisionShape *colShape
         btRigidBody::btRigidBodyConstructionInfo rbInfo(mass
                         , motionState, colShape, localInertia);
         btRigidBody *body = new btRigidBody(rbInfo);
+        if(!isDynamic) {
+                body->proceedToTransform(transform);
+        }
         dynamicsWorld->addRigidBody(body);
         return body;
 }
