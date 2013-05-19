@@ -24,9 +24,11 @@
 ** DONE Create simple plan / cube object
 *** DONE Create shape from vertices
 **** DONE Simple box shape
-** IN PROGRESS Allow to draw shapes
-** IN PROGRESS More complex shape
-
+** DONE Add bullet debut
+** IN PROGRESS Allow to draw more complex shape
+*** TODO Handle exported shapes from blender
+**** TODO Read yaml file
+**** TODO Map model name to meshes in dae file
 * DONE Beautify
 ** DONE Add texture
 ** DONE Add shadow
