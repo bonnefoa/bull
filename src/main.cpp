@@ -32,7 +32,7 @@ void initWindow()
 
 void initBullora()
 {
-        blConfig = loadBlConfig("conf.ini");
+        blConfig = loadBlConfig("conf.yaml");
 
         blState = new BlState(btVector3(0,0,8));
         blInput = new BlInput(blState, blConfig);

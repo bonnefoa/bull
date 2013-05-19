@@ -3,8 +3,6 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <libxml/parser.h>
-#include <libxml/tree.h>
 #include <vector>
 #include <bl_model.h>
 #include <bl_scene.h>
