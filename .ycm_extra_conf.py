@@ -7,6 +7,7 @@ flags = [
 , '-std=c++11'
 , '-I', '.'
 , '-I', './include'
+, '-I', '/usr/include/yaml-cpp'
 , '-I', '/usr/include/GL'
 , '-I', '/usr/include/libdrm'
 , '-I', '/usr/include/SDL2'
