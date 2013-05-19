@@ -25,7 +25,7 @@ BlImage *readPngImage(const char *filename)
 {
         FILE * infile;
         if ((infile = fopen(filename, "rb")) == NULL) {
-                ERROR("can't open %s\n", filename);
+                ERROR("can't open '%s'\n", filename);
                 return NULL;
         }
         unsigned char sig[8];

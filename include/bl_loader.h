@@ -8,9 +8,9 @@
 #include <vector>
 #include <bl_model.h>
 #include <bl_scene.h>
+#include <bl_mesh_loader.h>
+#include <yaml.h>
 
-BlScene *loadXmlScene(const char *filename);
-std::vector<BlModel*> loadModelFile(const char *modelPath,
-                btVector3 position=btVector3(), float mass=0.0f);
+BlScene *loadScene(const char *filename);
 
 #endif

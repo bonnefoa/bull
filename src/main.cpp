@@ -63,7 +63,7 @@ void shutdown()
 
 void initScene(char *filename)
 {
-        blScene = loadXmlScene(filename);
+        blScene = loadScene(filename);
         blProgramModel->bindProjection();
         for (std::vector<BlModel*>::iterator it = blScene->blModels->begin();
                         it != blScene->blModels->end(); ++it) {
