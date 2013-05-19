@@ -20,30 +20,35 @@ import os.path
 SHAPE_BOX = 'BOX'
 SHAPE_SPHERE = 'SPHERE'
 
-def vector_y_up(v):
-        return '[%g,%g,%g]' % (v.x, v.y, v.z)
+DIMENSIONS = set(['half-extents'])
 
-def vector_z_up(v):
-        return '[%g,%g,%g]' % (v.x, v.z, -v.y)
+def vector_y_up(v, f):
+        return '[%g,%g,%g]' % (f(v.x), f(v.y), f(v.z))
 
-def quaternion_z_up(q):
-        return '[%g,%g,%g,%g]' % (q.w, q.x, q.z, -q.y)
+def vector_z_up(v, f):
+        return '[%g,%g,%g]' % (f(v.x), f(v.z), f(-v.y))
 
-def quaternion_y_up(q):
-        return '[%g,%g,%g,%g]' % (q.w, q.x, q.y, q.z)
+def quaternion_z_up(q, f):
+        return '[%g,%g,%g,%g]' % (f(q.w), f(q.x), f(q.z), f(-q.y))
+
+def quaternion_y_up(q, f):
+        return '[%g,%g,%g,%g]' % (f(q.w), f(q.x), f(q.y), f(q.z))
 
 def convert_properties(properties, y_up):
         results = {}
         vect_to_string = vector_y_up
         quat_to_string = quaternion_y_up
         if not y_up:
-                vect_to_string = vector_y_up
-                quat_to_string = quaternion_y_up
+                vect_to_string = vector_z_up
+                quat_to_string = quaternion_z_up
         for k, v in properties.items():
+                f = float
+                if k in DIMENSIONS:
+                        f = abs
                 if type(v) == mathutils.Vector:
-                        results[k] = vect_to_string(v)
+                        results[k] = vect_to_string(v, f)
                 elif type(v) == mathutils.Quaternion:
-                        results[k] = quat_to_string(v)
+                        results[k] = quat_to_string(v, f)
                 else:
                         results[k] = v
         return results
@@ -51,7 +56,10 @@ def convert_properties(properties, y_up):
 def get_shape(obj, y_up):
         shape = obj.rigid_body.collision_shape
         bound_box = obj.bound_box.data
-        properties = {'shape':shape, 'mass':obj.rigid_body.mass}
+        mass = obj.rigid_body.mass
+        if obj.rigid_body.type == 'PASSIVE':
+                mass = 0.0
+        properties = {'shape':shape, 'mass':mass}
         if shape == SHAPE_BOX:
                 properties['half-extents'] = bound_box.dimensions / 2
         properties['origin'] = bound_box.location
@@ -63,12 +71,12 @@ class ExportBulletShape(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
         '''Export bullet shapes from rigid body.'''
         bl_idname = "object.export_bullet_shapes"
         bl_label = "Export Bullet Shapes"
-        filename_file = ""
+        filename_file = "shape"
         filename_ext = ".yaml"
         filter_glob = bpy.props.StringProperty(default="*.yaml", options={'HIDDEN'})
         y_up = bpy.props.BoolProperty(name="Convert To Y-Up",
                         description="Converts the values to a Y-Axis Up coordinate system",
-                        default=True)
+                        default=False)
 
         @classmethod
         def poll(cls, context):
@@ -77,10 +85,9 @@ class ExportBulletShape(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
         def process_obj(self, f, obj):
                 if not obj.rigid_body:
                         return
-                f.write('%s:\n' % obj.name)
                 properties = get_shape(obj, self.y_up )
                 for k, v in properties.items():
-                        f.write( "    %s: %s\n" % (k, v) )
+                        f.write( "%s: %s\n" % (k, v) )
 
         def execute(self, context):
                 filepath = self.filepath

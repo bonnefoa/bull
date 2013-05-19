@@ -133,10 +133,10 @@ std::vector<BlLightPoint*> loadLightFile(const char *path,
 }
 
 std::vector<BlModel*> loadModelFile(const char *modelPath,
-                btVector3 position, float mass, const char *image)
+                btVector3 position, btRigidBody *rigidBody, const char *image)
 {
-        INFO("Loading asset from file %s, mass %f, image %s, position %f %f %f\n",
-                        modelPath, mass, image,
+        INFO("Loading asset from file %s, image %s, position %f %f %f\n",
+                        modelPath, image,
                         position[0], position[1], position[2]);
         std::vector<BlModel*> res = std::vector<BlModel*>();
         const aiScene *scene = loadAssimpScene(modelPath);
@@ -159,7 +159,7 @@ std::vector<BlModel*> loadModelFile(const char *modelPath,
                                 bitangents.size());
                 BlModel *blModel = new BlModel(vertices, indices, normals,
                                 tangents, bitangents,
-                                uvs, position, mass, modelPath, image);
+                                uvs, position, rigidBody, modelPath, image);
                 res.push_back(blModel);
         }
         return res;

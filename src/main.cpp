@@ -70,7 +70,7 @@ void initScene(char *filename)
                 BlModel *model = *it;
                 model->init();
                 model->loadInBuffer();
-                model->rigidBody = blSimulation->addBlModel(model);
+                blSimulation->addBlModel(model);
         }
         for (std::vector<BlLightPoint*>::iterator it = blScene->blLightPoints->begin();
                         it != blScene->blLightPoints->end(); ++it) {

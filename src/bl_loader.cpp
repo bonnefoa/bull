@@ -20,6 +20,29 @@ namespace YAML {
                                 return true;
                         }
                 };
+
+        template<>
+                struct convert<btQuaternion> {
+                        static Node encode(const btQuaternion& rhs) {
+                                Node node;
+                                node.push_back(rhs[0]);
+                                node.push_back(rhs[1]);
+                                node.push_back(rhs[2]);
+                                node.push_back(rhs[3]);
+                                return node;
+                        }
+
+                        static bool decode(const Node& node,
+                                        btQuaternion& rhs) {
+                                if(!node.IsSequence() || node.size() != 4)
+                                        return false;
+                                rhs[0] = node[0].as<btScalar>();
+                                rhs[1] = node[1].as<btScalar>();
+                                rhs[2] = node[2].as<btScalar>();
+                                rhs[3] = node[3].as<btScalar>();
+                                return true;
+                        }
+                };
 }
 
 btVector3 readPosition(YAML::Node node)
@@ -30,6 +53,54 @@ btVector3 readPosition(YAML::Node node)
         return node.as<btVector3>();
 }
 
+btTransform readShapeTransform(YAML::Node node, btVector3 position)
+{
+        btQuaternion rotation = node["rotation"].as<btQuaternion>();
+        btVector3 origin = node["origin"].as<btVector3>();
+        return btTransform(rotation, origin + position);
+}
+
+btCollisionShape *readCollisionShape(YAML::Node node)
+{
+        std::string shape = node["shape"].as<std::string>();
+        btCollisionShape *collisionShape = (btCollisionShape*)
+                malloc(sizeof(btCollisionShape));
+        if(shape == "BOX") {
+                btVector3 halfExtent = node["half-extents"]
+                        .as<btVector3>();
+                collisionShape = new btBoxShape(halfExtent);
+        }
+        return collisionShape;
+}
+
+btRigidBody *readShapeNode(YAML::Node node, btVector3 position)
+{
+        if(!node["shape"]) { return NULL; }
+        const char *shapeFile = (node["shape"].as<std::string>()).c_str();
+        YAML::Node shapeNode = YAML::LoadFile(shapeFile);
+
+        float mass = shapeNode["mass"].as<float>();
+        bool isDynamic = (mass != 0.f);
+        btCollisionShape *collisionShape = readCollisionShape(shapeNode);
+        INFO("Shape of mass %f and type %s\n", mass,
+                        collisionShape->getName());
+        btTransform transform = readShapeTransform(shapeNode, position);
+
+        btVector3 localInertia(0,0,0);
+        btDefaultMotionState *motionState = NULL;
+        if(isDynamic) {
+                collisionShape->calculateLocalInertia(mass, localInertia);
+                motionState = new btDefaultMotionState(transform);
+        }
+        btRigidBody::btRigidBodyConstructionInfo rbInfo(mass
+                        , motionState, collisionShape, localInertia);
+        btRigidBody *body = new btRigidBody(rbInfo);
+        if(!isDynamic) {
+                body->proceedToTransform(transform);
+        }
+        return body;
+}
+
 std::vector<BlModel*> loadModel(YAML::Node node)
 {
         std::string modelPath = node["filename"].as<std::string>();
@@ -38,9 +109,9 @@ std::vector<BlModel*> loadModel(YAML::Node node)
                 image = strduplicate((node["image"].as<std::string>()).c_str());
         }
         btVector3 position = readPosition(node["position"]);
-        float mass = 0.0f;
+        btRigidBody *rigidBody = readShapeNode(node, position);
         return loadModelFile(modelPath.c_str(), position,
-                        mass, image);
+                        rigidBody, image);
 }
 
 BlLightAmbient *loadAmbientNode(YAML::Node node)

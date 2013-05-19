@@ -17,7 +17,7 @@
 
 BlLightAmbient *loadAmbientFile(const char *path);
 std::vector<BlModel*> loadModelFile(const char *modelPath,
-                btVector3 position, float mass, const char *image);
+                btVector3 position, btRigidBody *rigidBody, const char *image);
 std::vector<BlLightPoint*> loadLightFile(const char *path,
                 btVector3 position, std::vector<BlModel*> *models);
 BlLightAmbient *loadAmbientFile(const char *path);

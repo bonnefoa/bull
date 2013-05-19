@@ -16,7 +16,7 @@ class BlModel {
                                 , std::vector<btVector3> _bitangents
                                 , std::vector<BlUvs> _blUVs
                                 , btVector3 _position
-                                , float _mass
+                                , btRigidBody *_rigidBody
                                 , const char *_name
                                 , const char *_image) :
                         vertices(_vertices)
@@ -26,11 +26,9 @@ class BlModel {
                         , bitangents(_bitangents)
                         , blUVs(_blUVs)
                         , position(_position)
-                        , mass(_mass)
+                        , rigidBody(_rigidBody)
                         , name(_name)
-                        , image(_image) {
-                                rigidBody = NULL;
-                        };
+                        , image(_image) { };
                 void init();
                 void loadInBuffer();
                 bool loadAsset(void);
@@ -48,10 +46,9 @@ class BlModel {
                 std::vector <btVector3> bitangents;
                 std::vector <BlUvs> blUVs;
                 btVector3 position;
-                float mass;
+                btRigidBody *rigidBody;
                 const char *name;
                 const char *image;
-                btRigidBody *rigidBody;
 
                 virtual ~BlModel ();
 
