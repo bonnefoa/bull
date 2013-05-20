@@ -38,3 +38,9 @@ models:
           shape: /home/sora/blender/floor.yaml
           image: /home/sora/blender/cubeTextured.png
           position: [0.0, -2.0, 0.0]
+
+        - name: capsule
+          filename: /home/sora/blender/capsule.dae
+          shape: /home/sora/blender/capsule.yaml
+          image: /home/sora/blender/cubeTextured.png
+          position: [2.0, 2.0, 2.0]

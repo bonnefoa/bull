@@ -74,12 +74,14 @@ btCollisionShape *readCollisionShape(YAML::Node node)
                 float radius = node["radius"].as<float>();
                 float height = node["height"].as<float>();
                 collisionShape = new btConeShape(radius, height);
-        }
-        if(shape == "SPHERE") {
+        } else if(shape == "CAPSULE") {
+                float radius = node["radius"].as<float>();
+                float height = node["height"].as<float>();
+                collisionShape = new btCapsuleShape(radius, height);
+        } else if(shape == "SPHERE") {
                 float radius = node["radius"].as<float>();
                 collisionShape = new btSphereShape(radius);
-        }
-        if(shape == "CYLINDER") {
+        } else if(shape == "CYLINDER") {
                 btVector3 halfExtents = node["half-extents"]
                         .as<btVector3>();
                 collisionShape = new btCylinderShape(halfExtents);

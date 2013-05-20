@@ -22,6 +22,7 @@ SHAPE_BOX = 'BOX'
 SHAPE_SPHERE = 'SPHERE'
 SHAPE_CYLINDER = 'CYLINDER'
 SHAPE_CONE = 'CONE'
+SHAPE_CAPSULE = 'CAPSULE'
 
 DIMENSIONS = set(['half-extents'])
 
@@ -67,11 +68,14 @@ def get_shape(obj, y_up):
         properties = {'shape':shape, 'mass':mass}
         if shape == SHAPE_BOX:
                 properties['half-extents'] = bound_box.dimensions / 2
-        if shape == SHAPE_SPHERE:
+        elif shape == SHAPE_SPHERE:
                 properties['radius'] = max(bound_box.dimensions) / 2
-        if shape == SHAPE_CYLINDER:
+        elif shape == SHAPE_CYLINDER:
                 properties['half-extents'] = bound_box.dimensions / 2
-        if shape == SHAPE_CONE:
+        elif shape == SHAPE_CAPSULE:
+                properties['radius'] = bound_box.dimensions.x / 2
+                properties['height'] = bound_box.dimensions.y
+        elif shape == SHAPE_CONE:
                 properties['radius'] = bound_box.dimensions.x / 2
                 properties['height'] = bound_box.dimensions.z
         properties['origin'] = bound_box.location
