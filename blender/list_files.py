@@ -1,12 +1,11 @@
 import yaml
 import sys
-import string
 
 files = []
 data = yaml.load(open(sys.argv[1], "r"))
 
 def to_blender(filename):
-        filename = string.rsplit(filename, '.', 1)[0]
+        filename = filename.rsplit('.', 1)[0]
         return filename + '.blend'
 
 def process_model(model):
