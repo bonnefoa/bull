@@ -70,6 +70,11 @@ btCollisionShape *readCollisionShape(YAML::Node node)
                         .as<btVector3>();
                 collisionShape = new btBoxShape(halfExtent);
         }
+        if(shape == "SPHERE") {
+                float radius = node["radius"]
+                        .as<float>();
+                collisionShape = new btSphereShape(radius);
+        }
         return collisionShape;
 }
 

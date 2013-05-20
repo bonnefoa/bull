@@ -26,9 +26,11 @@
 **** DONE Simple box shape
 ** DONE Add bullet debut
 ** IN PROGRESS Allow to draw more complex shape
-*** TODO Handle exported shapes from blender
-**** TODO Read yaml file
-**** TODO Map model name to meshes in dae file
+*** TODO Add Sphere
+*** TODO Add Cone
+*** DONE Handle exported shapes from blender
+**** DONE Read yaml file
+**** DONE Map model name to meshes in dae file
 * DONE Beautify
 ** DONE Add texture
 ** DONE Add shadow
