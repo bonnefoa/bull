@@ -9,7 +9,7 @@ btVector3 convertAiColorToBtVector(aiColor3D color)
 
 btVector3 convertAiVectorToBtVector(aiVector3D vec)
 {
-        return btVector3(vec.x, vec.z, -vec.y);
+        return btVector3(vec.x, vec.y, vec.z);
 }
 
 std::vector <btVector3> loadVertices(aiMesh *mesh)
