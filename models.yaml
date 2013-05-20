@@ -1,0 +1,40 @@
+lights:
+        - name: simple light
+          filename: /home/sora/blender/light.dae
+          position: [0.0, 5.0, 0.0]
+models:
+        - name: suzanne
+          filename: /home/sora/blender/suzanne.dae
+          image: /home/sora/blender/cubeTextured.png
+          shape: /home/sora/blender/suzanne.yaml
+          position: [4.0, 4.0, 0.0]
+
+        - name: cube
+          filename: /home/sora/blender/cubeTextured.dae
+          image: /home/sora/blender/cubeTextured.png
+          shape: /home/sora/blender/cubeTextured.yaml
+          position: [0.0, 1.0, 0.0]
+
+        - name: sphere
+          filename: /home/sora/blender/sphere.dae
+          image: /home/sora/blender/cubeTextured.png
+          shape: /home/sora/blender/sphere.yaml
+          position: [0.0, 9.0, 1.0]
+
+        - name: cone
+          filename: /home/sora/blender/cone.dae
+          image: /home/sora/blender/cubeTextured.png
+          shape: /home/sora/blender/cone.yaml
+          position: [7.0, 2.0, 7.0]
+
+        - name: cylinder
+          filename: /home/sora/blender/cylinder.dae
+          image: /home/sora/blender/cubeTextured.png
+          shape: /home/sora/blender/cylinder.yaml
+          position: [0.0, 2.0, 7.0]
+
+        - name: floor
+          filename: /home/sora/blender/floor.dae
+          shape: /home/sora/blender/floor.yaml
+          image: /home/sora/blender/cubeTextured.png
+          position: [0.0, -2.0, 0.0]
