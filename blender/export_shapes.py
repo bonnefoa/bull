@@ -62,6 +62,8 @@ def get_shape(obj, y_up):
         properties = {'shape':shape, 'mass':mass}
         if shape == SHAPE_BOX:
                 properties['half-extents'] = bound_box.dimensions / 2
+        if shape == SHAPE_SPHERE:
+                properties['radius'] = max(bound_box.dimensions) / 2
         properties['origin'] = bound_box.location
         properties['rotation'] = bound_box.matrix_local.to_quaternion()
         return convert_properties(properties, y_up)
@@ -90,9 +92,7 @@ class ExportBulletShape(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
                         f.write( "%s: %s\n" % (k, v) )
 
         def execute(self, context):
-                filepath = self.filepath
-                filepath = bpy.path.ensure_ext(filepath, self.filename_ext)
-                with open(filepath, "w") as f:
+                with open(self.filepath, "w") as f:
                         for obj in bpy.data.objects:
                                 self.process_obj(f, obj)
                 self.report({'INFO'}, "Export succeeded!")
@@ -100,8 +100,8 @@ class ExportBulletShape(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
 
         def invoke(self, context, event):
                 wm = context.window_manager
-                self.filename_file = bpy.path.display_name_from_filepath(bpy.data.filepath)
-                self.filepath = os.path.join(os.path.dirname(bpy.data.filepath), '')
+                self.filename_file = bpy.path.display_name_from_filepath(bpy.data.filepath) + self.filename_ext
+                self.filepath = os.path.join(os.path.dirname(bpy.data.filepath), self.filename_file)
                 wm.fileselect_add(self)
                 return {'RUNNING_MODAL'}
 
