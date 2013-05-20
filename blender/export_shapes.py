@@ -16,6 +16,7 @@ import bpy.props
 import mathutils
 import bpy_extras
 import os.path
+import math
 
 SHAPE_BOX = 'BOX'
 SHAPE_SPHERE = 'SPHERE'
@@ -34,6 +35,8 @@ def quaternion_z_up(q):
         return '[%g,%g,%g,%g]' % (q.w, q.x, q.y, q.z)
 
 def quaternion_y_up(q):
+        q = mathutils.Quaternion([1, 0, 0], math.pi) * q
+        q = mathutils.Quaternion([0, 1, 0], math.pi) * q
         return '[%g,%g,%g,%g]' % (q.w, q.x, q.y, q.z)
 
 def convert_properties(properties, y_up):
