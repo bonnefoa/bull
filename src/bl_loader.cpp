@@ -66,14 +66,23 @@ btCollisionShape *readCollisionShape(YAML::Node node)
         btCollisionShape *collisionShape = (btCollisionShape*)
                 malloc(sizeof(btCollisionShape));
         if(shape == "BOX") {
-                btVector3 halfExtent = node["half-extents"]
+                btVector3 halfExtents = node["half-extents"]
                         .as<btVector3>();
-                collisionShape = new btBoxShape(halfExtent);
+                collisionShape = new btBoxShape(halfExtents);
+        }
+        if(shape == "CONE") {
+                float radius = node["radius"].as<float>();
+                float height = node["height"].as<float>();
+                collisionShape = new btConeShape(radius, height);
         }
         if(shape == "SPHERE") {
-                float radius = node["radius"]
-                        .as<float>();
+                float radius = node["radius"].as<float>();
                 collisionShape = new btSphereShape(radius);
+        }
+        if(shape == "CYLINDER") {
+                btVector3 halfExtents = node["half-extents"]
+                        .as<btVector3>();
+                collisionShape = new btCylinderShape(halfExtents);
         }
         return collisionShape;
 }

@@ -19,6 +19,8 @@ import os.path
 
 SHAPE_BOX = 'BOX'
 SHAPE_SPHERE = 'SPHERE'
+SHAPE_CYLINDER = 'CYLINDER'
+SHAPE_CONE = 'CONE'
 
 DIMENSIONS = set(['half-extents'])
 
@@ -28,11 +30,11 @@ def vector_y_up(v, f):
 def vector_z_up(v, f):
         return '[%g,%g,%g]' % (f(v.x), f(v.z), f(-v.y))
 
-def quaternion_z_up(q, f):
-        return '[%g,%g,%g,%g]' % (f(q.w), f(q.x), f(q.z), f(-q.y))
+def quaternion_z_up(q):
+        return '[%g,%g,%g,%g]' % (q.w, q.x, q.y, q.z)
 
-def quaternion_y_up(q, f):
-        return '[%g,%g,%g,%g]' % (f(q.w), f(q.x), f(q.y), f(q.z))
+def quaternion_y_up(q):
+        return '[%g,%g,%g,%g]' % (q.w, q.x, q.y, q.z)
 
 def convert_properties(properties, y_up):
         results = {}
@@ -48,7 +50,7 @@ def convert_properties(properties, y_up):
                 if type(v) == mathutils.Vector:
                         results[k] = vect_to_string(v, f)
                 elif type(v) == mathutils.Quaternion:
-                        results[k] = quat_to_string(v, f)
+                        results[k] = quat_to_string(v)
                 else:
                         results[k] = v
         return results
@@ -64,6 +66,11 @@ def get_shape(obj, y_up):
                 properties['half-extents'] = bound_box.dimensions / 2
         if shape == SHAPE_SPHERE:
                 properties['radius'] = max(bound_box.dimensions) / 2
+        if shape == SHAPE_CYLINDER:
+                properties['half-extents'] = bound_box.dimensions / 2
+        if shape == SHAPE_CONE:
+                properties['radius'] = bound_box.dimensions.x / 2
+                properties['height'] = bound_box.dimensions.z
         properties['origin'] = bound_box.location
         properties['rotation'] = bound_box.matrix_local.to_quaternion()
         return convert_properties(properties, y_up)
