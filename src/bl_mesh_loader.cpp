@@ -1,4 +1,5 @@
 #include "bl_mesh_loader.h"
+#include <BulletCollision/CollisionShapes/btShapeHull.h>
 
 Assimp::Importer importer;
 
@@ -133,10 +134,17 @@ std::vector<BlLightPoint*> loadLightFile(const char *path,
 }
 
 void fillConvexShapePoints(std::vector <btVector3> *vertices,
-                btConvexHullShape *collShape) {
+                btConvexHullShape *colShape) {
+        btConvexHullShape tmpShape;
         for (std::vector<btVector3>::iterator it = vertices->begin();
                         it != vertices->end(); ++it) {
-                collShape->addPoint(*it);
+                tmpShape.addPoint(*it);
+        }
+        btShapeHull hull = btShapeHull(&tmpShape);
+        btScalar margin = tmpShape.getMargin();
+        hull.buildHull(margin);
+        for (int i=0; i<hull.numVertices(); i++) {
+                colShape->addPoint(hull.getVertexPointer()[i]);
         }
 }
 
