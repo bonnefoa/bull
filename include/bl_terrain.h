@@ -18,6 +18,10 @@ class BlTerrain
                 void loadInBuffer();
                 void drawElement();
 
+                void bindVertices(GLint locVertices);
+                void bindTextures();
+                void bindModelMatrix(GLint uniformM);
+
                 std::vector <btVector3> vertices;
                 std::vector <unsigned int> indices;
                 std::vector <unsigned int> normals;

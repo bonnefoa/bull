@@ -1,5 +1,6 @@
 #include "bl_terrain.h"
 #include <bl_image.h>
+#include <bl_matrix.h>
 
 BlTerrain::BlTerrain(unsigned int size,
                           btVector3 _position,
@@ -70,6 +71,28 @@ void BlTerrain::loadInBuffer()
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, textureBuffer);
+}
+
+void BlTerrain::bindVertices(GLint locVertices)
+{
+        glEnableVertexAttribArray(locVertices);
+        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+        glVertexAttribPointer(locVertices, 4 , GL_FLOAT
+                        , GL_FALSE, 0, (void *)0);
+}
+
+void BlTerrain::bindTextures()
+{
+        glActiveTexture(GL_TEXTURE3);
+        glBindTexture(GL_TEXTURE_2D, textureBuffer);
+}
+
+void BlTerrain::bindModelMatrix(GLint uniformModel)
+{
+        btTransform trans;
+        trans.setIdentity();
+        trans.setOrigin(position);
+        sendTransform(trans, uniformModel);
 }
 
 void BlTerrain::drawElement() {
