@@ -62,7 +62,6 @@ void BlProgramModel::bindProjection()
 void BlProgramModel::displayModel(BlModel *blModel)
 {
         blModel->bindModelMatrix(locModel);
-        sendTransform(blState->view, locView);
 
         blModel->bindVertices(locVertices);
         blModel->bindNormals(locNormals);
@@ -83,6 +82,8 @@ void BlProgramModel::displayScene(BlScene *blScene, GLuint depthTexture)
 
         glActiveTexture(GL_TEXTURE2);
         glBindTexture(GL_TEXTURE_2D, depthTexture);
+
+        sendTransform(blState->view, locView);
 
         for (std::vector<BlLightPoint*>::iterator
                         it = blScene->blLightPoints->begin();
