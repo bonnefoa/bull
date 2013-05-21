@@ -18,16 +18,16 @@
 ** DONE Allow position in xml configuration
 ** DONE Handle reload
 
-* TODO Bullet integration
+* DONE Bullet integration
 ** DONE Add mass to asset loading
 ** DONE Update world with new state
 ** DONE Create simple plan / cube object
 *** DONE Create shape from vertices
 **** DONE Simple box shape
 ** DONE Add bullet debut
-** IN PROGRESS Allow to draw more complex shape
+** DONE Allow to draw more complex shape
 *** DONE Add Sphere
-*** IN PROGRESS Add Cone
+*** DONE Add Cone
 *** DONE Add cylinder
 *** DONE Handle exported shapes from blender
 **** DONE Read yaml file
@@ -45,5 +45,10 @@
 *** DONE Add ambient lighting
 * DONE Clean
 ** DONE Check memory leak
+* IN PROGRESS Heighmap
+** IN PROGRESS Build simple grid
+** TODO Load heightmap texture
+** TODO Move vertices following heightmap
+** TODO Use bullet for heighmap collision
 * DONE Configuration
 ** DONE Allow configurable binding
