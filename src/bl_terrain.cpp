@@ -14,8 +14,9 @@ BlTerrain::BlTerrain(unsigned int _verticeNumber,
                         vertices.push_back(vert);
                 }
         }
-        for(unsigned int z = 0; z < vertices.size(); z+=verticeNumber) {
-                for(unsigned int x = z; x < z + verticeNumber; x++) {
+        unsigned int maxZ = verticeNumber * (verticeNumber - 1);
+        for(unsigned int z = 0; z < maxZ; z+=verticeNumber) {
+                for(unsigned int x = z; x < z + verticeNumber - 1; x++) {
                         indices.push_back(x);
                         indices.push_back(x + verticeNumber);
                         indices.push_back(x + 1);
