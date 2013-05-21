@@ -9,7 +9,7 @@
 class BlTerrain
 {
         public:
-                BlTerrain(unsigned int size,
+                BlTerrain(unsigned int _verticeNumber,
                           btVector3 _position,
                           const char *_image);
                 ~BlTerrain();
@@ -20,7 +20,8 @@ class BlTerrain
 
                 void bindVertices(GLint locVertices);
                 void bindTextures();
-                void bindModelMatrix(GLint uniformM);
+                void bindModelMatrix(GLint uniformModel);
+                void bindVerticeNumber(GLint locSizeTerrain);
 
                 std::vector <btVector3> vertices;
                 std::vector <unsigned int> indices;
@@ -28,12 +29,14 @@ class BlTerrain
 
                 btVector3 position;
                 const char *image;
+                unsigned int verticeNumber;
+
         private:
 
+                GLuint textureBuffer;
                 GLuint vertexBuffer;
                 GLuint indiceBuffer;
                 GLuint normalBuffer;
-                GLuint textureBuffer;
 };
 
 #endif

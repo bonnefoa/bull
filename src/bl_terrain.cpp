@@ -1,27 +1,28 @@
 #include "bl_terrain.h"
 #include <bl_image.h>
 #include <bl_matrix.h>
+#include <bl_log.h>
 
-BlTerrain::BlTerrain(unsigned int size,
+BlTerrain::BlTerrain(unsigned int _verticeNumber,
                           btVector3 _position,
                           const char *_image)
-        : position(_position), image(_image)
+        : position(_position), image(_image), verticeNumber(_verticeNumber)
 {
-        for(unsigned int z = 0; z < size; z++) {
-                for(unsigned int x = 0; x < size; x++) {
+        for(unsigned int z = 0; z < verticeNumber; z++) {
+                for(unsigned int x = 0; x < verticeNumber; x++) {
                         btVector3 vert = btVector3(x, 0, z);
                         vertices.push_back(vert);
                 }
         }
-        for(unsigned int z = 0; z < vertices.size(); z+=size) {
-                for(unsigned int x = z; x < z + size; x++) {
+        for(unsigned int z = 0; z < vertices.size(); z+=verticeNumber) {
+                for(unsigned int x = z; x < z + verticeNumber; x++) {
                         indices.push_back(x);
-                        indices.push_back(x + size);
+                        indices.push_back(x + verticeNumber);
                         indices.push_back(x + 1);
 
                         indices.push_back(x + 1);
-                        indices.push_back(x + size);
-                        indices.push_back(x + size + 1);
+                        indices.push_back(x + verticeNumber);
+                        indices.push_back(x + verticeNumber + 1);
                 }
         }
 }
@@ -33,6 +34,7 @@ void BlTerrain::init()
         glGenBuffers(1, &normalBuffer);
 
         if(image != NULL) {
+                INFO("Loading image %s for terrain\n", image);
                 glGenTextures(1, &textureBuffer);
                 BlImage *blImage = readPngImage(image);
                 blImage->loadInBuffer(textureBuffer);
@@ -81,9 +83,14 @@ void BlTerrain::bindVertices(GLint locVertices)
                         , GL_FALSE, 0, (void *)0);
 }
 
+void BlTerrain::bindVerticeNumber(GLint locSizeTerrain)
+{
+        glUniform1i(locSizeTerrain, verticeNumber);
+}
+
 void BlTerrain::bindTextures()
 {
-        glActiveTexture(GL_TEXTURE3);
+        glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, textureBuffer);
 }
 

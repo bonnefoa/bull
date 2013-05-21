@@ -46,8 +46,8 @@
 * DONE Clean
 ** DONE Check memory leak
 * IN PROGRESS Heighmap
-** IN PROGRESS Build simple grid
-** TODO Load heightmap texture
+** DONE Build simple grid
+** IN PROGRESS Load heightmap texture
 ** TODO Move vertices following heightmap
 ** TODO Use bullet for heighmap collision
 * DONE Configuration
