@@ -106,3 +106,14 @@ btTransform buildMVPMatrix(btVector3 position, btTransform projection,
         btTransform MVP = projection * view * model;
         return MVP;
 }
+
+btTransform buildModelMatrix(btVector3 scale, btVector3 position)
+{
+        btMatrix3x3 basis;
+        basis.setIdentity();
+        basis = basis.scaled(scale);
+        btTransform result;
+        result.setBasis(basis);
+        result.setOrigin(position);
+        return result;
+}

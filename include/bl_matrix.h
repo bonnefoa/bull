@@ -22,5 +22,6 @@ btTransform computeVPShadowMatrix(btVector3 position);
 void bindProjectionMatrix(GLint programId, GLuint locProjection, btTransform projection);
 btTransform buildMVPMatrix(btVector3 position, btTransform projection,
                 btTransform view);
+btTransform buildModelMatrix(btVector3 scale, btVector3 position);
 
 #endif
