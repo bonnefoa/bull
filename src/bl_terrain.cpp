@@ -1,25 +1,26 @@
 #include "bl_terrain.h"
 #include <bl_image.h>
 
-BlTerrain::BlTerrain(unsigned int vertNumbers,
+BlTerrain::BlTerrain(unsigned int size,
+                          btVector3 _position,
                           const char *_image)
-        : image(_image)
+        : position(_position), image(_image)
 {
-        for(unsigned int z = 0; z < vertNumbers; z++) {
-                for(unsigned int x = 0; x < vertNumbers; x++) {
+        for(unsigned int z = 0; z < size; z++) {
+                for(unsigned int x = 0; x < size; x++) {
                         btVector3 vert = btVector3(x, 0, z);
                         vertices.push_back(vert);
                 }
         }
-        for(unsigned int z = 0; z < vertices.size(); z+=vertNumbers) {
-                for(unsigned int x = z; x < z + vertNumbers; x++) {
+        for(unsigned int z = 0; z < vertices.size(); z+=size) {
+                for(unsigned int x = z; x < z + size; x++) {
                         indices.push_back(x);
-                        indices.push_back(x + vertNumbers);
+                        indices.push_back(x + size);
                         indices.push_back(x + 1);
 
                         indices.push_back(x + 1);
-                        indices.push_back(x + vertNumbers);
-                        indices.push_back(x + vertNumbers + 1);
+                        indices.push_back(x + size);
+                        indices.push_back(x + size + 1);
                 }
         }
 }

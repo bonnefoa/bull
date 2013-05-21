@@ -9,7 +9,8 @@
 class BlTerrain
 {
         public:
-                BlTerrain(unsigned int vertNumbers,
+                BlTerrain(unsigned int size,
+                          btVector3 _position,
                           const char *_image);
                 ~BlTerrain();
 
@@ -21,6 +22,7 @@ class BlTerrain
                 std::vector <unsigned int> indices;
                 std::vector <unsigned int> normals;
 
+                btVector3 position;
                 const char *image;
         private:
 
