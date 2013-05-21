@@ -17,7 +17,7 @@ void BlImage::loadInBuffer(GLuint textureBuffer)
                         width, height);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
                         width, height,
-                        0, GL_RGBA, GL_UNSIGNED_BYTE,
+                        0, format, GL_UNSIGNED_BYTE,
                         pixels);
 }
 
