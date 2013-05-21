@@ -5,6 +5,7 @@
 #include <bl_program_model.h>
 #include <bl_program_shadow.h>
 #include <bl_program_texture.h>
+#include <bl_program_terrain.h>
 #include <bl_scene.h>
 #include <bl_simulation.h>
 #include <bl_window.h>
@@ -16,6 +17,7 @@ BlWindow *blWindow;
 
 BlSimulation *blSimulation;
 BlProgramModel *blProgramModel;
+BlProgramTerrain *blProgramTerrain;
 BlProgramShadow *blProgramShadow;
 BlProgramTexture *blProgramTexture;
 
@@ -39,6 +41,7 @@ void initBullora()
 
         blSimulation = new BlSimulation(blConfig, blState);
         blProgramModel = getProgramModel(blInput, blConfig, blState);
+        blProgramTerrain = getProgramTerrain(blConfig, blState);
         blProgramTexture = getProgramTexture();
         blProgramShadow = getProgramShadow(btVector3());
 }
@@ -48,6 +51,7 @@ void clean()
         delete blProgramModel;
         delete blProgramShadow;
         delete blProgramTexture;
+        delete blProgramTerrain;
         delete blScene;
         delete blSimulation;
         delete blInput;
@@ -65,12 +69,20 @@ void initScene(char *filename)
 {
         blScene = loadScene(filename);
         blProgramModel->bindProjection();
+        blProgramTerrain->bindProjection();
         for (std::vector<BlModel*>::iterator it = blScene->blModels->begin();
                         it != blScene->blModels->end(); ++it) {
                 BlModel *model = *it;
                 model->init();
                 model->loadInBuffer();
                 blSimulation->addBlModel(model);
+        }
+        for (std::vector<BlTerrain*>::iterator
+                        it = blScene->blTerrains->begin();
+                        it != blScene->blTerrains->end(); ++it) {
+                BlTerrain *terrain = *it;
+                terrain->init();
+                terrain->loadInBuffer();
         }
         for (std::vector<BlLightPoint*>::iterator it = blScene->blLightPoints->begin();
                         it != blScene->blLightPoints->end(); ++it) {
@@ -108,6 +120,7 @@ void render()
         glViewport(0, 0, 1024, 1024);
         blProgramShadow->displaySceneForRender(blScene);
         blProgramModel->displayScene(blScene, blProgramShadow->depthTexture);
+        blProgramTerrain->displayScene(blScene);
         blSimulation->debugDraw();
         SDL_GL_SwapWindow(blWindow->window);
 }
