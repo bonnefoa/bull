@@ -21,6 +21,7 @@ void BlLightPoint::moveLight(btVector3 newPosition, GLuint programId)
 
 void BlLightPoint::loadInBuffer(GLuint programId)
 {
+        glUseProgram(programId);
         GLint locConstantAttenuation = glGetUniformLocation(programId,
                    "lightConstantAttenuation");
         GLint locLinearAttenuation = glGetUniformLocation(programId,
