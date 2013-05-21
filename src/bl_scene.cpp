@@ -13,4 +13,10 @@ BlScene::~BlScene()
         }
         delete blLightPoints;
         delete blLightAmbient;
+
+        for (std::vector<BlTerrain*>::iterator it = blTerrains->begin();
+                        it != blTerrains->end(); ++it) {
+                delete (*it);
+        }
+        delete blTerrains;
 }

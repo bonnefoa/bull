@@ -127,6 +127,17 @@ btRigidBody *readShapeNode(YAML::Node node, btVector3 position)
         return body;
 }
 
+BlTerrain* loadTerrain(YAML::Node node)
+{
+        std::string name = node["name"].as<std::string>();
+        unsigned int size = node["size"].as<unsigned int>();
+        const char *image = strduplicate(
+                        (node["image"].as<std::string>()).c_str());
+        btVector3 position = readPosition(node["position"]);
+        BlTerrain *blTerrain = new BlTerrain(size, position, image);
+        return blTerrain;
+}
+
 std::vector<BlModel*> loadModel(YAML::Node node)
 {
         std::string modelPath = node["filename"].as<std::string>();
@@ -157,6 +168,7 @@ std::vector<BlLightPoint*> loadLightNode(YAML::Node node)
 
 BlScene *loadScene(const char *filename)
 {
+        std::vector<BlTerrain*> *terrains = new std::vector<BlTerrain*>();
         std::vector<BlModel*> *models = new std::vector<BlModel*>();
         std::vector<BlLightPoint*> *lights = new std::vector<BlLightPoint*>();
         BlLightAmbient* ambient = new BlLightAmbient(btVector3());
@@ -169,16 +181,22 @@ BlScene *loadScene(const char *filename)
                         lights->push_back(nodeLights[i]);
                 }
         }
-        YAML::Node modelNodex = config["models"];
-        for(YAML::const_iterator it=modelNodex.begin();
-                        it!=modelNodex.end();++it) {
+        YAML::Node configModel = config["models"];
+        for(YAML::const_iterator it=configModel.begin();
+                        it!=configModel.end();++it) {
                 std::vector<BlModel*> nodeModels = loadModel(*it);
                 for (unsigned int i = 0; i < nodeModels.size(); i++) {
                         models->push_back(nodeModels[i]);
                 }
         }
+        YAML::Node configTerrain = config["terrains"];
+        for(YAML::const_iterator it=configTerrain.begin();
+                        it!=configTerrain.end();++it) {
+                BlTerrain *nodeTerrain = loadTerrain(*it);
+                terrains->push_back(nodeTerrain);
+        }
         if(config["ambient"]) {
                 ambient = loadAmbientNode(config["ambient"]);
         }
-        return new BlScene(models, lights, ambient);
+        return new BlScene(models, lights, ambient, terrains);
 }
