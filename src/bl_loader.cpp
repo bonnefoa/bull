@@ -85,7 +85,10 @@ btCollisionShape *readCollisionShape(YAML::Node node)
                 btVector3 halfExtents = node["half-extents"]
                         .as<btVector3>();
                 collisionShape = new btCylinderShape(halfExtents);
+        } else if(shape == "CONVEX_HULL") {
+                collisionShape = new btConvexHullShape();
         }
+
         return collisionShape;
 }
 

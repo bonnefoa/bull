@@ -132,6 +132,14 @@ std::vector<BlLightPoint*> loadLightFile(const char *path,
         return res;
 }
 
+void fillConvexShapePoints(std::vector <btVector3> *vertices,
+                btConvexHullShape *collShape) {
+        for (std::vector<btVector3>::iterator it = vertices->begin();
+                        it != vertices->end(); ++it) {
+                collShape->addPoint(*it);
+        }
+}
+
 std::vector<BlModel*> loadModelFile(const char *modelPath,
                 btVector3 position, btRigidBody *rigidBody, const char *image)
 {
@@ -157,6 +165,11 @@ std::vector<BlModel*> loadModelFile(const char *modelPath,
                                 vertices.size(), indices.size(), uvs.size(),
                                 normals.size(), tangents.size(),
                                 bitangents.size());
+                if(rigidBody && rigidBody->getCollisionShape()->getShapeType()
+                                == CONVEX_HULL_SHAPE_PROXYTYPE) {
+                        btConvexHullShape *colShape = (btConvexHullShape*) rigidBody->getCollisionShape();
+                        fillConvexShapePoints(&vertices, colShape);
+                }
                 BlModel *blModel = new BlModel(vertices, indices, normals,
                                 tangents, bitangents,
                                 uvs, position, rigidBody, modelPath, image);
