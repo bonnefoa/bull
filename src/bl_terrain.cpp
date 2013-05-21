@@ -4,9 +4,9 @@
 #include <bl_log.h>
 
 BlTerrain::BlTerrain(unsigned int _verticeNumber,
-                          btVector3 _position,
+                          btTransform _model,
                           const char *_image)
-        : position(_position), image(_image), verticeNumber(_verticeNumber)
+        : model(_model), image(_image), verticeNumber(_verticeNumber)
 {
         for(unsigned int z = 0; z < verticeNumber; z++) {
                 for(unsigned int x = 0; x < verticeNumber; x++) {
@@ -96,10 +96,7 @@ void BlTerrain::bindTextures()
 
 void BlTerrain::bindModelMatrix(GLint uniformModel)
 {
-        btTransform trans;
-        trans.setIdentity();
-        trans.setOrigin(position);
-        sendTransform(trans, uniformModel);
+        sendTransform(model, uniformModel);
 }
 
 void BlTerrain::drawElement() {

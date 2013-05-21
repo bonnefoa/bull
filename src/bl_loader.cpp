@@ -1,4 +1,5 @@
 #include "bl_loader.h"
+#include <bl_matrix.h>
 
 namespace YAML {
         template<>
@@ -45,7 +46,7 @@ namespace YAML {
                 };
 }
 
-btVector3 readPosition(YAML::Node node)
+btVector3 readVector3(YAML::Node node)
 {
         if(!node) {
                 return btVector3();
@@ -133,8 +134,11 @@ BlTerrain* loadTerrain(YAML::Node node)
         unsigned int size = node["size"].as<unsigned int>();
         const char *image = strduplicate(
                         (node["image"].as<std::string>()).c_str());
-        btVector3 position = readPosition(node["position"]);
-        BlTerrain *blTerrain = new BlTerrain(size, position, image);
+        btVector3 position = readVector3(node["position"]);
+        btVector3 scale = readVector3(node["scale"]);
+        btTransform model = buildModelMatrix(scale, position);
+
+        BlTerrain *blTerrain = new BlTerrain(size, model, image);
         return blTerrain;
 }
 
@@ -145,7 +149,7 @@ std::vector<BlModel*> loadModel(YAML::Node node)
         if(node["image"]) {
                 image = strduplicate((node["image"].as<std::string>()).c_str());
         }
-        btVector3 position = readPosition(node["position"]);
+        btVector3 position = readVector3(node["position"]);
         btRigidBody *rigidBody = readShapeNode(node, position);
         return loadModelFile(modelPath.c_str(), position,
                         rigidBody, image);
@@ -161,7 +165,7 @@ std::vector<BlLightPoint*> loadLightNode(YAML::Node node)
 {
         std::string modelPath = node["filename"].as<std::string>();
         std::vector<BlModel*> nodeModels = loadModel(node);
-        btVector3 position = readPosition(node["position"]);
+        btVector3 position = readVector3(node["position"]);
         return loadLightFile(modelPath.c_str(),
                         position, new std::vector<BlModel*>(nodeModels));
 }

@@ -47,8 +47,9 @@
 ** DONE Check memory leak
 * IN PROGRESS Heighmap
 ** DONE Build simple grid
-** IN PROGRESS Load heightmap texture
-** TODO Move vertices following heightmap
+** DONE Load heightmap texture
+** DONE Move vertices following heightmap
+** IN PROGRESS Allow height and width configuration for terrain proportion
 ** TODO Use bullet for heighmap collision
 * DONE Configuration
 ** DONE Allow configurable binding

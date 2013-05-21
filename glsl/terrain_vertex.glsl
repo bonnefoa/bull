@@ -14,8 +14,9 @@ out vec2 UV;
 void main()
 {
         UV = vertexPosition_modelspace.xz / verticeNumber;
-        float height = texture(samplerTexture, UV).x;
+        float heightPoint = texture(samplerTexture, UV).x;
 
-        gl_Position = P * V * M * vec4(vertexPosition_modelspace, 1.0f);
-        gl_Position.y += height;
+        vec3 elevatedVertice = vertexPosition_modelspace;
+        elevatedVertice.y += heightPoint;
+        gl_Position = P * V * M * vec4(elevatedVertice, 1.0f);
 }
