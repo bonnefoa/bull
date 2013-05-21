@@ -88,7 +88,14 @@ btCollisionShape *readCollisionShape(YAML::Node node)
         } else if(shape == "CONVEX_HULL") {
                 collisionShape = new btConvexHullShape();
         }
-
+        float margin = 0.0f;
+        if(node["margin"]) {
+                margin = node["margin"].as<float>();
+        }
+        collisionShape->setMargin(margin);
+        INFO("Collision shape of type %s, margin %f\n",
+                        collisionShape->getName(),
+                        collisionShape->getMargin());
         return collisionShape;
 }
 

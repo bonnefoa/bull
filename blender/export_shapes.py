@@ -61,11 +61,12 @@ def convert_properties(properties, y_up):
 
 def get_shape(obj, y_up):
         shape = obj.rigid_body.collision_shape
+        margin = obj.rigid_body.collision_margin
         bound_box = obj.bound_box.data
         mass = obj.rigid_body.mass
         if obj.rigid_body.type == 'PASSIVE':
                 mass = 0.0
-        properties = {'shape':shape, 'mass':mass}
+        properties = {'shape':shape, 'mass':mass, 'margin':margin}
         if shape == SHAPE_BOX:
                 properties['half-extents'] = bound_box.dimensions / 2
         elif shape == SHAPE_SPHERE:
