@@ -31,7 +31,6 @@ class BlModel {
                         , image(_image) { };
                 void init();
                 void loadInBuffer();
-                bool loadAsset(void);
 
                 void bindVertices(GLint locationVertex);
                 void bindNormals(GLint locNormals);
