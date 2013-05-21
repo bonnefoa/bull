@@ -2,7 +2,15 @@ lights:
         - name: simple light
           filename: /home/sora/blender/light.dae
           position: [0.0, 5.0, 0.0]
+
+terrains:
+        - name: floor
+          size: 40
+          image: /home/sora/blender/heightmap.png
+          position: [0.0, -2.0, 0.0]
+
 models:
+
         - name: suzanne
           filename: /home/sora/blender/suzanne.dae
           image: /home/sora/blender/cubeTextured.png
@@ -33,14 +41,14 @@ models:
           shape: /home/sora/blender/cylinder.yaml
           position: [0.0, 2.0, 7.0]
 
-        - name: floor
-          filename: /home/sora/blender/floor.dae
-          shape: /home/sora/blender/floor.yaml
-          image: /home/sora/blender/cubeTextured.png
-          position: [0.0, -2.0, 0.0]
-
         - name: capsule
           filename: /home/sora/blender/capsule.dae
           shape: /home/sora/blender/capsule.yaml
           image: /home/sora/blender/cubeTextured.png
           position: [2.0, 2.0, 2.0]
+
+        - name: sword
+          filename: /home/sora/blender/sword.dae
+          shape: /home/sora/blender/sword.yaml
+          image: /home/sora/blender/sword.png
+          position: [2.0, 9.0, 2.0]
