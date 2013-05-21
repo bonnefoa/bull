@@ -95,3 +95,14 @@ void bindProjectionMatrix(GLint programId, GLuint locProjection, btTransform pro
         mat[11] = -1.0f;
         glUniformMatrix4fv(locProjection, 1, GL_FALSE, mat);
 }
+
+btTransform buildMVPMatrix(btVector3 position, btTransform projection,
+                btTransform view)
+{
+        btTransform model;
+        model.setIdentity();
+        model.setOrigin(position);
+
+        btTransform MVP = projection * view * model;
+        return MVP;
+}
