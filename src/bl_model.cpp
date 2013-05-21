@@ -53,25 +53,21 @@ void BlModel::loadInBuffer()
         glBufferData(GL_ARRAY_BUFFER,
                         vertices.size() * sizeof(btVector3),
                         &vertices[0], GL_STATIC_DRAW);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
 
         glBindBuffer(GL_ARRAY_BUFFER, normalBuffer);
         glBufferData(GL_ARRAY_BUFFER
                         , normals.size() * sizeof(btVector3)
                         , &normals[0], GL_STATIC_DRAW);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
 
         glBindBuffer(GL_ARRAY_BUFFER, tangentBuffer);
         glBufferData(GL_ARRAY_BUFFER
                         , tangents.size() * sizeof(btVector3)
                         , &tangents[0], GL_STATIC_DRAW);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
 
         glBindBuffer(GL_ARRAY_BUFFER, bitangentBuffer);
         glBufferData(GL_ARRAY_BUFFER
                         , bitangents.size() * sizeof(btVector3)
                         , &bitangents[0], GL_STATIC_DRAW);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indiceBuffer);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER
