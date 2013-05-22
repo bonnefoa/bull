@@ -1,12 +1,21 @@
 #include "bl_terrain.h"
-#include <bl_image.h>
 #include <bl_matrix.h>
 #include <bl_log.h>
+#include <BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h>
 
-BlTerrain::BlTerrain(unsigned int _verticeNumber,
-                          btTransform _model,
-                          const char *_image)
-        : model(_model), image(_image), verticeNumber(_verticeNumber)
+BlTerrain::BlTerrain(
+                int   _heightWidth,
+                int   _heightLenght,
+                float _heightScale,
+                float _minHeight,
+                float _maxHeight,
+                unsigned int _verticeNumber,
+                btTransform _model,
+                const char *_image)
+        : heightWidth(_heightWidth), heightLenght(_heightLenght),
+                heightScale(_heightScale), minHeight(_minHeight),
+                maxHeight(_maxHeight),
+                model(_model), image(_image), verticeNumber(_verticeNumber)
 {
         for(unsigned int z = 0; z < verticeNumber; z++) {
                 for(unsigned int x = 0; x < verticeNumber; x++) {
@@ -28,6 +37,31 @@ BlTerrain::BlTerrain(unsigned int _verticeNumber,
         }
 }
 
+void BlTerrain::createRigidBody()
+{
+        int upAxis = 1;
+        btHeightfieldTerrainShape *shape =
+                new btHeightfieldTerrainShape(
+                                heightWidth,
+                                heightLenght,
+                                blImage->pixels,
+                                heightScale,
+                                minHeight,
+                                maxHeight,
+                                upAxis,
+                                PHY_UCHAR,
+                                false
+                                );
+        float mass = 0.0f;
+        btDefaultMotionState *motionState = NULL;
+        btVector3 localInertia(0,0,0);
+
+        btRigidBody::btRigidBodyConstructionInfo rbInfo(mass
+                        , motionState, shape, localInertia);
+        rigidBody = new btRigidBody(rbInfo);
+        rigidBody->proceedToTransform(model);
+}
+
 void BlTerrain::init()
 {
         glGenBuffers(1, &indiceBuffer);
@@ -37,12 +71,13 @@ void BlTerrain::init()
         if(image != NULL) {
                 INFO("Loading image %s for terrain\n", image);
                 glGenTextures(1, &textureBuffer);
-                BlImage *blImage = readPngImage(image);
+                blImage = readPngImage(image);
                 blImage->loadInBuffer(textureBuffer);
-                delete blImage;
+                createRigidBody();
         } else {
                 textureBuffer = 0;
         }
+
 }
 
 BlTerrain::~BlTerrain()
@@ -52,6 +87,7 @@ BlTerrain::~BlTerrain()
         glDeleteBuffers(1, &normalBuffer);
         if(textureBuffer > 0)
                 glDeleteTextures(1, &textureBuffer);
+        delete blImage;
 }
 
 void BlTerrain::loadInBuffer()

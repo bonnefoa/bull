@@ -138,7 +138,17 @@ BlTerrain* loadTerrain(YAML::Node node)
         btVector3 scale = readVector3(node["scale"]);
         btTransform model = buildModelMatrix(scale, position);
 
-        BlTerrain *blTerrain = new BlTerrain(size, model, image);
+        int   heightWidth = node["heightWidth"].as<int>();
+        int   heightLenght = node["heightLenght"].as<int>();
+        float heightScale = node["heightScale"].as<float>();
+        float minHeight = node["minHeight"].as<float>();
+        float maxHeight = node["maxHeight"].as<float>();
+
+        BlTerrain *blTerrain = new BlTerrain(
+                        heightWidth, heightLenght,
+                        heightScale, minHeight,
+                        maxHeight,
+                        size, model, image);
         return blTerrain;
 }
 

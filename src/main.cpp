@@ -83,6 +83,7 @@ void initScene(const char *filename)
                 BlTerrain *terrain = *it;
                 terrain->init();
                 terrain->loadInBuffer();
+                blSimulation->addRigidBody(terrain->rigidBody);
         }
         for (std::vector<BlLightPoint*>::iterator it = blScene->blLightPoints->begin();
                         it != blScene->blLightPoints->end(); ++it) {

@@ -5,13 +5,20 @@
 #include <GL/gl.h>
 #include <vector>
 #include <bullet.h>
+#include <bl_image.h>
 
 class BlTerrain
 {
         public:
-                BlTerrain(unsigned int _verticeNumber,
-                          btTransform _model,
-                          const char *_image);
+                BlTerrain(
+                                int   _heightWidth,
+                                int   _heightLenght,
+                                float _heightScale,
+                                float _minHeight,
+                                float _maxHeight,
+                                unsigned int _verticeNumber,
+                                btTransform _model,
+                                const char *_image);
                 ~BlTerrain();
 
                 void init();
@@ -27,11 +34,20 @@ class BlTerrain
                 std::vector <unsigned int> indices;
                 std::vector <unsigned int> normals;
 
+                int heightWidth;
+                int heightLenght;
+                float heightScale;
+                float minHeight;
+                float maxHeight;
+
+                btRigidBody *rigidBody;
                 btTransform model;
                 const char *image;
                 unsigned int verticeNumber;
+                BlImage *blImage;
 
         private:
+                void createRigidBody();
 
                 GLuint textureBuffer;
                 GLuint vertexBuffer;
