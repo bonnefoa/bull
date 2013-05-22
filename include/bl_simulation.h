@@ -13,7 +13,7 @@ class BlSimulation {
                 void doSimulation();
                 virtual ~BlSimulation();
                 void step(void);
-                void addBlModel(BlModel *blModel);
+                void addRigidBody(btRigidBody *rigidBody);
                 void clearWorld(void);
                 void toggleDebug(int debugState);
                 void debugDraw();

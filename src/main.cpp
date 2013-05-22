@@ -75,7 +75,7 @@ void initScene(const char *filename)
                 BlModel *model = *it;
                 model->init();
                 model->loadInBuffer();
-                blSimulation->addBlModel(model);
+                blSimulation->addRigidBody(model->rigidBody);
         }
         for (std::vector<BlTerrain*>::iterator
                         it = blScene->blTerrains->begin();

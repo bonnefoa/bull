@@ -30,10 +30,10 @@ BlSimulation::~BlSimulation()
         delete collisionConfiguration;
 }
 
-void BlSimulation::addBlModel(BlModel *blModel)
+void BlSimulation::addRigidBody(btRigidBody *rigidBody)
 {
-        if(blModel->rigidBody) {
-                dynamicsWorld->addRigidBody(blModel->rigidBody);
+        if(rigidBody) {
+                dynamicsWorld->addRigidBody(rigidBody);
         }
 }
 
