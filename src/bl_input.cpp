@@ -71,7 +71,7 @@ void BlInput::handleKeyDown(SDL_Event *event)
         } else if(sym == blConfig->key_alt_escape) {
                 blState->gamestate = QUIT;
         } else if(sym == blConfig->key_reload) {
-                blState->gamestate = RELOAD;
+                blState->reload(mod);
         } else if(sym == blConfig->key_light) {
                 blState->light();
         } else if(sym == blConfig->key_pause) {

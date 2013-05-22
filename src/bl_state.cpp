@@ -17,6 +17,16 @@ void BlState::forward(SDL_Keymod mod)
         incrementAxis(mod, &axisUp, &sAxisUp);
 }
 
+void BlState::reload(SDL_Keymod mod)
+{
+        if(mod == KMOD_LSHIFT) {
+                gamestate = RELOAD_KEEP_STATE;
+        } else {
+                gamestate = RELOAD;
+        }
+}
+
+
 void BlState::back(SDL_Keymod mod)
 {
         incrementAxis(mod, &axisDown, &sAxisDown);

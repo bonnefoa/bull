@@ -10,6 +10,7 @@ enum gamestate_enum {
         NORMAL,
         QUIT,
         RELOAD,
+        RELOAD_KEEP_STATE,
         STOP,
 };
 
@@ -65,6 +66,7 @@ class BlState {
                 void back(SDL_Keymod mod);
                 void left(SDL_Keymod mod);
                 void right(SDL_Keymod mod);
+                void reload(SDL_Keymod mod);
                 void light();
                 void pause();
 

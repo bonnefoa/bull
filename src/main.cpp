@@ -65,7 +65,7 @@ void shutdown()
         delete blWindow;
 }
 
-void initScene(char *filename)
+void initScene(const char *filename)
 {
         blScene = loadScene(filename);
         blProgramModel->bindProjection();
@@ -138,14 +138,37 @@ void mainLoop()
         render();
 }
 
+void reload(const char *configFile)
+{
+        clean();
+        initBullora();
+        initScene(configFile);
+        blState->gamestate = NORMAL;
+}
+
+void reloadKeepPosition(const char *configFile)
+{
+        int oldDebugState = blSimulation->getDebugState();
+        btVector3 oldPosition = blState->position;
+        float oldPhi = blState->phi;
+        float oldTheta = blState->theta;
+        reload(configFile);
+        blState->phi = oldPhi;
+        blState->theta = oldTheta;
+        blState->position = oldPosition;
+        blSimulation->toggleDebug(oldDebugState);
+}
+
 int main(int argc, char **argv)
 {
         (void) argc;
         (void) argv;
 
+        const char *configFile = argv[1];
+
         initWindow();
         initBullora();
-        initScene(argv[1]);
+        initScene(configFile);
         setLight();
 
         while(true) {
@@ -154,11 +177,11 @@ int main(int argc, char **argv)
                         case QUIT:
                                 blWindow->shutdown();
                                 return 0;
+                        case RELOAD_KEEP_STATE:
+                                reloadKeepPosition(configFile);
+                                break;
                         case RELOAD:
-                                clean();
-                                initBullora();
-                                initScene(argv[1]);
-                                blState->gamestate = NORMAL;
+                                reload(configFile);
                                 break;
                         case NORMAL:
                                 blSimulation->step();
