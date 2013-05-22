@@ -18,6 +18,8 @@ class BlState {
                 BlState(btVector3 _position) :
                         gamestate(NORMAL),
 
+                        phi(0.0f),
+                        theta(M_PI_2),
                         position(_position),
                         view(btTransform()),
 
@@ -36,6 +38,9 @@ class BlState {
                         rightMouse(0) {};
 
                 gamestate_enum gamestate;
+
+                float phi;
+                float theta;
 
                 btVector3 position;
                 btTransform view;

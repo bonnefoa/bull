@@ -15,8 +15,6 @@ class BlInput
                 BlInput(BlState *blState, BlConfig *config);
                 void handleInput();
 
-                float phi;
-                float theta;
                 Uint32 now;
 
                 void logState();
