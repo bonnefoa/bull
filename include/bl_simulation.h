@@ -17,6 +17,7 @@ class BlSimulation {
                 void clearWorld(void);
                 void toggleDebug(int debugState);
                 void debugDraw();
+                int getDebugState();
 
         private:
                 BlState *blState;

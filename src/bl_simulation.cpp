@@ -37,6 +37,11 @@ void BlSimulation::addBlModel(BlModel *blModel)
         }
 }
 
+int BlSimulation::getDebugState()
+{
+        return dynamicsWorld->getDebugDrawer()->getDebugMode();
+}
+
 void BlSimulation::toggleDebug(int debugState)
 {
         if (debugState==0) {
