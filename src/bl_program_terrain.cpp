@@ -26,7 +26,8 @@ void BlProgramTerrain::init(void)
         locModel = glGetUniformLocation(programId, "M");
         locView = glGetUniformLocation(programId, "V");
         locProjection = glGetUniformLocation(programId, "P");
-        locVerticeNumber = glGetUniformLocation(programId, "verticeNumber");
+        locGridLenght = glGetUniformLocation(programId, "gridLenght");
+        locGridWidth = glGetUniformLocation(programId, "gridWidth");
         locVertices = glGetAttribLocation(programId
                         , "vertexPosition_modelspace");
         samplerTexture = glGetUniformLocation(programId
@@ -36,10 +37,13 @@ void BlProgramTerrain::init(void)
         INFO("Model location %i\n", locModel);
         INFO("View location %i\n", locView);
         INFO("Projection location %i\n", locProjection);
-        INFO("Vertice number location %i\n", locVerticeNumber);
+        INFO("Grid width location %i\n", locGridWidth);
+        INFO("Grid lenght location %i\n", locGridLenght);
         INFO("Vertices location %i\n", locVertices);
         if(locModel < 0 || locView < 0 || locProjection < 0 ||
-                        locVerticeNumber < 0 || locVertices < 0){
+                        locGridWidth < 0 ||
+                        locGridLenght < 0 ||
+                        locVertices < 0){
                 ERROR("unused location\n");
         }
 }
@@ -49,7 +53,7 @@ void BlProgramTerrain::displayTerrain(BlTerrain *blTerrain)
         blTerrain->bindModelMatrix(locModel);
         blTerrain->bindVertices(locVertices);
         blTerrain->bindTextures();
-        blTerrain->bindVerticeNumber(locVerticeNumber);
+        blTerrain->bindGridSize(locGridLenght, locGridWidth);
         blTerrain->drawElement();
 }
 

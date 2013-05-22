@@ -12,11 +12,10 @@ class BlTerrain
         public:
                 BlTerrain(
                                 int   _gridWidth,
-                                int   _heightLenght,
+                                int   _gridLenght,
                                 float _heightScale,
                                 float _minHeight,
                                 float _maxHeight,
-                                unsigned int _verticeNumber,
                                 btTransform _model,
                                 const char *_image);
                 ~BlTerrain();
@@ -28,7 +27,7 @@ class BlTerrain
                 void bindVertices(GLint locVertices);
                 void bindTextures();
                 void bindModelMatrix(GLint uniformModel);
-                void bindVerticeNumber(GLint locSizeTerrain);
+                void bindGridSize(GLint locGridLenght, GLint locGridWidth);
 
                 std::vector <btVector3> vertices;
                 std::vector <unsigned int> indices;
@@ -43,7 +42,6 @@ class BlTerrain
                 btRigidBody *rigidBody;
                 btTransform model;
                 const char *image;
-                unsigned int verticeNumber;
                 BlImage *blImage;
 
         private:

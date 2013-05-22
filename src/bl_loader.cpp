@@ -131,7 +131,6 @@ btRigidBody *readShapeNode(YAML::Node node, btVector3 position)
 BlTerrain* loadTerrain(YAML::Node node)
 {
         std::string name = node["name"].as<std::string>();
-        unsigned int size = node["size"].as<unsigned int>();
         const char *image = strduplicate(
                         (node["image"].as<std::string>()).c_str());
         btVector3 position = readVector3(node["position"]);
@@ -148,7 +147,7 @@ BlTerrain* loadTerrain(YAML::Node node)
                         gridWidth, gridLenght,
                         heightScale, minHeight,
                         maxHeight,
-                        size, model, image);
+                        model, image);
         return blTerrain;
 }
 

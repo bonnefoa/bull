@@ -9,7 +9,6 @@ BlTerrain::BlTerrain(
                 float _heightScale,
                 float _minHeight,
                 float _maxHeight,
-                unsigned int _verticeNumber,
                 btTransform _model,
                 const char *_image)
         : gridWidth(_gridWidth),
@@ -17,24 +16,24 @@ BlTerrain::BlTerrain(
                 heightScale(_heightScale),
                 minHeight(_minHeight),
                 maxHeight(_maxHeight),
-                model(_model), image(_image), verticeNumber(_verticeNumber)
+                model(_model), image(_image)
 {
-        for(unsigned int z = 0; z < verticeNumber; z++) {
-                for(unsigned int x = 0; x < verticeNumber; x++) {
+        for(int z = 0; z < gridLenght; z++) {
+                for(int x = 0; x < gridWidth; x++) {
                         btVector3 vert = btVector3(x, 0, z);
                         vertices.push_back(vert);
                 }
         }
-        unsigned int maxZ = verticeNumber * (verticeNumber - 1);
-        for(unsigned int z = 0; z < maxZ; z+=verticeNumber) {
-                for(unsigned int x = z; x < z + verticeNumber - 1; x++) {
+        int maxZ = gridWidth * (gridLenght - 1);
+        for(int z = 0; z < maxZ; z+=gridWidth) {
+                for(int x = z; x < z + gridWidth - 1; x++) {
                         indices.push_back(x);
-                        indices.push_back(x + verticeNumber);
+                        indices.push_back(x + gridWidth);
                         indices.push_back(x + 1);
 
                         indices.push_back(x + 1);
-                        indices.push_back(x + verticeNumber);
-                        indices.push_back(x + verticeNumber + 1);
+                        indices.push_back(x + gridWidth);
+                        indices.push_back(x + gridWidth + 1);
                 }
         }
 }
@@ -122,9 +121,10 @@ void BlTerrain::bindVertices(GLint locVertices)
                         , GL_FALSE, 0, (void *)0);
 }
 
-void BlTerrain::bindVerticeNumber(GLint locSizeTerrain)
+void BlTerrain::bindGridSize(GLint locGridLenght, GLint locGridWidth)
 {
-        glUniform1i(locSizeTerrain, verticeNumber);
+        glUniform1i(locGridWidth, gridWidth);
+        glUniform1i(locGridLenght, gridLenght);
 }
 
 void BlTerrain::bindTextures()
