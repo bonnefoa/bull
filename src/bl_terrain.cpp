@@ -4,16 +4,18 @@
 #include <BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h>
 
 BlTerrain::BlTerrain(
-                int   _heightWidth,
-                int   _heightLenght,
+                int   _gridWidth,
+                int   _gridLenght,
                 float _heightScale,
                 float _minHeight,
                 float _maxHeight,
                 unsigned int _verticeNumber,
                 btTransform _model,
                 const char *_image)
-        : heightWidth(_heightWidth), heightLenght(_heightLenght),
-                heightScale(_heightScale), minHeight(_minHeight),
+        : gridWidth(_gridWidth),
+                gridLenght(_gridLenght),
+                heightScale(_heightScale),
+                minHeight(_minHeight),
                 maxHeight(_maxHeight),
                 model(_model), image(_image), verticeNumber(_verticeNumber)
 {
@@ -42,8 +44,8 @@ void BlTerrain::createRigidBody()
         int upAxis = 1;
         btHeightfieldTerrainShape *shape =
                 new btHeightfieldTerrainShape(
-                                heightWidth,
-                                heightLenght,
+                                gridWidth,
+                                gridLenght,
                                 blImage->pixels,
                                 heightScale,
                                 minHeight,

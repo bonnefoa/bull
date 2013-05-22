@@ -11,7 +11,7 @@ class BlTerrain
 {
         public:
                 BlTerrain(
-                                int   _heightWidth,
+                                int   _gridWidth,
                                 int   _heightLenght,
                                 float _heightScale,
                                 float _minHeight,
@@ -34,8 +34,8 @@ class BlTerrain
                 std::vector <unsigned int> indices;
                 std::vector <unsigned int> normals;
 
-                int heightWidth;
-                int heightLenght;
+                int gridWidth;
+                int gridLenght;
                 float heightScale;
                 float minHeight;
                 float maxHeight;
