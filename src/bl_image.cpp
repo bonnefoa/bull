@@ -2,6 +2,8 @@
 #include <bl_log.h>
 #include <png.h>
 #include <zlib.h>
+#include <math.h>
+#include <string.h>
 
 void BlImage::loadInBuffer(GLuint textureBuffer)
 {
@@ -11,8 +13,8 @@ void BlImage::loadInBuffer(GLuint textureBuffer)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
         glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
         INFO("Loading in buffer %i image of size %i / %i\n", textureBuffer,
                         width, height);
@@ -56,6 +58,8 @@ int colorTypeToNumberChannels(int colorType)
         switch(colorType) {
                 case PNG_COLOR_TYPE_GRAY:
                         return RGB_CHANNEL;
+                case PNG_COLOR_TYPE_GRAY_ALPHA:
+                        return RGBA_CHANNEL;
                 case PNG_COLOR_TYPE_RGB:
                         return RGB_CHANNEL;
                 case PNG_COLOR_TYPE_RGB_ALPHA:
@@ -70,6 +74,8 @@ GLenum colorTypeToGlFormat(int colorType)
         switch(colorType) {
                 case PNG_COLOR_TYPE_GRAY:
                         return GL_RGB;
+                case PNG_COLOR_TYPE_GRAY_ALPHA:
+                        return GL_RGBA;
                 case PNG_COLOR_TYPE_RGB:
                         return GL_RGB;
                 case PNG_COLOR_TYPE_RGB_ALPHA:
@@ -134,7 +140,24 @@ BlImage *readPngImage(const char *filename)
         png_read_end(pngPtr, NULL);
         png_destroy_read_struct(&pngPtr, &infoPtr, NULL);
 
-        return new BlImage(width, height, lines, format, numChannels);
+        unsigned int texWidth = pow(2, ceil(log2(width)));
+        unsigned int texHeight = pow(2, ceil(log2(height)));
+        if(texWidth == width && texHeight == height) {
+                return new BlImage(width, height, lines, format, numChannels);
+        }
+
+        size_t sizePixels = sizeof(unsigned char) *
+                texWidth * texHeight * numChannels;
+        unsigned char *pixels = (unsigned char *) malloc(sizePixels);
+        memset(pixels, 0, sizePixels);
+        for (i = 0;  i < height; i++) {
+                memcpy(pixels + i * texWidth * numChannels,
+                       lines + i * width * numChannels,
+                       width * numChannels * sizeof(char));
+        }
+        free(lines);
+
+        return new BlImage(texWidth, texHeight, pixels, format, numChannels);
 }
 
 BlImage::~BlImage()
