@@ -145,8 +145,8 @@ BlTerrain* loadTerrain(YAML::Node node)
 
         BlTerrain *blTerrain = new BlTerrain(
                         gridWidth, gridLenght,
-                        heightScale, minHeight,
-                        maxHeight,
+                        heightScale,
+                        minHeight, maxHeight,
                         model, image);
         return blTerrain;
 }

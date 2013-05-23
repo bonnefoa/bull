@@ -4,11 +4,9 @@
 #include <BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h>
 
 BlTerrain::BlTerrain(
-                int   _gridWidth,
-                int   _gridLenght,
+                int   _gridWidth, int   _gridLenght,
                 float _heightScale,
-                float _minHeight,
-                float _maxHeight,
+                float _minHeight, float _maxHeight,
                 btTransform _model,
                 const char *_image)
         : gridWidth(_gridWidth),
@@ -18,9 +16,11 @@ BlTerrain::BlTerrain(
                 maxHeight(_maxHeight),
                 model(_model), image(_image)
 {
+        float deltaX = gridWidth / 2 - 0.5;
+        float deltaZ = gridLenght / 2 - 0.5;
         for(int z = 0; z < gridLenght; z++) {
                 for(int x = 0; x < gridWidth; x++) {
-                        btVector3 vert = btVector3(x, 0, z);
+                        btVector3 vert = btVector3(x - deltaX, 0, z - deltaZ);
                         vertices.push_back(vert);
                 }
         }

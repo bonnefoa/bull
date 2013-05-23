@@ -14,8 +14,8 @@ out vec2 UV;
 
 void main()
 {
-        UV = vec2(vertexPosition_modelspace.x / gridWidth,
-                  vertexPosition_modelspace.z / gridLenght);
+        UV = vec2(vertexPosition_modelspace.x / gridWidth - gridWidth / 2 + 0.5,
+                  vertexPosition_modelspace.z / gridLenght - gridLenght / 2 + 0.5);
         float heightPoint = texture(samplerTexture, UV).x;
 
         vec3 elevatedVertice = vertexPosition_modelspace;
