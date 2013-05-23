@@ -16,8 +16,8 @@ BlTerrain::BlTerrain(
                 maxHeight(_maxHeight),
                 model(_model), image(_image)
 {
-        float deltaX = gridWidth / 2 - 0.5;
-        float deltaZ = gridLenght / 2 - 0.5;
+        float deltaX = (gridWidth + 1) / 2;
+        float deltaZ = (gridLenght + 1) / 2;
         for(int z = 0; z < gridLenght; z++) {
                 for(int x = 0; x < gridWidth; x++) {
                         btVector3 vert = btVector3(x - deltaX, 0, z - deltaZ);
@@ -67,17 +67,17 @@ void BlTerrain::extractHeightmapData(BlImage *blImage)
 {
         size_t size = gridWidth * gridLenght * sizeof(char);
         heightMapData = (char *)malloc(size);
-        float lengthIncrement = blImage->height / gridLenght;
-        float widthIncrement = blImage->width / gridWidth;
+        int lengthIncrement = blImage->height / gridLenght;
+        int widthIncrement = blImage->width / gridWidth;
         for(int x = 0; x < gridWidth; x++) {
                 for(int z = 0; z < gridLenght; z++) {
                         int index = x + z * gridWidth;
-                        float pixelIndex =
+                        int pixelIndex =
                                 x * blImage->numChannels * widthIncrement
-                                + z * blImage->height * blImage->numChannels
+                                + z * blImage->width * blImage->numChannels
                                     * lengthIncrement;
                         heightMapData[index] =
-                                blImage->pixels[(int)trunc(pixelIndex)];
+                                blImage->pixels[pixelIndex];
                 }
         }
 }
