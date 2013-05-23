@@ -45,7 +45,7 @@ void BlTerrain::createRigidBody()
                 new btHeightfieldTerrainShape(
                                 gridWidth,
                                 gridLenght,
-                                blImage->pixels,
+                                heightMapData,
                                 heightScale,
                                 minHeight,
                                 maxHeight,
@@ -63,6 +63,25 @@ void BlTerrain::createRigidBody()
         rigidBody->proceedToTransform(model);
 }
 
+void BlTerrain::extractHeightmapData(BlImage *blImage)
+{
+        size_t size = gridWidth * gridLenght * sizeof(char);
+        heightMapData = (char *)malloc(size);
+        float lengthIncrement = blImage->height / gridLenght;
+        float widthIncrement = blImage->width / gridWidth;
+        for(int x = 0; x < gridWidth; x++) {
+                for(int z = 0; z < gridLenght; z++) {
+                        int index = x + z * gridWidth;
+                        float pixelIndex =
+                                x * blImage->numChannels * widthIncrement
+                                + z * blImage->height * blImage->numChannels
+                                    * lengthIncrement;
+                        heightMapData[index] =
+                                blImage->pixels[(int)trunc(pixelIndex)];
+                }
+        }
+}
+
 void BlTerrain::init()
 {
         glGenBuffers(1, &indiceBuffer);
@@ -72,9 +91,11 @@ void BlTerrain::init()
         if(image != NULL) {
                 INFO("Loading image %s for terrain\n", image);
                 glGenTextures(1, &textureBuffer);
-                blImage = readPngImage(image);
+                BlImage *blImage = readPngImage(image);
                 blImage->loadInBuffer(textureBuffer);
+                extractHeightmapData(blImage);
                 createRigidBody();
+                delete blImage;
         } else {
                 textureBuffer = 0;
         }
@@ -88,7 +109,6 @@ BlTerrain::~BlTerrain()
         glDeleteBuffers(1, &normalBuffer);
         if(textureBuffer > 0)
                 glDeleteTextures(1, &textureBuffer);
-        delete blImage;
 }
 
 void BlTerrain::loadInBuffer()

@@ -42,10 +42,11 @@ class BlTerrain
                 btRigidBody *rigidBody;
                 btTransform model;
                 const char *image;
-                BlImage *blImage;
+                char *heightMapData;
 
         private:
                 void createRigidBody();
+                void extractHeightmapData(BlImage *blImage);
 
                 GLuint textureBuffer;
                 GLuint vertexBuffer;
