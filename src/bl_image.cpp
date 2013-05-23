@@ -1,6 +1,7 @@
 #include "bl_image.h"
 #include <bl_log.h>
 #include <png.h>
+#include <zlib.h>
 
 void BlImage::loadInBuffer(GLuint textureBuffer)
 {
@@ -15,10 +16,67 @@ void BlImage::loadInBuffer(GLuint textureBuffer)
 
         INFO("Loading in buffer %i image of size %i / %i\n", textureBuffer,
                         width, height);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
+        glTexImage2D(GL_TEXTURE_2D, 0, format,
                         width, height,
                         0, format, GL_UNSIGNED_BYTE,
                         pixels);
+}
+
+void BlImage::writeImage(const char *destination)
+{
+        FILE *outfile;
+        if ((outfile = fopen(destination, "wb")) == NULL) {
+                ERROR("can't open %s", destination);
+        }
+        png_structp  pngPtr;
+        png_infop  infoPtr;
+
+        pngPtr = png_create_write_struct(PNG_LIBPNG_VER_STRING,
+                        NULL, NULL, NULL);
+        infoPtr = png_create_info_struct(pngPtr);
+        png_init_io(pngPtr, outfile);
+        png_set_compression_level(pngPtr, Z_BEST_COMPRESSION);
+
+        png_set_IHDR(pngPtr, infoPtr, width,
+                        height, 8,
+                        PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE,
+                        PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+        png_write_info(pngPtr, infoPtr);
+
+        for(unsigned int i = 0; i < height; i++) {
+                png_write_row(pngPtr,
+                                &pixels[i * width * numChannels]);
+        }
+        png_write_end(pngPtr, NULL);
+        fclose(outfile);
+}
+
+int colorTypeToNumberChannels(int colorType)
+{
+        switch(colorType) {
+                case PNG_COLOR_TYPE_GRAY:
+                        return RGB_CHANNEL;
+                case PNG_COLOR_TYPE_RGB:
+                        return RGB_CHANNEL;
+                case PNG_COLOR_TYPE_RGB_ALPHA:
+                        return RGBA_CHANNEL;
+        }
+        ERROR("Unknown color type %i\n", colorType);
+        return 0;
+}
+
+GLenum colorTypeToGlFormat(int colorType)
+{
+        switch(colorType) {
+                case PNG_COLOR_TYPE_GRAY:
+                        return GL_RGB;
+                case PNG_COLOR_TYPE_RGB:
+                        return GL_RGB;
+                case PNG_COLOR_TYPE_RGB_ALPHA:
+                        return GL_RGBA;
+        }
+        ERROR("Unknown color type %i\n", colorType);
+        return 0;
 }
 
 BlImage *readPngImage(const char *filename)
@@ -35,49 +93,46 @@ BlImage *readPngImage(const char *filename)
                 return NULL;
         }
 
-        int bit_depth;
-        int color_type;
+        int bitDepth;
+        int colorType;
         png_uint_32  i, rowbytes;
         png_uint_32 width;
         png_uint_32 height;
-        int numChannels = RGB_CHANNEL;
-        GLenum format = GL_RGB;
-        png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING
+        png_structp pngPtr = png_create_read_struct(PNG_LIBPNG_VER_STRING
                         , NULL, NULL, NULL);
-        png_infop info_ptr = png_create_info_struct(png_ptr);
+        png_infop infoPtr = png_create_info_struct(pngPtr);
 
-        png_init_io(png_ptr, infile);
-        png_set_sig_bytes(png_ptr, 8);
-        png_read_info(png_ptr, info_ptr);
-        png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth,
-                        &color_type, NULL, NULL, NULL);
-        if (color_type == PNG_COLOR_TYPE_PALETTE)
-                png_set_expand(png_ptr);
-        if (color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8)
-                png_set_expand(png_ptr);
-        if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
-                png_set_expand(png_ptr);
-        if (bit_depth == 16)
-                png_set_strip_16(png_ptr);
-        if (color_type == PNG_COLOR_TYPE_GRAY ||
-                        color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
-                png_set_gray_to_rgb(png_ptr);
-        if(color_type == PNG_COLOR_TYPE_RGB_ALPHA) {
-                numChannels = RGBA_CHANNEL;
-                format = GL_RGBA;
-        }
+        png_init_io(pngPtr, infile);
+        png_set_sig_bytes(pngPtr, 8);
+        png_read_info(pngPtr, infoPtr);
+        png_get_IHDR(pngPtr, infoPtr, &width, &height, &bitDepth,
+                        &colorType, NULL, NULL, NULL);
+        if (colorType == PNG_COLOR_TYPE_PALETTE)
+                png_set_expand(pngPtr);
+        if (colorType == PNG_COLOR_TYPE_GRAY && bitDepth < 8)
+                png_set_expand(pngPtr);
+        if (png_get_valid(pngPtr, infoPtr, PNG_INFO_tRNS))
+                png_set_expand(pngPtr);
+        if (bitDepth == 16)
+                png_set_strip_16(pngPtr);
+        if (colorType == PNG_COLOR_TYPE_GRAY ||
+                        colorType == PNG_COLOR_TYPE_GRAY_ALPHA)
+                png_set_gray_to_rgb(pngPtr);
+
+        int numChannels = colorTypeToNumberChannels(colorType);
+        GLenum format = colorTypeToGlFormat(colorType);
 
         png_bytep row_pointers[height];
-        png_read_update_info(png_ptr, info_ptr);
-        rowbytes = png_get_rowbytes(png_ptr, info_ptr);
+        png_read_update_info(pngPtr, infoPtr);
+        rowbytes = png_get_rowbytes(pngPtr, infoPtr);
 
         unsigned char *lines = (unsigned char *) malloc(sizeof(unsigned char)
                                 * width * height * numChannels);
         for (i = 0;  i < height;  ++i)
                 row_pointers[i] = lines + i*rowbytes;
-        png_read_image(png_ptr, row_pointers);
-        png_read_end(png_ptr, NULL);
-        png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+        png_read_image(pngPtr, row_pointers);
+        png_read_end(pngPtr, NULL);
+        png_destroy_read_struct(&pngPtr, &infoPtr, NULL);
 
         return new BlImage(width, height, lines, format, numChannels);
 }

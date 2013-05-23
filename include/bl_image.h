@@ -1,6 +1,7 @@
 #ifndef BL_IMAGE_H
 #define BL_IMAGE_H
 
+#define GRAY_CHANNEL 1
 #define RGB_CHANNEL 3
 #define RGBA_CHANNEL 4
 
@@ -28,6 +29,7 @@ class BlImage {
                 int numChannels;
 
                 void loadInBuffer(GLuint imageBuffer);
+                void writeImage(const char *destination);
                 virtual ~BlImage(void);
 };
 
