@@ -14,11 +14,13 @@ out vec2 UV;
 
 void main()
 {
-        UV = vec2(vertexPosition_modelspace.x / gridWidth - gridWidth / 2 + 0.5,
-                  vertexPosition_modelspace.z / gridLenght - gridLenght / 2 + 0.5);
+        UV = vec2(vertexPosition_modelspace.x / gridWidth
+                        - 2.0f / gridWidth + 0.5,
+                  vertexPosition_modelspace.z / gridLenght
+                        - 2.0f / gridLenght + 0.5);
         float heightPoint = texture(samplerTexture, UV).x;
 
         vec3 elevatedVertice = vertexPosition_modelspace;
-        elevatedVertice.y += heightPoint;
+        elevatedVertice.y += heightPoint * 255;
         gl_Position = P * V * M * vec4(elevatedVertice, 1.0f);
 }
