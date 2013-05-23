@@ -40,7 +40,7 @@ BlImage *readPngImage(const char *filename)
         png_uint_32  i, rowbytes;
         png_uint_32 width;
         png_uint_32 height;
-        int num_channel = RGB_CHANNEL;
+        int numChannels = RGB_CHANNEL;
         GLenum format = GL_RGB;
         png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING
                         , NULL, NULL, NULL);
@@ -63,7 +63,7 @@ BlImage *readPngImage(const char *filename)
                         color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
                 png_set_gray_to_rgb(png_ptr);
         if(color_type == PNG_COLOR_TYPE_RGB_ALPHA) {
-                num_channel = RGBA_CHANNEL;
+                numChannels = RGBA_CHANNEL;
                 format = GL_RGBA;
         }
 
@@ -72,14 +72,14 @@ BlImage *readPngImage(const char *filename)
         rowbytes = png_get_rowbytes(png_ptr, info_ptr);
 
         unsigned char *lines = (unsigned char *) malloc(sizeof(unsigned char)
-                                * width * height * num_channel);
+                                * width * height * numChannels);
         for (i = 0;  i < height;  ++i)
                 row_pointers[i] = lines + i*rowbytes;
         png_read_image(png_ptr, row_pointers);
         png_read_end(png_ptr, NULL);
         png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
 
-        return new BlImage(width, height, lines, format);
+        return new BlImage(width, height, lines, format, numChannels);
 }
 
 BlImage::~BlImage()

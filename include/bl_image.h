@@ -13,16 +13,19 @@ class BlImage {
                 BlImage (unsigned int _width,
                                 unsigned int _height,
                                 unsigned char * _pixels,
-                                GLenum _format) :
+                                GLenum _format,
+                                int _numChannels) :
                         width(_width),
                         height(_height),
                         pixels(_pixels),
-                        format(_format) {};
+                        format(_format),
+                        numChannels(_numChannels) {};
 
                 unsigned int width;
                 unsigned int height;
                 unsigned char *pixels;
                 GLenum format;
+                int numChannels;
 
                 void loadInBuffer(GLuint imageBuffer);
                 virtual ~BlImage(void);
