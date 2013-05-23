@@ -50,23 +50,14 @@ void BlDebugDrawer::initDebugRender()
 {
         glUseProgram(blProgramDebug->programId);
         sendTransform(blState->view, blProgramDebug->locView);
-}
-
-void BlDebugDrawer::drawLine(const btVector3& from,const btVector3& to,const btVector3& color)
-{
-        glUseProgram(blProgramDebug->programId);
-
         colors.clear();
-        colors.push_back(color);
-        colors.push_back(color);
-
         lines.clear();
-        lines.push_back(from);
-        lines.push_back(to);
-
         glEnableVertexAttribArray(blProgramDebug->locColor);
         glEnableVertexAttribArray(blProgramDebug->locVertices);
+}
 
+void BlDebugDrawer::finalizeDraw()
+{
         glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
         glBufferData(GL_ARRAY_BUFFER, colors.size() * sizeof(btVector3),
                         &colors[0], GL_STATIC_DRAW);
@@ -79,8 +70,17 @@ void BlDebugDrawer::drawLine(const btVector3& from,const btVector3& to,const btV
         glVertexAttribPointer(blProgramDebug->locVertices, 4 , GL_FLOAT
                         , GL_FALSE, 0, (void *)0);
 
-        glDrawArrays(GL_LINES, 0, 8);
+        glDrawArrays(GL_LINES, 0, lines.size());
 
         glDisableVertexAttribArray(blProgramDebug->locColor);
         glDisableVertexAttribArray(blProgramDebug->locVertices);
+}
+
+void BlDebugDrawer::drawLine(const btVector3& from,const btVector3& to,const btVector3& color)
+{
+        colors.push_back(color);
+        colors.push_back(color);
+
+        lines.push_back(from);
+        lines.push_back(to);
 }

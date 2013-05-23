@@ -23,6 +23,7 @@ class BlDebugDrawer : public btIDebugDraw {
                 virtual void setDebugMode(int debugMode);
                 virtual int getDebugMode() const;
                 void initDebugRender();
+                void finalizeDraw();
 
                 virtual ~BlDebugDrawer();
 

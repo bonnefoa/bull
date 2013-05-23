@@ -62,6 +62,7 @@ void BlSimulation::debugDraw()
         if(dynamicsWorld->getDebugDrawer()->getDebugMode() > 0) {
                 blDebugDrawer->initDebugRender();
                 dynamicsWorld->debugDrawWorld();
+                blDebugDrawer->finalizeDraw();
         }
 }
 
