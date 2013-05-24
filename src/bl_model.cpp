@@ -21,11 +21,8 @@ void BlModel::init()
                 uvBuffer = 0;
         }
 
-        if(image != NULL) {
-                glGenTextures(1, &textureBuffer);
-                BlImage *blImage = readPngImage(image);
-                blImage->loadInBuffer(textureBuffer);
-                delete blImage;
+        if(textureFile != NULL) {
+                textureBuffer = blTexture->fetchTexture(textureFile);
         } else {
                 textureBuffer = 0;
         }

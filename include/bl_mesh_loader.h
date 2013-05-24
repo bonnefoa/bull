@@ -14,12 +14,36 @@
 #include <vector>
 #include <stdio.h>
 #include <stdlib.h>
+#include <bl_texture.h>
 
-BlLightAmbient *loadAmbientFile(const char *path);
-std::vector<BlModel*> loadModelFile(const char *modelPath,
-                btVector3 position, btRigidBody *rigidBody, const char *image);
-std::vector<BlLightPoint*> loadLightFile(const char *path,
-                btVector3 position, std::vector<BlModel*> *models);
-BlLightAmbient *loadAmbientFile(const char *path);
+class BlMeshLoader
+{
+        public:
+                BlMeshLoader(BlTexture *_blTexture) :
+                        blTexture(_blTexture) {};
+                ~BlMeshLoader();
+
+                BlLightAmbient *loadAmbientFile(const char *path);
+                std::vector<BlModel*> loadModelFile(const char *modelPath,
+                                btVector3 position, btRigidBody *rigidBody,
+                                const char *image);
+                std::vector<BlLightPoint*> loadLightFile(const char *path,
+                                btVector3 position,
+                                std::vector<BlModel*> *models);
+        private:
+                BlTexture *blTexture;
+                Assimp::Importer importer;
+                btVector3 convertAiColorToBtVector(aiColor3D color);
+                btVector3 convertAiVectorToBtVector(aiVector3D vec);
+                std::vector <btVector3> loadVertices(aiMesh *mesh);
+                std::vector <btVector3> loadVerticesInformation(aiMesh *mesh,
+                                aiVector3D *infos);
+                std::vector <btVector3> loadNormals(aiMesh *mesh);
+                std::vector <unsigned int> loadIndices(aiMesh *mesh);
+                std::vector< BlUvs > loadUvs(aiMesh *mesh);
+                const aiScene *loadAssimpScene(const char *path);
+                void fillConvexShapePoints(std::vector <btVector3> *vertices,
+                                btConvexHullShape *colShape);
+};
 
 #endif

@@ -1,19 +1,17 @@
 #include "bl_mesh_loader.h"
 #include <BulletCollision/CollisionShapes/btShapeHull.h>
 
-Assimp::Importer importer;
-
-btVector3 convertAiColorToBtVector(aiColor3D color)
+btVector3 BlMeshLoader::convertAiColorToBtVector(aiColor3D color)
 {
         return btVector3(color[0], color[1], color[2]);
 }
 
-btVector3 convertAiVectorToBtVector(aiVector3D vec)
+btVector3 BlMeshLoader::convertAiVectorToBtVector(aiVector3D vec)
 {
         return btVector3(vec.x, vec.y, vec.z);
 }
 
-std::vector <btVector3> loadVertices(aiMesh *mesh)
+std::vector <btVector3> BlMeshLoader::loadVertices(aiMesh *mesh)
 {
         std::vector <btVector3> vertices;
         for(unsigned int j=0; j < mesh->mNumVertices; j++){
@@ -22,7 +20,7 @@ std::vector <btVector3> loadVertices(aiMesh *mesh)
         return vertices;
 }
 
-std::vector <btVector3> loadVerticesInformation(aiMesh *mesh,
+std::vector <btVector3> BlMeshLoader::loadVerticesInformation(aiMesh *mesh,
                 aiVector3D *infos)
 {
         std::vector <btVector3> result;
@@ -33,7 +31,7 @@ std::vector <btVector3> loadVerticesInformation(aiMesh *mesh,
         return result;
 }
 
-std::vector <btVector3> loadNormals(aiMesh *mesh)
+std::vector <btVector3> BlMeshLoader::loadNormals(aiMesh *mesh)
 {
         std::vector <btVector3> normals;
         for(unsigned int j=0; j < mesh->mNumVertices; j++){
@@ -42,7 +40,7 @@ std::vector <btVector3> loadNormals(aiMesh *mesh)
         return normals;
 }
 
-std::vector <unsigned int> loadIndices(aiMesh *mesh)
+std::vector <unsigned int> BlMeshLoader::loadIndices(aiMesh *mesh)
 {
         std::vector <unsigned int > indices;
         for(unsigned int j=0; j < mesh->mNumFaces; j++){
@@ -56,7 +54,7 @@ std::vector <unsigned int> loadIndices(aiMesh *mesh)
         return indices;
 }
 
-std::vector< BlUvs > loadUvs(aiMesh *mesh)
+std::vector< BlUvs > BlMeshLoader::loadUvs(aiMesh *mesh)
 {
         int textureIndice = 0;
         std::vector< BlUvs > uvs;
@@ -80,7 +78,7 @@ std::vector< BlUvs > loadUvs(aiMesh *mesh)
         return uvs;
 }
 
-const aiScene *loadAssimpScene(const char *path)
+const aiScene *BlMeshLoader::loadAssimpScene(const char *path)
 {
         const aiScene *scene = importer.ReadFile(path,
                         aiProcess_CalcTangentSpace
@@ -94,7 +92,7 @@ const aiScene *loadAssimpScene(const char *path)
         return scene;
 }
 
-BlLightAmbient *loadAmbientFile(const char *path)
+BlLightAmbient *BlMeshLoader::loadAmbientFile(const char *path)
 {
         INFO("Loading ambient from file %s\n", path);
         const aiScene *scene = loadAssimpScene(path);
@@ -106,7 +104,7 @@ BlLightAmbient *loadAmbientFile(const char *path)
         return new BlLightAmbient(btVector3());
 }
 
-std::vector<BlLightPoint*> loadLightFile(const char *path,
+std::vector<BlLightPoint*> BlMeshLoader::loadLightFile(const char *path,
                 btVector3 position, std::vector<BlModel*> *models)
 {
         INFO("Loading light from file %s, position %f %f %f\n",
@@ -133,8 +131,9 @@ std::vector<BlLightPoint*> loadLightFile(const char *path,
         return res;
 }
 
-void fillConvexShapePoints(std::vector <btVector3> *vertices,
-                btConvexHullShape *colShape) {
+void BlMeshLoader::fillConvexShapePoints(std::vector <btVector3> *vertices,
+                btConvexHullShape *colShape)
+{
         btConvexHullShape tmpShape;
         for (std::vector<btVector3>::iterator it = vertices->begin();
                         it != vertices->end(); ++it) {
@@ -148,8 +147,10 @@ void fillConvexShapePoints(std::vector <btVector3> *vertices,
         }
 }
 
-std::vector<BlModel*> loadModelFile(const char *modelPath,
-                btVector3 position, btRigidBody *rigidBody, const char *image)
+std::vector<BlModel*> BlMeshLoader::loadModelFile(const char *modelPath,
+                btVector3 position,
+                btRigidBody *rigidBody,
+                const char *image)
 {
         INFO("Loading asset from file %s, image %s, position %f %f %f\n",
                         modelPath, image,
@@ -178,7 +179,8 @@ std::vector<BlModel*> loadModelFile(const char *modelPath,
                         btConvexHullShape *colShape = (btConvexHullShape*) rigidBody->getCollisionShape();
                         fillConvexShapePoints(&vertices, colShape);
                 }
-                BlModel *blModel = new BlModel(vertices, indices, normals,
+                BlModel *blModel = new BlModel(blTexture,
+                                vertices, indices, normals,
                                 tangents, bitangents,
                                 uvs, position, rigidBody, modelPath, image);
                 res.push_back(blModel);

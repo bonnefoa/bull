@@ -46,7 +46,7 @@ namespace YAML {
                 };
 }
 
-btVector3 readVector3(YAML::Node node)
+btVector3 BlLoader::readVector3(YAML::Node node)
 {
         if(!node) {
                 return btVector3();
@@ -54,14 +54,14 @@ btVector3 readVector3(YAML::Node node)
         return node.as<btVector3>();
 }
 
-btTransform readShapeTransform(YAML::Node node, btVector3 position)
+btTransform BlLoader::readShapeTransform(YAML::Node node, btVector3 position)
 {
         btQuaternion rotation = node["rotation"].as<btQuaternion>();
         btVector3 origin = node["origin"].as<btVector3>();
         return btTransform(rotation, origin + position);
 }
 
-btCollisionShape *readCollisionShape(YAML::Node node)
+btCollisionShape *BlLoader::readCollisionShape(YAML::Node node)
 {
         std::string shape = node["shape"].as<std::string>();
         btCollisionShape *collisionShape = (btCollisionShape*)
@@ -100,7 +100,7 @@ btCollisionShape *readCollisionShape(YAML::Node node)
         return collisionShape;
 }
 
-btRigidBody *readShapeNode(YAML::Node node, btVector3 position)
+btRigidBody *BlLoader::readShapeNode(YAML::Node node, btVector3 position)
 {
         if(!node["shape"]) { return NULL; }
         const char *shapeFile = (node["shape"].as<std::string>()).c_str();
@@ -128,7 +128,7 @@ btRigidBody *readShapeNode(YAML::Node node, btVector3 position)
         return body;
 }
 
-BlTerrain* loadTerrain(YAML::Node node)
+BlTerrain* BlLoader::loadTerrain(YAML::Node node)
 {
         std::string name = node["name"].as<std::string>();
         const char *image = strduplicate(
@@ -151,7 +151,7 @@ BlTerrain* loadTerrain(YAML::Node node)
         return blTerrain;
 }
 
-std::vector<BlModel*> loadModel(YAML::Node node)
+std::vector<BlModel*> BlLoader::loadModel(YAML::Node node)
 {
         std::string modelPath = node["filename"].as<std::string>();
         const char *image = NULL;
@@ -160,26 +160,26 @@ std::vector<BlModel*> loadModel(YAML::Node node)
         }
         btVector3 position = readVector3(node["position"]);
         btRigidBody *rigidBody = readShapeNode(node, position);
-        return loadModelFile(modelPath.c_str(), position,
+        return blMeshLoader.loadModelFile(modelPath.c_str(), position,
                         rigidBody, image);
 }
 
-BlLightAmbient *loadAmbientNode(YAML::Node node)
+BlLightAmbient *BlLoader::loadAmbientNode(YAML::Node node)
 {
         std::string filename = node["filename"].as<std::string>();
-        return loadAmbientFile(filename.c_str());
+        return blMeshLoader.loadAmbientFile(filename.c_str());
 }
 
-std::vector<BlLightPoint*> loadLightNode(YAML::Node node)
+std::vector<BlLightPoint*> BlLoader::loadLightNode(YAML::Node node)
 {
         std::string modelPath = node["filename"].as<std::string>();
         std::vector<BlModel*> nodeModels = loadModel(node);
         btVector3 position = readVector3(node["position"]);
-        return loadLightFile(modelPath.c_str(),
+        return blMeshLoader.loadLightFile(modelPath.c_str(),
                         position, new std::vector<BlModel*>(nodeModels));
 }
 
-BlScene *loadScene(const char *filename)
+BlScene *BlLoader::loadScene(const char *filename)
 {
         std::vector<BlTerrain*> *terrains = new std::vector<BlTerrain*>();
         std::vector<BlModel*> *models = new std::vector<BlModel*>();

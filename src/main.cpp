@@ -20,6 +20,8 @@ BlProgramModel *blProgramModel;
 BlProgramTerrain *blProgramTerrain;
 BlProgramShadow *blProgramShadow;
 BlProgramTexture *blProgramTexture;
+BlTexture *blTexture;
+BlLoader *blLoader;
 
 BlScene *blScene;
 BlState *blState;
@@ -44,6 +46,8 @@ void initBullora()
         blProgramTerrain = getProgramTerrain(blConfig, blState);
         blProgramTexture = getProgramTexture();
         blProgramShadow = getProgramShadow(btVector3());
+        blTexture = new BlTexture();
+        blLoader = new BlLoader(blTexture);
 }
 
 void clean()
@@ -67,7 +71,7 @@ void shutdown()
 
 void initScene(const char *filename)
 {
-        blScene = loadScene(filename);
+        blScene = blLoader->loadScene(filename);
         blProgramModel->bindProjection();
         blProgramTerrain->bindProjection();
         for (std::vector<BlModel*>::iterator it = blScene->blModels->begin();
