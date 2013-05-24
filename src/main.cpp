@@ -32,6 +32,7 @@ void initWindow()
 {
         blWindow = new BlWindow();
         blWindow->launch();
+        blTexture = new BlTexture();
 }
 
 void initBullora()
@@ -46,7 +47,6 @@ void initBullora()
         blProgramTerrain = getProgramTerrain(blConfig, blState);
         blProgramTexture = getProgramTexture();
         blProgramShadow = getProgramShadow(btVector3());
-        blTexture = new BlTexture();
         blLoader = new BlLoader(blTexture);
 }
 
