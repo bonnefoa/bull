@@ -6,11 +6,13 @@
 #include <vector>
 #include <bullet.h>
 #include <bl_image.h>
+#include <bl_texture.h>
 
 class BlTerrain
 {
         public:
                 BlTerrain(
+                                BlTexture *_blTexture,
                                 int   _gridWidth,
                                 int   _gridLenght,
                                 float _heightScale,
@@ -29,6 +31,7 @@ class BlTerrain
                 void bindModelMatrix(GLint uniformModel);
                 void bindGridSize(GLint locGridLenght, GLint locGridWidth);
 
+                BlTexture *blTexture;
                 std::vector <btVector3> vertices;
                 std::vector <unsigned int> indices;
                 std::vector <unsigned int> normals;

@@ -3,13 +3,14 @@
 #include <bl_log.h>
 #include <BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h>
 
-BlTerrain::BlTerrain(
+BlTerrain::BlTerrain(BlTexture *_blTexture,
                 int   _gridWidth, int   _gridLenght,
                 float _heightScale,
                 float _minHeight, float _maxHeight,
                 btTransform _model,
                 const char *_image)
-        : gridWidth(_gridWidth),
+        : blTexture(_blTexture),
+                gridWidth(_gridWidth),
                 gridLenght(_gridLenght),
                 heightScale(_heightScale),
                 minHeight(_minHeight),
@@ -89,10 +90,8 @@ void BlTerrain::init()
         glGenBuffers(1, &normalBuffer);
 
         if(image != NULL) {
-                INFO("Loading image %s for terrain\n", image);
-                glGenTextures(1, &textureBuffer);
+                textureBuffer = blTexture->fetchTexture(image);
                 BlImage *blImage = readPngImage(image);
-                blImage->loadInBuffer(textureBuffer);
                 extractHeightmapData(blImage);
                 createRigidBody();
                 delete blImage;

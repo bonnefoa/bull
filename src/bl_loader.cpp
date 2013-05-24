@@ -143,7 +143,7 @@ BlTerrain* BlLoader::loadTerrain(YAML::Node node)
         float minHeight = node["minHeight"].as<float>();
         float maxHeight = node["maxHeight"].as<float>();
 
-        BlTerrain *blTerrain = new BlTerrain(
+        BlTerrain *blTerrain = new BlTerrain(blTexture,
                         gridWidth, gridLenght,
                         heightScale,
                         minHeight, maxHeight,
