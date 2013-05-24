@@ -2,20 +2,24 @@
 #include <bl_matrix.h>
 #include <bl_log.h>
 #include <BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h>
+#include <map>
 
 BlTerrain::BlTerrain(BlTexture *_blTexture,
                 int   _gridWidth, int   _gridLenght,
                 float _heightScale,
                 float _minHeight, float _maxHeight,
                 btTransform _model,
-                const char *_image)
+                const char *_heightmapImage,
+                std::map<int, const char *> _mapHeightToTextures)
         : blTexture(_blTexture),
                 gridWidth(_gridWidth),
                 gridLenght(_gridLenght),
                 heightScale(_heightScale),
                 minHeight(_minHeight),
                 maxHeight(_maxHeight),
-                model(_model), image(_image)
+                model(_model),
+                heightmapImage(_heightmapImage),
+                mapHeightToTextures(_mapHeightToTextures)
 {
         float deltaX = (gridWidth + 1) / 2;
         float deltaZ = (gridLenght + 1) / 2;
@@ -89,9 +93,9 @@ void BlTerrain::init()
         glGenBuffers(1, &vertexBuffer);
         glGenBuffers(1, &normalBuffer);
 
-        if(image != NULL) {
-                textureBuffer = blTexture->fetchTexture(image);
-                BlImage *blImage = readPngImage(image);
+        if(heightmapImage != NULL) {
+                textureBuffer = blTexture->fetchTexture(heightmapImage);
+                BlImage *blImage = readPngImage(heightmapImage);
                 extractHeightmapData(blImage);
                 createRigidBody();
                 delete blImage;

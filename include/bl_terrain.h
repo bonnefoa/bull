@@ -19,7 +19,9 @@ class BlTerrain
                                 float _minHeight,
                                 float _maxHeight,
                                 btTransform _model,
-                                const char *_image);
+                                const char *_heightmapImage,
+                                std::map<int, const char *> _mapHeightToTextures
+                                );
                 ~BlTerrain();
 
                 void init();
@@ -44,8 +46,9 @@ class BlTerrain
 
                 btRigidBody *rigidBody;
                 btTransform model;
-                const char *image;
+                const char *heightmapImage;
                 char *heightMapData;
+                std::map<int, const char *> mapHeightToTextures;
 
         private:
                 void createRigidBody();

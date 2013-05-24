@@ -143,11 +143,21 @@ BlTerrain* BlLoader::loadTerrain(YAML::Node node)
         float minHeight = node["minHeight"].as<float>();
         float maxHeight = node["maxHeight"].as<float>();
 
+        std::map<int, const char*> mapHeightToTextures;
+        YAML::Node configTexture = node["textures"];
+        for(YAML::const_iterator it=configTexture.begin();
+                        it!=configTexture.end();++it) {
+                int height = (*it)["height"].as<int>();
+                const char *file = strduplicate(
+                                ((*it)["file"].as<std::string>()).c_str());
+                mapHeightToTextures[height] = file;
+        }
+
         BlTerrain *blTerrain = new BlTerrain(blTexture,
                         gridWidth, gridLenght,
                         heightScale,
                         minHeight, maxHeight,
-                        model, image);
+                        model, image, mapHeightToTextures);
         return blTerrain;
 }
 
