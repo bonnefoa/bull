@@ -44,6 +44,32 @@ namespace YAML {
                                 return true;
                         }
                 };
+
+        template<>
+                struct convert<std::vector<float> > {
+                        static Node encode(const std::vector<float>& rhs) {
+                                Node node;
+                                std::vector<float>::const_iterator it;
+                                for (it = rhs.begin();it != rhs.end(); ++it) {
+                                        node.push_back(*it);
+                                }
+                                return node;
+                        }
+
+                        static bool decode(const Node& node,
+                                        std::vector<float>& rhs) {
+                                if(!node.IsSequence())
+                                        return false;
+                                YAML::const_iterator it;
+                                for(it=node.begin();
+                                                it!=node.end();
+                                                ++it) {
+                                        rhs.push_back(it->as<float>());
+                                }
+                                return true;
+                        }
+                };
+
 }
 
 btVector3 BlLoader::readVector3(YAML::Node node)
@@ -143,21 +169,18 @@ BlTerrain* BlLoader::loadTerrain(YAML::Node node)
         float minHeight = node["minHeight"].as<float>();
         float maxHeight = node["maxHeight"].as<float>();
 
-        std::map<int, const char*> mapHeightToTextures;
-        YAML::Node configTexture = node["textures"];
-        for(YAML::const_iterator it=configTexture.begin();
-                        it!=configTexture.end();++it) {
-                int height = (*it)["height"].as<int>();
-                const char *file = strduplicate(
-                                ((*it)["file"].as<std::string>()).c_str());
-                mapHeightToTextures[height] = file;
-        }
+        const char *textureSetName = strduplicate((node["textureSetName"]
+                                .as<std::string>()).c_str());
+        std::vector<float> textureSetHeights =
+                node["textureSetHeights"].as<std::vector<float> >();
 
         BlTerrain *blTerrain = new BlTerrain(blTexture,
                         gridWidth, gridLenght,
                         heightScale,
                         minHeight, maxHeight,
-                        model, image, mapHeightToTextures);
+                        model, image,
+                        textureSetName,
+                        textureSetHeights);
         return blTerrain;
 }
 

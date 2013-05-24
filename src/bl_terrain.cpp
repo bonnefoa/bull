@@ -10,7 +10,9 @@ BlTerrain::BlTerrain(BlTexture *_blTexture,
                 float _minHeight, float _maxHeight,
                 btTransform _model,
                 const char *_heightmapImage,
-                std::map<int, const char *> _mapHeightToTextures)
+                const char *_textureSetName,
+                std::vector<float> _textureSetHeights
+                )
         : blTexture(_blTexture),
                 gridWidth(_gridWidth),
                 gridLenght(_gridLenght),
@@ -19,7 +21,8 @@ BlTerrain::BlTerrain(BlTexture *_blTexture,
                 maxHeight(_maxHeight),
                 model(_model),
                 heightmapImage(_heightmapImage),
-                mapHeightToTextures(_mapHeightToTextures)
+                textureSetName(_textureSetName),
+                textureSetHeights(_textureSetHeights)
 {
         float deltaX = (gridWidth + 1) / 2;
         float deltaZ = (gridLenght + 1) / 2;
