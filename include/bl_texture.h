@@ -4,18 +4,22 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 #include <map>
+#include <vector>
 #include <string>
+#include <bl_image.h>
 
 class BlTexture
 {
         public:
                 BlTexture();
                 ~BlTexture();
-                GLuint fetchTexture(const char* filename);
+                GLuint fetchTexture(std::string filename);
+                GLuint fill3dTexture(std::string setName
+                        , std::vector<std::string> files);
                 void clear();
 
         private:
-                std::map<const char*, GLuint> mapTextureToBuffer;
+                std::map<std::string, GLuint> mapTextureToBuffer;
 };
 
 #endif
