@@ -30,6 +30,7 @@ class BlTerrain
                 void drawElement();
 
                 void bindVertices(GLint locVertices);
+                void bindUV(GLint locUV);
                 void bindTextures();
                 void bindModelMatrix(GLint uniformModel);
                 void bindGridSize(GLint locGridLenght, GLint locGridWidth);
@@ -37,7 +38,6 @@ class BlTerrain
                 BlTexture *blTexture;
                 std::vector <btVector3> vertices;
                 std::vector <unsigned int> indices;
-                std::vector <unsigned int> normals;
 
                 int gridWidth;
                 int gridLenght;
@@ -55,6 +55,9 @@ class BlTerrain
         private:
                 void createRigidBody();
                 void extractHeightmapData(BlImage *blImage);
+                void initVertices();
+                void initIndices();
+                void initUVs();
 
                 GLuint heightmapBuffer;
                 GLuint textureBuffer;

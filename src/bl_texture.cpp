@@ -45,7 +45,6 @@ GLuint BlTexture::fillTextureAtlas(std::string setName
 
         mapTextureToBuffer[setName] = textureBuffer;
         return textureBuffer;
-
 }
 
 void BlTexture::clear()

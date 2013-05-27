@@ -28,6 +28,7 @@ void BlProgramTerrain::init(void)
         locProjection = glGetUniformLocation(programId, "P");
         locGridLenght = glGetUniformLocation(programId, "gridLenght");
         locGridWidth = glGetUniformLocation(programId, "gridWidth");
+        locUVTexture = glGetAttribLocation(programId, "locUVTexture");
         locVertices = glGetAttribLocation(programId
                         , "vertexPosition_modelspace");
         textureSampler = glGetUniformLocation(programId
@@ -43,6 +44,7 @@ void BlProgramTerrain::init(void)
         INFO("Grid width location %i\n", locGridWidth);
         INFO("Grid lenght location %i\n", locGridLenght);
         INFO("Vertices location %i\n", locVertices);
+        INFO("UV texture location %i\n", locUVTexture);
         if(locModel < 0 || locView < 0 || locProjection < 0 ||
                         locGridWidth < 0 ||
                         locGridLenght < 0 ||

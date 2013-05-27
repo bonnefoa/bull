@@ -24,6 +24,12 @@ BlTerrain::BlTerrain(BlTexture *_blTexture,
                 textureSetName(_textureSetName),
                 textureSetHeights(_textureSetHeights)
 {
+        initVertices();
+        initIndices();
+}
+
+void BlTerrain::initVertices()
+{
         float deltaX = (gridWidth + 1) / 2;
         float deltaZ = (gridLenght + 1) / 2;
         for(int z = 0; z < gridLenght; z++) {
@@ -32,18 +38,25 @@ BlTerrain::BlTerrain(BlTexture *_blTexture,
                         vertices.push_back(vert);
                 }
         }
+}
+
+void BlTerrain::initIndices()
+{
         int maxZ = gridWidth * (gridLenght - 1);
         for(int z = 0; z < maxZ; z+=gridWidth) {
                 for(int x = z; x < z + gridWidth - 1; x++) {
                         indices.push_back(x);
                         indices.push_back(x + gridWidth);
                         indices.push_back(x + 1);
-
                         indices.push_back(x + 1);
                         indices.push_back(x + gridWidth);
                         indices.push_back(x + gridWidth + 1);
                 }
         }
+}
+
+void BlTerrain::initUVs()
+{
 }
 
 void BlTerrain::createRigidBody()
@@ -122,11 +135,6 @@ void BlTerrain::loadInBuffer()
         glBufferData(GL_ARRAY_BUFFER,
                         vertices.size() * sizeof(btVector3),
                         &vertices[0], GL_STATIC_DRAW);
-
-        glBindBuffer(GL_ARRAY_BUFFER, normalBuffer);
-        glBufferData(GL_ARRAY_BUFFER
-                        , normals.size() * sizeof(btVector3)
-                        , &normals[0], GL_STATIC_DRAW);
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indiceBuffer);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER
