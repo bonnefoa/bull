@@ -4,38 +4,17 @@
 #include <BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h>
 #include <map>
 
-BlTerrain::BlTerrain(BlTexture *_blTexture,
-                int   _gridWidth, int   _gridLenght,
-                float _heightScale,
-                float _minHeight, float _maxHeight,
-                btTransform _model,
-                const char *_heightmapImage,
-                const char *_textureSetName,
-                std::vector<float> _textureSetHeights
-                )
-        : blTexture(_blTexture),
-                gridWidth(_gridWidth),
-                gridLenght(_gridLenght),
-                heightScale(_heightScale),
-                minHeight(_minHeight),
-                maxHeight(_maxHeight),
-                model(_model),
-                heightmapImage(_heightmapImage),
-                textureSetName(_textureSetName),
-                textureSetHeights(_textureSetHeights)
-{
-        initVertices();
-        initIndices();
-        initUVs();
-}
-
 void BlTerrain::initVertices()
 {
-        float deltaX = (gridWidth + 1) / 2;
-        float deltaZ = (gridLenght + 1) / 2;
+        float deltaX = (gridWidth - 1) / 2.0f;
+        float deltaZ = (gridLenght- 1) / 2.0f;
         for(int z = 0; z < gridLenght; z++) {
                 for(int x = 0; x < gridWidth; x++) {
-                        btVector3 vert = btVector3(x - deltaX, 0, z - deltaZ);
+                        int index = x + z * gridWidth;
+                        unsigned char heightData = heightMapData[index];
+                        float height = heightData * heightScale;
+                        btVector3 vert = btVector3(x - deltaX,
+                                        height, z - deltaZ);
                         vertices.push_back(vert);
                 }
         }
@@ -112,12 +91,8 @@ void BlTerrain::extractHeightmapData(BlImage *blImage)
         }
 }
 
-void BlTerrain::init()
+void BlTerrain::initTextures()
 {
-        glGenBuffers(1, &indiceBuffer);
-        glGenBuffers(1, &vertexBuffer);
-        glGenBuffers(1, &uvBuffer);
-
         INFO("Fetching texture set %s\n", textureSetName);
         textureBuffer = blTexture->fetchTexture(textureSetName);
         INFO("Fetching heightmap image %s\n", heightmapImage);
@@ -126,7 +101,18 @@ void BlTerrain::init()
         extractHeightmapData(blImage);
         createRigidBody();
         delete blImage;
+}
 
+void BlTerrain::init()
+{
+        glGenBuffers(1, &indiceBuffer);
+        glGenBuffers(1, &vertexBuffer);
+        glGenBuffers(1, &uvBuffer);
+
+        initIndices();
+        initTextures();
+        initVertices();
+        initUVs();
 }
 
 BlTerrain::~BlTerrain()

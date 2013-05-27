@@ -14,16 +14,7 @@ out vec2 uvFragmentTexture;
 
 void main()
 {
-        vec2 UV = vec2(vertexPosition_modelspace.x / gridWidth
-                        - 0.5f / gridWidth + 0.5,
-                  vertexPosition_modelspace.z / gridLenght
-                        - 0.5f / gridLenght + 0.5);
-
-        float heightPoint = texture(heightmapSampler, UV).r;
-
-        vec3 elevatedVertice = vertexPosition_modelspace;
-        elevatedVertice.y += heightPoint * 255;
-        gl_Position = P * V * M * vec4(elevatedVertice, 1.0f);
+        gl_Position = P * V * M * vec4(vertexPosition_modelspace, 1.0f);
 
         uvFragmentTexture = uvTexture;
 }

@@ -13,16 +13,24 @@ class BlTerrain
         public:
                 BlTerrain(
                                 BlTexture *_blTexture,
-                                int   _gridWidth,
-                                int   _gridLenght,
+                                int   _gridWidth, int   _gridLenght,
                                 float _heightScale,
-                                float _minHeight,
-                                float _maxHeight,
+                                float _minHeight, float _maxHeight,
                                 btTransform _model,
                                 const char *_heightmapImage,
-                                const char *_setTextureName,
-                                std::vector<float> _textureHeights
-                                );
+                                const char *_textureSetName,
+                                std::vector<float> _textureSetHeights
+                         ) :
+                        blTexture(_blTexture),
+                        gridWidth(_gridWidth),
+                        gridLenght(_gridLenght),
+                        heightScale(_heightScale),
+                        minHeight(_minHeight),
+                        maxHeight(_maxHeight),
+                        model(_model),
+                        heightmapImage(_heightmapImage),
+                        textureSetName(_textureSetName),
+                        textureSetHeights(_textureSetHeights) {};
                 ~BlTerrain();
 
                 void init();
@@ -57,6 +65,7 @@ class BlTerrain
 
                 void createRigidBody();
                 void extractHeightmapData(BlImage *blImage);
+                void initTextures();
                 void initVertices();
                 void initIndices();
                 void initUVs();

@@ -46,8 +46,6 @@ void BlProgramTerrain::init(void)
         INFO("Vertices location %i\n", locVertices);
         INFO("UV texture location %i\n", locUVTexture);
         if(locModel < 0 || locView < 0 || locProjection < 0 ||
-                        locGridWidth < 0 ||
-                        locGridLenght < 0 ||
                         locVertices < 0){
                 ERROR("unused location\n");
         }
