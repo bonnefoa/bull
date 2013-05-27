@@ -56,6 +56,7 @@ class BlTerrain
                 void createRigidBody();
                 void extractHeightmapData(BlImage *blImage);
 
+                GLuint heightmapBuffer;
                 GLuint textureBuffer;
                 GLuint vertexBuffer;
                 GLuint indiceBuffer;

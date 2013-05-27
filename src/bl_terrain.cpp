@@ -96,15 +96,14 @@ void BlTerrain::init()
         glGenBuffers(1, &vertexBuffer);
         glGenBuffers(1, &normalBuffer);
 
-        if(heightmapImage != NULL) {
-                textureBuffer = blTexture->fetchTexture(heightmapImage);
-                BlImage *blImage = readPngImage(heightmapImage);
-                extractHeightmapData(blImage);
-                createRigidBody();
-                delete blImage;
-        } else {
-                textureBuffer = 0;
-        }
+        INFO("Fetching texture set %s\n", textureSetName);
+        textureBuffer = blTexture->fetchTexture(textureSetName);
+        INFO("Fetching heightmap image %s\n", heightmapImage);
+        heightmapBuffer = blTexture->fetchTexture(heightmapImage);
+        BlImage *blImage = readPngImage(heightmapImage);
+        extractHeightmapData(blImage);
+        createRigidBody();
+        delete blImage;
 
 }
 
@@ -113,8 +112,8 @@ BlTerrain::~BlTerrain()
         glDeleteBuffers(1, &indiceBuffer);
         glDeleteBuffers(1, &vertexBuffer);
         glDeleteBuffers(1, &normalBuffer);
-        if(textureBuffer > 0)
-                glDeleteTextures(1, &textureBuffer);
+        if(heightmapBuffer > 0)
+                glDeleteTextures(1, &heightmapBuffer);
 }
 
 void BlTerrain::loadInBuffer()
@@ -134,9 +133,6 @@ void BlTerrain::loadInBuffer()
                         , indices.size() * sizeof(unsigned int)
                         , &indices[0], GL_STATIC_DRAW);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, textureBuffer);
 }
 
 void BlTerrain::bindVertices(GLint locVertices)
@@ -156,7 +152,7 @@ void BlTerrain::bindGridSize(GLint locGridLenght, GLint locGridWidth)
 void BlTerrain::bindTextures()
 {
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, textureBuffer);
+        glBindTexture(GL_TEXTURE_2D, heightmapBuffer);
 }
 
 void BlTerrain::bindModelMatrix(GLint uniformModel)
