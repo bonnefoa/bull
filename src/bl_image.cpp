@@ -5,54 +5,6 @@
 #include <math.h>
 #include <string.h>
 
-void BlImage::loadInBuffer(GLuint textureBuffer)
-{
-        glBindTexture(GL_TEXTURE_2D, textureBuffer);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-        glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-        INFO("Loading in buffer %i image of size %i / %i\n", textureBuffer,
-                        width, height);
-        glTexImage2D(GL_TEXTURE_2D, 0, format,
-                        width, height,
-                        0, format, GL_UNSIGNED_BYTE,
-                        pixels);
-}
-
-void BlImage::writeImage(const char *destination)
-{
-        FILE *outfile;
-        if ((outfile = fopen(destination, "wb")) == NULL) {
-                ERROR("can't open %s", destination);
-        }
-        png_structp  pngPtr;
-        png_infop  infoPtr;
-
-        pngPtr = png_create_write_struct(PNG_LIBPNG_VER_STRING,
-                        NULL, NULL, NULL);
-        infoPtr = png_create_info_struct(pngPtr);
-        png_init_io(pngPtr, outfile);
-        png_set_compression_level(pngPtr, Z_BEST_COMPRESSION);
-
-        png_set_IHDR(pngPtr, infoPtr, width,
-                        height, 8,
-                        PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE,
-                        PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
-        png_write_info(pngPtr, infoPtr);
-
-        for(unsigned int i = 0; i < height; i++) {
-                png_write_row(pngPtr,
-                                &pixels[i * width * numChannels]);
-        }
-        png_write_end(pngPtr, NULL);
-        fclose(outfile);
-}
-
 int colorTypeToNumberChannels(int colorType)
 {
         switch(colorType) {
@@ -83,6 +35,32 @@ GLenum colorTypeToGlFormat(int colorType)
         }
         ERROR("Unknown color type %i\n", colorType);
         return 0;
+}
+
+BlImage *readMultipleImages(std::vector<std::string> images)
+{
+        std::vector<BlImage*> parsedImages;
+        for (std::vector<std::string>::iterator it=images.begin();
+                        it!=images.end(); ++it) {
+                parsedImages.push_back(readPngImage((*it).c_str()));
+        }
+
+        unsigned int width = parsedImages[0]->width;
+        unsigned int height = parsedImages[0]->height;
+        GLenum format = parsedImages[0]->format;
+        int numChannels = parsedImages[0]->numChannels;
+
+        size_t imageSize = width * height * numChannels * sizeof(char);
+        unsigned char *pixels = (unsigned char*) malloc(imageSize
+                        * images.size());
+
+        for (unsigned int i = 0; i < images.size(); i++) {
+                memcpy(pixels + i * imageSize,
+                       parsedImages[i]->pixels,
+                       imageSize);
+                delete parsedImages[i];
+        }
+        return new BlImage(width, height, pixels, format, numChannels);
 }
 
 BlImage *readPngImage(const char *filename)
@@ -156,8 +134,55 @@ BlImage *readPngImage(const char *filename)
                        width * numChannels * sizeof(char));
         }
         free(lines);
-
         return new BlImage(texWidth, texHeight, pixels, format, numChannels);
+}
+
+void BlImage::loadInBuffer(GLuint textureBuffer)
+{
+        glBindTexture(GL_TEXTURE_2D, textureBuffer);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+        glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+        INFO("Loading in buffer %i image of size %i / %i\n", textureBuffer,
+                        width, height);
+        glTexImage2D(GL_TEXTURE_2D, 0, format,
+                        width, height,
+                        0, format, GL_UNSIGNED_BYTE,
+                        pixels);
+}
+
+void BlImage::writeImage(const char *destination)
+{
+        FILE *outfile;
+        if ((outfile = fopen(destination, "wb")) == NULL) {
+                ERROR("can't open %s", destination);
+        }
+        png_structp  pngPtr;
+        png_infop  infoPtr;
+
+        pngPtr = png_create_write_struct(PNG_LIBPNG_VER_STRING,
+                        NULL, NULL, NULL);
+        infoPtr = png_create_info_struct(pngPtr);
+        png_init_io(pngPtr, outfile);
+        png_set_compression_level(pngPtr, Z_BEST_COMPRESSION);
+
+        png_set_IHDR(pngPtr, infoPtr, width,
+                        height, 8,
+                        PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE,
+                        PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+        png_write_info(pngPtr, infoPtr);
+
+        for(unsigned int i = 0; i < height; i++) {
+                png_write_row(pngPtr,
+                                &pixels[i * width * numChannels]);
+        }
+        png_write_end(pngPtr, NULL);
+        fclose(outfile);
 }
 
 BlImage::~BlImage()

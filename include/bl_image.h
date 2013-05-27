@@ -7,7 +7,8 @@
 
 #include <GL/glew.h>
 #include <GL/gl.h>
-
+#include <string>
+#include <vector>
 
 class BlImage {
         public:
@@ -34,5 +35,6 @@ class BlImage {
 };
 
 BlImage *readPngImage(const char *filename);
+BlImage *readMultipleImages(std::vector<std::string> images);
 
 #endif
