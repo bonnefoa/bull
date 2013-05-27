@@ -70,6 +70,32 @@ namespace YAML {
                         }
                 };
 
+        template<>
+                struct convert<std::vector<std::string> > {
+                        static Node encode(
+                                        const std::vector<std::string>& rhs) {
+                                Node node;
+                                std::vector<std::string>::const_iterator it;
+                                for (it = rhs.begin();it != rhs.end(); ++it) {
+                                        node.push_back(*it);
+                                }
+                                return node;
+                        }
+
+                        static bool decode(const Node& node,
+                                        std::vector<std::string>& rhs) {
+                                if(!node.IsSequence())
+                                        return false;
+                                YAML::const_iterator it;
+                                for(it=node.begin();
+                                                it!=node.end();
+                                                ++it) {
+                                        rhs.push_back(it->as<std::string>());
+                                }
+                                return true;
+                        }
+                };
+
 }
 
 btVector3 BlLoader::readVector3(YAML::Node node)
@@ -203,6 +229,14 @@ BlLightAmbient *BlLoader::loadAmbientNode(YAML::Node node)
         return blMeshLoader.loadAmbientFile(filename.c_str());
 }
 
+void BlLoader::loadTextureSet(YAML::Node node)
+{
+        const char *setName = (node["name"].as<std::string>()).c_str();
+        std::vector<std::string> files = node["files"]
+                .as<std::vector<std::string> >();
+        blTexture->fill3dTexture(setName, files);
+}
+
 std::vector<BlLightPoint*> BlLoader::loadLightNode(YAML::Node node)
 {
         std::string modelPath = node["filename"].as<std::string>();
@@ -234,6 +268,11 @@ BlScene *BlLoader::loadScene(const char *filename)
                 for (unsigned int i = 0; i < nodeModels.size(); i++) {
                         models->push_back(nodeModels[i]);
                 }
+        }
+        YAML::Node configTextureSet = (config["textureSet"]);
+        for(YAML::const_iterator it=configTextureSet.begin();
+                        it!=configTextureSet.end();++it) {
+                loadTextureSet(*it);
         }
         YAML::Node configTerrain = config["terrains"];
         for(YAML::const_iterator it=configTerrain.begin();
