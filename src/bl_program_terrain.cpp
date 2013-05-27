@@ -30,9 +30,12 @@ void BlProgramTerrain::init(void)
         locGridWidth = glGetUniformLocation(programId, "gridWidth");
         locVertices = glGetAttribLocation(programId
                         , "vertexPosition_modelspace");
-        samplerTexture = glGetUniformLocation(programId
+        textureSampler = glGetUniformLocation(programId
                         , "textureSampler");
-        glUniform1i(samplerTexture, 0);
+        heightmapSampler = glGetUniformLocation(programId
+                        , "heightmapSampler");
+        glUniform1i(heightmapSampler, 0);
+        glUniform1i(textureSampler, 1);
 
         INFO("Model location %i\n", locModel);
         INFO("View location %i\n", locView);

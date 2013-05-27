@@ -153,6 +153,8 @@ void BlTerrain::bindTextures()
 {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, heightmapBuffer);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, textureBuffer);
 }
 
 void BlTerrain::bindModelMatrix(GLint uniformModel)

@@ -20,31 +20,32 @@ GLuint BlTexture::fetchTexture(std::string filename)
         return textureBuffer;
 }
 
-GLuint BlTexture::fill3dTexture(std::string setName
+GLuint BlTexture::fillTextureAtlas(std::string setName
                 , std::vector<std::string> files)
 {
         BlImage *blImage = readMultipleImages(files);
 
         GLuint textureBuffer;
         glGenTextures(1, &textureBuffer);
-        glBindTexture(GL_TEXTURE_3D, textureBuffer);
+        glBindTexture(GL_TEXTURE_2D, textureBuffer);
 
-        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
         glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
-        INFO("Loading in buffer %i 3d image of size %i / %i\n",
+        INFO("Loading in buffer %i image of size %i / %i\n",
                         textureBuffer, blImage->width, blImage->height);
-        glTexImage3D(GL_TEXTURE_3D, 0, GL_RGB,
-                        blImage->width, blImage->height, files.size(),
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
+                        blImage->width, blImage->height,
                         0, GL_RGB, GL_UNSIGNED_BYTE,
                         blImage->pixels);
 
         mapTextureToBuffer[setName] = textureBuffer;
         return textureBuffer;
+
 }
 
 void BlTexture::clear()

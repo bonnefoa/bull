@@ -36,7 +36,8 @@ class BlProgramTerrain : public BlProgram
                 GLint locProjection;
                 GLint locGridLenght;
                 GLint locGridWidth;
-                GLint samplerTexture;
+                GLint heightmapSampler;
+                GLint textureSampler;
 
                 GLint locVertices;
 };

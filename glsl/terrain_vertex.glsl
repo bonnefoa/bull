@@ -6,7 +6,7 @@ uniform mat4 P;
 
 uniform int gridLenght;
 uniform int gridWidth;
-uniform sampler2D samplerTexture;
+uniform sampler2D heightmapSampler;
 
 in vec3 vertexPosition_modelspace;
 
@@ -19,7 +19,7 @@ void main()
                   vertexPosition_modelspace.z / gridLenght
                         - 0.5f / gridLenght + 0.5);
 
-        float heightPoint = texture(samplerTexture, UV).r;
+        float heightPoint = texture(heightmapSampler, UV).r;
 
         vec3 elevatedVertice = vertexPosition_modelspace;
         elevatedVertice.y += heightPoint * 255;

@@ -234,7 +234,7 @@ void BlLoader::loadTextureSet(YAML::Node node)
         const char *setName = (node["name"].as<std::string>()).c_str();
         std::vector<std::string> files = node["files"]
                 .as<std::vector<std::string> >();
-        blTexture->fill3dTexture(setName, files);
+        blTexture->fillTextureAtlas(setName, files);
 }
 
 std::vector<BlLightPoint*> BlLoader::loadLightNode(YAML::Node node)
