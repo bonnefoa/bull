@@ -28,7 +28,7 @@ void BlProgramTerrain::init(void)
         locProjection = glGetUniformLocation(programId, "P");
         locGridLenght = glGetUniformLocation(programId, "gridLenght");
         locGridWidth = glGetUniformLocation(programId, "gridWidth");
-        locUVTexture = glGetAttribLocation(programId, "locUVTexture");
+        locUVTexture = glGetAttribLocation(programId, "uvTexture");
         locVertices = glGetAttribLocation(programId
                         , "vertexPosition_modelspace");
         textureSampler = glGetUniformLocation(programId
@@ -57,6 +57,7 @@ void BlProgramTerrain::displayTerrain(BlTerrain *blTerrain)
 {
         blTerrain->bindModelMatrix(locModel);
         blTerrain->bindVertices(locVertices);
+        blTerrain->bindUVTexture(locUVTexture);
         blTerrain->bindTextures();
         blTerrain->bindGridSize(locGridLenght, locGridWidth);
         blTerrain->drawElement();
