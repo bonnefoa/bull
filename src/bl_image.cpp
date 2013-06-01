@@ -164,19 +164,16 @@ void BlImage::writeImage(const char *destination)
         }
         png_structp  pngPtr;
         png_infop  infoPtr;
-
         pngPtr = png_create_write_struct(PNG_LIBPNG_VER_STRING,
                         NULL, NULL, NULL);
         infoPtr = png_create_info_struct(pngPtr);
         png_init_io(pngPtr, outfile);
         png_set_compression_level(pngPtr, Z_BEST_COMPRESSION);
-
         png_set_IHDR(pngPtr, infoPtr, width,
                         height, 8,
                         PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE,
                         PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
         png_write_info(pngPtr, infoPtr);
-
         for(unsigned int i = 0; i < height; i++) {
                 png_write_row(pngPtr,
                                 &pixels[i * width * numChannels]);
