@@ -22,6 +22,8 @@ class BlImage {
                         pixels(_pixels),
                         format(_format),
                         numChannels(_numChannels) {};
+                int getPixelIndexAt(int x, int y);
+                unsigned char getPixelAt(int x, int y);
 
                 unsigned int width;
                 unsigned int height;

@@ -182,6 +182,17 @@ void BlImage::writeImage(const char *destination)
         fclose(outfile);
 }
 
+int BlImage::getPixelIndexAt(int x, int y)
+{
+        return x * numChannels + y * width * numChannels;
+}
+
+unsigned char BlImage::getPixelAt(int x, int y)
+{
+        return pixels[getPixelIndexAt(x, y)];
+}
+
+
 BlImage::~BlImage()
 {
         free(pixels);
