@@ -18,13 +18,15 @@ void showInfoLog(GLuint object,
 
 int max(int a, int b)
 {
-        if (a > b) return a;
+        if (a > b)
+                return a;
         return b;
 }
 
 int min(int a, int b)
 {
-        if (a < b) return a;
+        if (a < b)
+                return a;
         return b;
 }
 
@@ -42,5 +44,62 @@ void setIfMax(btScalar point, btScalar ref,
                 btVector3 &p, void (btVector3::*f)(btScalar))
 {
         point = abs(point);
-        if (ref < point) { (p.*f)(point); }
+        if (ref < point) (p.*f)(point);
+}
+
+float **initMatrix(int width, int height)
+{
+        float **mat = (float **)malloc(width * sizeof(float*));
+        for(int x = 0; x < width; x++) {
+                mat[x] = (float *)malloc(height * sizeof(float));
+                memset(mat[x], 0, height * sizeof(float));
+        }
+        return mat;
+}
+
+void freeMatrix(float **mat, int width)
+{
+        for(int x = 0; x < width; x++) {
+                free(mat[x]);
+        }
+        free(mat);
+}
+
+float ***initMatrixVector(int width, int height, int sizeVector)
+{
+        float ***mat = (float ***)malloc(width * sizeof(float**));
+        for(int x = 0; x < width; x++) {
+                mat[x] = (float **)malloc(height * sizeof(float*));
+                for(int y = 0; y < height; y++) {
+                        mat[x][y] = (float *)malloc(
+                                        sizeVector * sizeof(float));
+                        memset(mat[x][y], 0, sizeVector * sizeof(float));
+                }
+        }
+        return mat;
+}
+
+void freeMatrixVector(float ***mat, int width, int height)
+{
+        for(int x = 0; x < width; x++) {
+                for(int y = 0; y < height; y++) {
+                        free(mat[x][y]);
+                }
+                free(mat[x]);
+        }
+        free(mat);
+}
+
+std::vector <btVector3> matrixVectorToVectorList(float ***arr, int width, int lenght)
+{
+        std::vector <btVector3> vect;
+        for(int z = 0; z < lenght; z++) {
+                for(int x = 0; x < width; x++) {
+                        btVector3 vert = btVector3(arr[x][z][0],
+                                        arr[x][z][1],
+                                        arr[x][z][2]);
+                        vect.push_back(vert);
+                }
+        }
+        return vect;
 }
