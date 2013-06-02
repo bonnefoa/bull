@@ -1,6 +1,7 @@
 #include "bl_terrain.h"
 #include <bl_matrix.h>
 #include <bl_log.h>
+#include <bl_heightmap.h>
 #include <BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h>
 #include <map>
 
@@ -72,10 +73,10 @@ void BlTerrain::createRigidBody()
         rigidBody->proceedToTransform(model);
 }
 
-void BlTerrain::extractHeightmapData(BlImage *blImage)
+char *BlTerrain::extractHeightmapData(BlImage *blImage)
 {
         size_t size = gridWidth * gridLenght * sizeof(char);
-        heightMapData = (char *)malloc(size);
+        char *height = (char *)malloc(size);
         int lengthIncrement = blImage->height / gridLenght;
         int widthIncrement = blImage->width / gridWidth;
         for(int x = 0; x < gridWidth; x++) {
@@ -85,22 +86,17 @@ void BlTerrain::extractHeightmapData(BlImage *blImage)
                                 x * blImage->numChannels * widthIncrement
                                 + z * blImage->width * blImage->numChannels
                                     * lengthIncrement;
-                        heightMapData[index] =
+                        height[index] =
                                 blImage->pixels[pixelIndex];
                 }
         }
+        return height;
 }
 
 void BlTerrain::initTextures()
 {
-        INFO("Fetching texture set %s\n", textureSetName);
         textureBuffer = blTexture->fetchTexture(textureSetName);
-        INFO("Fetching heightmap image %s\n", heightmapImage);
         heightmapBuffer = blTexture->fetchTexture(heightmapImage);
-        BlImage *blImage = readPngImage(heightmapImage);
-        extractHeightmapData(blImage);
-        createRigidBody();
-        delete blImage;
 }
 
 void BlTerrain::init()
@@ -109,10 +105,17 @@ void BlTerrain::init()
         glGenBuffers(1, &vertexBuffer);
         glGenBuffers(1, &uvBuffer);
 
+        BlImage *blImage = readPngImage(heightmapImage);
+        heightMapData = extractHeightmapData(blImage);
+
+        createRigidBody();
+        vertices = generateOffGrid(blImage, gridWidth, gridLenght);
         initIndices();
+
         initTextures();
-        initVertices();
         initUVs();
+
+        delete blImage;
 }
 
 BlTerrain::~BlTerrain()

@@ -64,7 +64,7 @@ class BlTerrain
                 std::vector<float> textureSetHeights;
 
                 void createRigidBody();
-                void extractHeightmapData(BlImage *blImage);
+                char *extractHeightmapData(BlImage *blImage);
                 void initTextures();
                 void initVertices();
                 void initIndices();
