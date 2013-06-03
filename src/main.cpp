@@ -64,7 +64,6 @@ void clean()
         delete blScene;
         delete blSimulation;
         delete blInput;
-        delete blConfig;
 }
 
 void shutdown()
@@ -72,6 +71,7 @@ void shutdown()
         clean();
         blSdl->shutdown();
         delete blSdl;
+        delete blConfig;
 }
 
 void initScene(const char *filename)
