@@ -3,12 +3,23 @@ lights:
           filename: /home/sora/blender/light.dae
           position: [0.0, 5.0, 0.0]
 
+textureSet:
+        - name: firstTextureSet
+          files: [/home/sora/blender/soil/ground_grass_gen_05.png,
+                  /home/sora/blender/soil/ground_grass_gen_02.png]
+
 terrains:
         - name: floor
-          size: 100
           image: /home/sora/blender/heightmap.png
-          scale: [1.0, 20.0, 1.0]
-          position: [0.0, -20.0, 0.0]
+          scale: [1.0, 0.05, 1.0]
+          position: [0.0, 0.0, 0.0]
+          gridWidth: 64
+          gridLenght: 64
+          heightScale: 2
+          minHeight: -10
+          maxHeight: 10
+          textureSetName: firstTextureSet
+          textureSetHeights: [0.0, 10.0]
 
 models:
 
@@ -22,7 +33,7 @@ models:
           filename: /home/sora/blender/cubeTextured.dae
           image: /home/sora/blender/cubeTextured.png
           shape: /home/sora/blender/cubeTextured.yaml
-          position: [0.0, 1.0, 0.0]
+          position: [0.0, 10.0, 0.0]
 
         - name: sphere
           filename: /home/sora/blender/sphere.dae
@@ -34,19 +45,19 @@ models:
           filename: /home/sora/blender/cone.dae
           image: /home/sora/blender/cubeTextured.png
           shape: /home/sora/blender/cone.yaml
-          position: [7.0, 2.0, 7.0]
+          position: [7.0, 20.0, 7.0]
 
         - name: cylinder
           filename: /home/sora/blender/cylinder.dae
           image: /home/sora/blender/cubeTextured.png
           shape: /home/sora/blender/cylinder.yaml
-          position: [0.0, 2.0, 7.0]
+          position: [0.0, 20.0, 7.0]
 
         - name: capsule
           filename: /home/sora/blender/capsule.dae
           shape: /home/sora/blender/capsule.yaml
           image: /home/sora/blender/cubeTextured.png
-          position: [2.0, 2.0, 2.0]
+          position: [2.0, 20.0, 2.0]
 
         - name: sword
           filename: /home/sora/blender/sword.dae
