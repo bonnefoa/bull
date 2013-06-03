@@ -40,8 +40,6 @@ BlModel::~BlModel(void)
         glDeleteBuffers(1, &bitangentBuffer);
         if(uvBuffer > 0)
                 glDeleteBuffers(1, &uvBuffer);
-        if(textureBuffer > 0)
-                glDeleteTextures(1, &textureBuffer);
 }
 
 void BlModel::loadInBuffer()
