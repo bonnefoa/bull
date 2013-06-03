@@ -1,5 +1,6 @@
 #include "bl_heightmap.h"
 #include <bl_util.h>
+#include <bl_vertice.h>
 
 BlImage *generateNormalMapFromHeightmap(BlImage *blImage)
 {
@@ -108,21 +109,6 @@ void getMaxGravPoint(btVector3 gridPoint, int gridWidth, int gridLenght,
         }
 }
 
-void addRectangle(std::vector<btVector3> *vertices,
-                btVector3 lowerLeft,
-                btVector3 upRight)
-{
-        btVector3 upLeft = btVector3(lowerLeft[0], 0, upRight[2]);
-        btVector3 lowerRight = btVector3(upRight[0], 0, lowerLeft[2]);
-        vertices->push_back(lowerLeft);
-        vertices->push_back(upRight);
-        vertices->push_back(upLeft);
-
-        vertices->push_back(lowerLeft);
-        vertices->push_back(lowerRight);
-        vertices->push_back(upRight);
-}
-
 std::vector<btVector3> generateOffGrid(BlImage *heightmap, int gridWidth
                 , int gridLenght)
 {
@@ -139,7 +125,8 @@ std::vector<btVector3> generateOffGrid(BlImage *heightmap, int gridWidth
                         }
                         if(lastPoint[3] < z) {
                                 addRectangle(&vertices, lastPoint
-                                                , btVector3(leftX, 0, z - 1));
+                                                , btVector3(leftX, 0, z - 1),
+                                                true);
                                 lastPoint = btVector3(x, 0 , z);
                         }
                 }
