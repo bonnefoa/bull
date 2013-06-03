@@ -49,7 +49,6 @@ void BlSdl::initFont()
         if(TTF_Init()==-1) {
                 ERROR("TTF_Init: %s\n", TTF_GetError());
         }
-        TTF_Font *font;
         font = TTF_OpenFont(blConfig->fontPath, blConfig->fontSize);
         if(!font) {
                 ERROR("TTF_OpenFont: font '%s' %s\n",
@@ -60,7 +59,6 @@ void BlSdl::initFont()
 
 void BlSdl::launch()
 {
-
         if (SDL_Init(SDL_INIT_VIDEO) < 0)
                 die("Unable to initialize SDL");
         SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);

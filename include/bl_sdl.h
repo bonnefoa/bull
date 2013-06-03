@@ -14,6 +14,7 @@ class BlSdl {
                 BlSdl(void);
                 void launch(void);
                 void shutdown(void);
+                TTF_Font *font;
 
         private:
                 void die(const char *msg);
