@@ -18,7 +18,6 @@ BlSimulation::BlSimulation(BlDebugDrawer *blDebugDrawer)
 
 BlSimulation::~BlSimulation()
 {
-        delete dynamicsWorld->getDebugDrawer();
         delete dynamicsWorld;
         delete solver;
         delete overlappingPairCache;
