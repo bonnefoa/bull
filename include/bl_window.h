@@ -2,6 +2,7 @@
 #define BL_SDL_H
 
 #include <SDL.h>
+#include <SDL_ttf.h>
 
 class BlWindow {
         public:

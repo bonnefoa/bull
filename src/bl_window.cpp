@@ -69,6 +69,11 @@ void BlWindow::launch()
         context = SDL_GL_CreateContext(window);
         checkError(__LINE__);
 
+        if(TTF_Init()==-1) {
+                ERROR("TTF_Init: %s\n", TTF_GetError());
+        }
+
+
         glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
