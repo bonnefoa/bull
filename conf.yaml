@@ -18,3 +18,6 @@ keys:
         light: l
         debug: v
         pause: space
+
+text:
+        font: /usr/share/fonts/dejavu/DejaVuSerif.ttf

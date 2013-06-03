@@ -9,6 +9,7 @@ class BlConfig {
                 BlConfig(
                                 float _mouseSpeed,
                                 float _speed,
+                                const char* _fontPath,
 
                                 btTransform _projection,
 
@@ -24,6 +25,7 @@ class BlConfig {
                                 int _key_debug
                                 ) :
 
+                                fontPath(_fontPath),
                                 mouseSpeed(_mouseSpeed),
                                 speed(_speed),
                                 projection(_projection),
@@ -39,6 +41,7 @@ class BlConfig {
                                 key_debug(_key_debug)
                 {} ;
 
+                const char* fontPath;
                 float mouseSpeed;
                 float speed;
 
