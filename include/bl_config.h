@@ -10,6 +10,7 @@ class BlConfig {
                                 float _mouseSpeed,
                                 float _speed,
                                 const char* _fontPath,
+                                int _fontSize,
 
                                 btTransform _projection,
 
@@ -26,6 +27,7 @@ class BlConfig {
                                 ) :
 
                                 fontPath(_fontPath),
+                                fontSize(_fontSize),
                                 mouseSpeed(_mouseSpeed),
                                 speed(_speed),
                                 projection(_projection),
@@ -42,6 +44,7 @@ class BlConfig {
                 {} ;
 
                 const char* fontPath;
+                int fontSize;
                 float mouseSpeed;
                 float speed;
 
@@ -61,6 +64,5 @@ class BlConfig {
 };
 
 BlConfig *loadBlConfig(const char *configurationFile);
-
 
 #endif

@@ -32,6 +32,7 @@ BlConfig *loadBlConfig(const char *configurationFile)
         YAML::Node textNode = config["text"];
         const char *fontPath = (char *)
                 (textNode["font"].as<std::string>()).c_str();
+        int fontSize = textNode["font"].as<int>();
 
         YAML::Node gameNode = config["game"];
         float speed = getNodeFloat(gameNode["speed"], 0.001f);
@@ -62,6 +63,7 @@ BlConfig *loadBlConfig(const char *configurationFile)
                      mouseSpeed,
                      speed,
                      fontPath,
+                     fontSize,
 
                      projection,
 
