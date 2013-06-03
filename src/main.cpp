@@ -33,16 +33,14 @@ Uint32 nextTime = 0;
 
 void initWindow()
 {
-        blSdl = new BlSdl();
+        blSdl = new BlSdl(blConfig);
         blSdl->launch();
         blTexture = new BlTexture();
 }
 
-void initBullora()
+void initComponents()
 {
-        blConfig = loadBlConfig("conf.yaml");
-
-        blState = new BlState(btVector3(0,0,8));
+        blState = new BlState(btVector3(0,0,8), blSdl->font);
         blInput = new BlInput(blState, blConfig);
 
         blProgramModel = getProgramModel(blInput, blConfig, blState);
@@ -173,7 +171,7 @@ void mainLoop()
 void reload(const char *configFile)
 {
         clean();
-        initBullora();
+        initComponents();
         initScene(configFile);
         blState->gamestate = NORMAL;
 }
@@ -196,9 +194,10 @@ int main(int argc, char **argv)
         (void) argv;
 
         const char *configFile = argv[1];
+        blConfig = loadBlConfig("conf.yaml");
 
         initWindow();
-        initBullora();
+        initComponents();
         initScene(configFile);
         setLight();
 

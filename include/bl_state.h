@@ -2,6 +2,7 @@
 #define BL_STATE_H
 
 #include <SDL.h>
+#include <SDL_ttf.h>
 #include <bullet.h>
 
 #define MAX_AXIS 20
@@ -16,8 +17,9 @@ enum gamestate_enum {
 
 class BlState {
         public:
-                BlState(btVector3 _position) :
+                BlState(btVector3 _position, TTF_Font *_font) :
                         gamestate(NORMAL),
+                        font(_font),
 
                         phi(0.0f),
                         theta(M_PI_2),
@@ -39,6 +41,7 @@ class BlState {
                         rightMouse(0) {};
 
                 gamestate_enum gamestate;
+                TTF_Font *font;
 
                 float phi;
                 float theta;
