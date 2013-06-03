@@ -17,6 +17,8 @@ class BlProgramDebug : public BlProgram
 
                 GLint locVertices;
                 GLint locColor;
+                GLint locUV;
+                GLint samplerTexture;
         private:
                 BlConfig *blConfig;
 };

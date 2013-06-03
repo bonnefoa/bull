@@ -1,5 +1,6 @@
 #include "bl_program_debug.h"
 #include <bl_matrix.h>
+#include <bl_log.h>
 
 BlProgramDebug *getProgramDebug(BlConfig *blConfig)
 {
@@ -26,6 +27,16 @@ void BlProgramDebug::init()
 
         locVertices = glGetAttribLocation(programId, "vertexPosition_modelspace");
         locColor = glGetAttribLocation(programId, "vertexColor");
+	locUV = glGetAttribLocation(programId, "vertexUV");
+        samplerTexture = glGetUniformLocation(programId
+                        , "textureSampler");
+        INFO("Loc vertices %i, loc Color %i, loc UV %i\n",
+                        locVertices, locColor, locUV);
+        if(locVertices < 0 || locColor < 0 || locUV < 0) {
+                ERROR("A location is unused");
+        }
+
+        glUniform1i(samplerTexture, 4);
 
         bindProjectionMatrix(programId, locProjection, blConfig->projection);
 }
