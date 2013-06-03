@@ -182,7 +182,8 @@ std::vector<BlModel*> BlMeshLoader::loadModelFile(const char *modelPath,
                 BlModel *blModel = new BlModel(blTexture,
                                 vertices, indices, normals,
                                 tangents, bitangents,
-                                uvs, position, rigidBody, modelPath, image);
+                                uvs, position, rigidBody,
+                                strduplicate(modelPath), image);
                 res.push_back(blModel);
         }
         return res;
