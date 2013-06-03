@@ -72,6 +72,7 @@ void shutdown()
         blSdl->shutdown();
         delete blSdl;
         delete blConfig;
+        delete blTexture;
 }
 
 void initScene(const char *filename)
