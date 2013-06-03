@@ -26,8 +26,8 @@ void BlModel::init()
         } else {
                 textureBuffer = 0;
         }
-        INFO("Generated buffers : indice %i, vertex %i, normal %i, tangent %i, bitangent %i, uv %i, texture %i\n",
-                        indiceBuffer, vertexBuffer, normalBuffer,
+        INFO("Generated buffers for %s: indice %i, vertex %i, normal %i, tangent %i, bitangent %i, uv %i, texture %i\n",
+                        name, indiceBuffer, vertexBuffer, normalBuffer,
                         tangentBuffer, bitangentBuffer, uvBuffer, textureBuffer);
 }
 
