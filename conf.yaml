@@ -21,3 +21,4 @@ keys:
 
 text:
         font: /usr/share/fonts/dejavu/DejaVuSerif.ttf
+        size: 10

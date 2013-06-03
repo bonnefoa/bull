@@ -2,6 +2,7 @@
 #include <bl_log.h>
 #include <bl_matrix.h>
 #include <yaml.h>
+#include <bl_util.h>
 
 int getKeyFromName(YAML::Node node, const char *def)
 {
@@ -30,9 +31,9 @@ BlConfig *loadBlConfig(const char *configurationFile)
         YAML::Node config = YAML::LoadFile(configurationFile);
 
         YAML::Node textNode = config["text"];
-        const char *fontPath = (char *)
-                (textNode["font"].as<std::string>()).c_str();
-        int fontSize = textNode["font"].as<int>();
+        const char *fontPath =
+                strduplicate((textNode["font"].as<std::string>()).c_str());
+        int fontSize = textNode["size"].as<int>();
 
         YAML::Node gameNode = config["game"];
         float speed = getNodeFloat(gameNode["speed"], 0.001f);
