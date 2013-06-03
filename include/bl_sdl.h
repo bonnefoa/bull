@@ -3,9 +3,11 @@
 
 #include <SDL.h>
 #include <SDL_ttf.h>
+#include <bl_config.h>
 
 class BlSdl {
         public:
+                BlSdl(BlConfig *_blConfig) : blConfig(_blConfig) {};
                 SDL_Window *window;
                 SDL_GLContext context;
 
@@ -16,6 +18,8 @@ class BlSdl {
         private:
                 void die(const char *msg);
                 void checkError(int line = -1);
+                BlConfig *blConfig;
+                void initFont();
 };
 
 #endif

@@ -19,10 +19,6 @@ void errorCallback( GLenum source,
         INFO("%s\n",message);
 }
 
-BlSdl::BlSdl()
-{
-}
-
 void BlSdl::die(const char *msg)
 {
         INFO("%s: %s\n", msg, SDL_GetError());
@@ -48,6 +44,20 @@ void BlSdl::shutdown()
         SDL_Quit();
 }
 
+void BlSdl::initFont()
+{
+        if(TTF_Init()==-1) {
+                ERROR("TTF_Init: %s\n", TTF_GetError());
+        }
+        TTF_Font *font;
+        font = TTF_OpenFont(blConfig->fontPath, blConfig->fontSize);
+        if(!font) {
+                ERROR("TTF_OpenFont: font '%s' %s\n",
+                                blConfig->fontPath,
+                                TTF_GetError());
+        }
+}
+
 void BlSdl::launch()
 {
 
@@ -69,11 +79,7 @@ void BlSdl::launch()
 
         context = SDL_GL_CreateContext(window);
         checkError(__LINE__);
-
-        if(TTF_Init()==-1) {
-                ERROR("TTF_Init: %s\n", TTF_GetError());
-        }
-
+        initFont();
 
         glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
