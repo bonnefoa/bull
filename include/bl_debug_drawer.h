@@ -29,6 +29,7 @@ class BlDebugDrawer : public btIDebugDraw {
                 void drawXYZAxis(const btTransform& center);
 
                 virtual ~BlDebugDrawer();
+                GLuint textureBuffer;
 
         private:
                 BlProgramDebug *blProgramDebug;
@@ -37,8 +38,14 @@ class BlDebugDrawer : public btIDebugDraw {
                 GLuint lineBuffer;
                 GLuint colorBuffer;
 
+                GLuint vertexBuffer;
+                GLuint uvBuffer;
+
                 std::vector<btVector3> lines;
                 std::vector<btVector3> colors;
+
+                std::vector<btVector3> vertices;
+                std::vector<float> uvs;
 };
 
 #endif
