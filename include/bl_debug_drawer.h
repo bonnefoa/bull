@@ -24,6 +24,9 @@ class BlDebugDrawer : public btIDebugDraw {
                 virtual int getDebugMode() const;
                 void initDebugRender();
                 void finalizeDraw();
+                void drawAxis(const btTransform& center,
+                                const btVector3& direction);
+                void drawXYZAxis(const btTransform& center);
 
                 virtual ~BlDebugDrawer();
 
