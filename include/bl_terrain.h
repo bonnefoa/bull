@@ -7,6 +7,7 @@
 #include <bullet.h>
 #include <bl_image.h>
 #include <bl_texture.h>
+#include <bl_util.h>
 
 class BlTerrain
 {

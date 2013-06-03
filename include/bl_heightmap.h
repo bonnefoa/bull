@@ -7,9 +7,11 @@
 #include <vector>
 
 BlImage *generateNormalMapFromHeightmap(BlImage *blImage);
-std::vector <btVector3> generateOffGrid(BlImage *heightmap, int gridWidth
+std::vector<btVector3> generateOffGrid(BlImage *heightmap, int gridWidth
                 , int gridLenght);
 int getDeltaPixelSum(int pointX, int pointY, int width,
                 int height, BlImage *blImage);
+float **extractGravityPoints(BlImage *heightmap, int gridWidth,
+                int gridLenght);
 
 #endif

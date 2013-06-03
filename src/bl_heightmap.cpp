@@ -70,13 +70,13 @@ int getDeltaPixelSum(int pointX, int pointY, int gridWidth,
         return sum;
 }
 
-std::vector <btVector3> generateOffGrid(BlImage *heightmap, int gridWidth
-                , int gridLenght)
+float **extractGravityPoints(BlImage *heightmap, int gridWidth,
+                int gridLenght)
 {
-        std::vector<btVector3> gravityPoints;
-
+        float **gravityPoints = initMatrix(gridWidth, gridLenght);
         int lengthIncrement = heightmap->height / gridLenght;
         int widthIncrement = heightmap->width / gridWidth;
+
         for(int z = 1; z < gridLenght - 1; z++) {
                 for(int x = 1; x < gridWidth - 1; x++) {
                         int pointX = x * widthIncrement;
@@ -84,50 +84,79 @@ std::vector <btVector3> generateOffGrid(BlImage *heightmap, int gridWidth
                         float pixSum = getDeltaPixelSum(pointX, pointY,
                                         gridWidth, gridLenght, heightmap);
                         pixSum /= gridWidth + gridLenght;
-                        if(pixSum > 10) {
-                                gravityPoints.push_back(btVector3(x, 0, z));
+                        gravityPoints[x][z] = pixSum;
+                }
+        }
+        return gravityPoints;
+}
+
+void getMaxGravPoint(btVector3 gridPoint, int gridWidth, int gridLenght,
+                float **gravityPoints, int *maxX, int *maxZ)
+{
+        int maxGrav = 0;
+        for (int x = 0; x < gridWidth; x++) {
+                for (int z = 0; z < gridLenght; z++) {
+                        btVector3 gravityPoint = btVector3(x, 0, z);
+                        float distance = gravityPoint.distance(gridPoint);
+                        float grav = gravityPoints[x][z] / (distance * distance);
+                        if(grav > maxGrav) {
+                                maxGrav = grav;
+                                *maxX = x;
+                                *maxZ = z;
                         }
                 }
         }
+}
 
-        float deltaX = (gridWidth - 1) / 2.0f;
-        float deltaZ = (gridLenght- 1) / 2.0f;
-        float vertPositions[gridWidth][gridLenght][2];
+void addRectangle(std::vector<btVector3> *vertices,
+                btVector3 lowerLeft,
+                btVector3 upRight)
+{
+        btVector3 upLeft = btVector3(lowerLeft[0], 0, upRight[2]);
+        btVector3 lowerRight = btVector3(upRight[0], 0, lowerLeft[2]);
+        vertices->push_back(lowerLeft);
+        vertices->push_back(upRight);
+        vertices->push_back(upLeft);
 
+        vertices->push_back(lowerLeft);
+        vertices->push_back(lowerRight);
+        vertices->push_back(upRight);
+}
+
+std::vector<btVector3> generateOffGrid(BlImage *heightmap, int gridWidth
+                , int gridLenght)
+{
+        float **gravityPoints = extractGravityPoints(heightmap,
+                        gridWidth, gridLenght);
+        std::vector<btVector3> vertices;
+
+        btVector3 lastPoint = btVector3(0,0,0);
+        float leftX = gridWidth - 1;
         for(int z = 0; z < gridLenght; z++) {
                 for(int x = 0; x < gridWidth; x++) {
-                        float vertX = (x - deltaX);
-                        float vertZ = (z - deltaZ);
-                        vertPositions[x][z][0] = vertX;
-                        vertPositions[x][z][1] = vertZ;
-                }
-        }
-
-        for(int z = 1; z < gridLenght - 1; z++) {
-                for(int x = 1; x < (gridWidth - 1); x++) {
-                        float vertX = vertPositions[x][z][0];
-                        float vertZ = vertPositions[x][z][1];
-                        btVector3 res = btVector3(vertX, 0, vertZ);
-                        btVector3 gridPoint = btVector3(vertX, 0, vertZ);
-
-                        for (std::vector<btVector3>::iterator it = gravityPoints.begin();
-                                        it != gravityPoints.end(); ++it) {
-                                btVector3 gravityPoint = *it;
-                                btVector3 direction = (gravityPoint - gridPoint).normalize();
-                                float distance = gravityPoint.distance(gridPoint);
-                                res += direction / distance;
+                        if(gravityPoints[x][z] == 0) {
+                                continue;
                         }
-                        vertPositions[x][z][0] = res[0];
+                        if(lastPoint[3] < z) {
+                                addRectangle(&vertices, lastPoint
+                                                , btVector3(leftX, 0, z - 1));
+                                lastPoint = btVector3(x, 0 , z);
+                        }
                 }
         }
+        vertices.push_back(lastPoint);
+        vertices.push_back(btVector3(lastPoint[0], 0, gridLenght - 1));
+        vertices.push_back(btVector3(gridWidth - 1, 0, gridLenght - 1));
 
-        std::vector <btVector3> vertices;
-        for(int z = 0; z < gridLenght; z++) {
-                for(int x = 0; x < gridWidth; x++) {
-                        btVector3 vert = btVector3(vertPositions[x][z][0], 0,
-                                        vertPositions[x][z][1]);
-                        vertices.push_back(vert);
-                }
+        vertices.push_back(lastPoint);
+        vertices.push_back(btVector3(gridWidth - 1, 0, gridLenght - 1));
+        vertices.push_back(btVector3(gridWidth - 1, 0, lastPoint[2]));
+
+        btVector3 center = btVector3((gridWidth- 1) / 2.0f, 0,
+                        (gridLenght- 1) / 2.0f);
+        for (std::vector<btVector3>::iterator it = vertices.begin();
+                        it != vertices.end(); ++it) {
+                (*it) -= center;
         }
 
         return vertices;

@@ -23,16 +23,8 @@ void BlTerrain::initVertices()
 
 void BlTerrain::initIndices()
 {
-        int maxZ = gridWidth * (gridLenght - 1);
-        for(int z = 0; z < maxZ; z+=gridWidth) {
-                for(int x = z; x < z + gridWidth - 1; x++) {
-                        indices.push_back(x);
-                        indices.push_back(x + gridWidth);
-                        indices.push_back(x + 1);
-                        indices.push_back(x + 1);
-                        indices.push_back(x + gridWidth);
-                        indices.push_back(x + gridWidth + 1);
-                }
+        for(unsigned int i =0; i < vertices.size(); i++) {
+                indices.push_back(i);
         }
 }
 
@@ -109,7 +101,8 @@ void BlTerrain::init()
         heightMapData = extractHeightmapData(blImage);
 
         createRigidBody();
-        vertices = generateOffGrid(blImage, gridWidth, gridLenght);
+        vertices = generateOffGrid(blImage,
+                        gridWidth, gridLenght);
         initIndices();
 
         initTextures();
