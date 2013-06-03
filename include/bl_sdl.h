@@ -4,12 +4,12 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 
-class BlWindow {
+class BlSdl {
         public:
                 SDL_Window *window;
                 SDL_GLContext context;
 
-                BlWindow(void);
+                BlSdl(void);
                 void launch(void);
                 void shutdown(void);
 

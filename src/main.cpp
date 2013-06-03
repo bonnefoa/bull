@@ -8,12 +8,12 @@
 #include <bl_program_terrain.h>
 #include <bl_scene.h>
 #include <bl_simulation.h>
-#include <bl_window.h>
+#include <bl_sdl.h>
 
 #define TICK_INTERVAL 1000
 
 BlInput *blInput;
-BlWindow *blWindow;
+BlSdl *blSdl;
 
 BlSimulation *blSimulation;
 BlProgramModel *blProgramModel;
@@ -33,8 +33,8 @@ Uint32 nextTime = 0;
 
 void initWindow()
 {
-        blWindow = new BlWindow();
-        blWindow->launch();
+        blSdl = new BlSdl();
+        blSdl->launch();
         blTexture = new BlTexture();
 }
 
@@ -72,8 +72,8 @@ void clean()
 void shutdown()
 {
         clean();
-        blWindow->shutdown();
-        delete blWindow;
+        blSdl->shutdown();
+        delete blSdl;
 }
 
 void initScene(const char *filename)
@@ -127,11 +127,22 @@ void moveLight() {
         }
 }
 
+void debugScene()
+{
+        for (std::vector<BlTerrain*>::iterator
+                        it = blScene->blTerrains->begin();
+                        it != blScene->blTerrains->end(); ++it) {
+                BlTerrain *terrain = *it;
+                blDebugDrawer->drawXYZAxis(terrain->model);
+        }
+}
+
 void renderDebug()
 {
         if(blState->debugState) {
                 blDebugDrawer->initDebugRender();
                 blSimulation->debugDraw();
+                debugScene();
                 blDebugDrawer->finalizeDraw();
         }
 }
@@ -143,7 +154,7 @@ void render()
         blProgramModel->displayScene(blScene, blProgramShadow->depthTexture);
         blProgramTerrain->displayScene(blScene);
         renderDebug();
-        SDL_GL_SwapWindow(blWindow->window);
+        SDL_GL_SwapWindow(blSdl->window);
 }
 
 void mainLoop()
@@ -195,7 +206,7 @@ int main(int argc, char **argv)
                 mainLoop();
                 switch (blState->gamestate) {
                         case QUIT:
-                                blWindow->shutdown();
+                                blSdl->shutdown();
                                 return 0;
                         case RELOAD_KEEP_STATE:
                                 reloadKeepPosition(configFile);

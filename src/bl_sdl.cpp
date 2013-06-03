@@ -1,5 +1,5 @@
 #include <GL/glew.h>
-#include <bl_window.h>
+#include <bl_sdl.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <bl_log.h>
@@ -19,18 +19,18 @@ void errorCallback( GLenum source,
         INFO("%s\n",message);
 }
 
-BlWindow::BlWindow()
+BlSdl::BlSdl()
 {
 }
 
-void BlWindow::die(const char *msg)
+void BlSdl::die(const char *msg)
 {
         INFO("%s: %s\n", msg, SDL_GetError());
         SDL_Quit();
         exit(1);
 }
 
-void BlWindow::checkError(int line)
+void BlSdl::checkError(int line)
 {
         const char *error = SDL_GetError();
         if (*error != '\0')
@@ -40,14 +40,15 @@ void BlWindow::checkError(int line)
         }
 }
 
-void BlWindow::shutdown()
+void BlSdl::shutdown()
 {
         SDL_GL_DeleteContext(context);
         SDL_DestroyWindow(window);
+        TTF_Quit();
         SDL_Quit();
 }
 
-void BlWindow::launch()
+void BlSdl::launch()
 {
 
         if (SDL_Init(SDL_INIT_VIDEO) < 0)
