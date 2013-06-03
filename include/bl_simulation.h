@@ -9,7 +9,7 @@
 
 class BlSimulation {
         public:
-                BlSimulation(BlConfig *blConfig, BlState *blState);
+                BlSimulation(BlDebugDrawer *blDebugDrawer);
                 void doSimulation();
                 virtual ~BlSimulation();
                 void step(void);
@@ -17,11 +17,9 @@ class BlSimulation {
                 void clearWorld(void);
                 void toggleDebug(int debugState);
                 void debugDraw();
-                int getDebugState();
 
         private:
                 BlState *blState;
-                BlDebugDrawer *blDebugDrawer;
 
                 btAlignedObjectArray<btCollisionShape*> collisionShapes;
                 btDiscreteDynamicsWorld* dynamicsWorld;

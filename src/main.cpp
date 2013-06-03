@@ -23,6 +23,9 @@ BlProgramTexture *blProgramTexture;
 BlTexture *blTexture;
 BlLoader *blLoader;
 
+BlProgramDebug *blProgramDebug;
+BlDebugDrawer *blDebugDrawer;
+
 BlScene *blScene;
 BlState *blState;
 BlConfig *blConfig;
@@ -42,12 +45,16 @@ void initBullora()
         blState = new BlState(btVector3(0,0,8));
         blInput = new BlInput(blState, blConfig);
 
-        blSimulation = new BlSimulation(blConfig, blState);
         blProgramModel = getProgramModel(blInput, blConfig, blState);
         blProgramTerrain = getProgramTerrain(blConfig, blState);
         blProgramTexture = getProgramTexture();
         blProgramShadow = getProgramShadow(btVector3());
         blLoader = new BlLoader(blTexture);
+
+        blProgramDebug = getProgramDebug(blConfig);
+        blDebugDrawer = new BlDebugDrawer(blProgramDebug, blState);
+        blDebugDrawer->init();
+        blSimulation = new BlSimulation(blDebugDrawer);
 }
 
 void clean()
@@ -120,13 +127,22 @@ void moveLight() {
         }
 }
 
+void renderDebug()
+{
+        if(blState->debugState) {
+                blDebugDrawer->initDebugRender();
+                blSimulation->debugDraw();
+                blDebugDrawer->finalizeDraw();
+        }
+}
+
 void render()
 {
         glViewport(0, 0, 1024, 1024);
         blProgramShadow->displaySceneForRender(blScene);
         blProgramModel->displayScene(blScene, blProgramShadow->depthTexture);
         blProgramTerrain->displayScene(blScene);
-        blSimulation->debugDraw();
+        renderDebug();
         SDL_GL_SwapWindow(blWindow->window);
 }
 
@@ -153,7 +169,6 @@ void reload(const char *configFile)
 
 void reloadKeepPosition(const char *configFile)
 {
-        int oldDebugState = blSimulation->getDebugState();
         btVector3 oldPosition = blState->position;
         float oldPhi = blState->phi;
         float oldTheta = blState->theta;
@@ -161,7 +176,7 @@ void reloadKeepPosition(const char *configFile)
         blState->phi = oldPhi;
         blState->theta = oldTheta;
         blState->position = oldPosition;
-        blSimulation->toggleDebug(oldDebugState);
+        blSimulation->toggleDebug(blState->debugState);
 }
 
 int main(int argc, char **argv)

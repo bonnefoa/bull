@@ -4,7 +4,7 @@
 #include <bl_debug_drawer.h>
 #include <bl_program_debug.h>
 
-BlSimulation::BlSimulation(BlConfig *blConfig, BlState *blState)
+BlSimulation::BlSimulation(BlDebugDrawer *blDebugDrawer)
 {
         collisionConfiguration = new btDefaultCollisionConfiguration();
         dispatcher = new btCollisionDispatcher(collisionConfiguration);
@@ -13,10 +13,6 @@ BlSimulation::BlSimulation(BlConfig *blConfig, BlState *blState)
         dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher,overlappingPairCache,
                         solver,collisionConfiguration);
         dynamicsWorld->setGravity(btVector3(0, -10, 0));
-
-        BlProgramDebug *blProgramDebug = getProgramDebug(blConfig);
-        blDebugDrawer = new BlDebugDrawer(blProgramDebug, blState);
-        blDebugDrawer->init();
         dynamicsWorld->setDebugDrawer(blDebugDrawer);
 }
 
@@ -37,11 +33,6 @@ void BlSimulation::addRigidBody(btRigidBody *rigidBody)
         }
 }
 
-int BlSimulation::getDebugState()
-{
-        return dynamicsWorld->getDebugDrawer()->getDebugMode();
-}
-
 void BlSimulation::toggleDebug(int debugState)
 {
         if (debugState==0) {
@@ -59,13 +50,8 @@ void BlSimulation::step(void)
 
 void BlSimulation::debugDraw()
 {
-        if(dynamicsWorld->getDebugDrawer()->getDebugMode() > 0) {
-                blDebugDrawer->initDebugRender();
-                dynamicsWorld->debugDrawWorld();
-                blDebugDrawer->finalizeDraw();
-        }
+        dynamicsWorld->debugDrawWorld();
 }
-
 
 void BlSimulation::clearWorld()
 {

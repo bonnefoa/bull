@@ -26,7 +26,6 @@ void BlState::reload(SDL_Keymod mod)
         }
 }
 
-
 void BlState::back(SDL_Keymod mod)
 {
         incrementAxis(mod, &axisDown, &sAxisDown);
