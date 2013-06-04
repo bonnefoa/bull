@@ -12,7 +12,7 @@ uniform float lightLinearAttenuation = 0.0;
 uniform float lightQuadraticAttenuation = 0.0;
 uniform vec3 lightPosition_worldspace;
 
-out vec3 color;
+out vec4 color;
 
 in vec2 UV;
 
@@ -61,5 +61,5 @@ void main()
         float visibility = texture(shadowSampler,
                 vec3(shadowCoord.xy, (shadowCoord.z-biais) / shadowCoord.w));
 
-        color = ambientPart + (diffusePart + specularPart) * visibility;
+        color = vec4(ambientPart + (diffusePart + specularPart) * visibility, 1);
 }

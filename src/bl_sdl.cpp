@@ -46,7 +46,7 @@ void BlSdl::shutdown()
 
 void BlSdl::initFont()
 {
-        if(TTF_Init()==-1) {
+        if(TTF_Init() < 0) {
                 ERROR("TTF_Init: %s\n", TTF_GetError());
         }
         font = TTF_OpenFont(blConfig->fontPath, blConfig->fontSize);
@@ -82,6 +82,9 @@ void BlSdl::launch()
         glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         if (glewInit() != GLEW_OK)
                 die("Failed to initialize GLEW\n");
