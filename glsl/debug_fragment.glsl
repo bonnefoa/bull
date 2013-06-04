@@ -1,16 +1,18 @@
 #version 130
 
 uniform sampler2D textureSampler;
+uniform bool hasTexture = false;
 
 in vec3 fragmentColor;
 in vec2 UV;
 
-out vec3 color;
+out vec4 color;
 
 void main()
 {
-        color = texture(textureSampler, UV).xyz;
-        if(color == vec3(0,0,0)){
-                color = fragmentColor;
+        if(hasTexture){
+                color = texture(textureSampler, UV);
+        } else {
+                color = vec4(fragmentColor, 1);
         }
 }

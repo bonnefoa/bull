@@ -24,6 +24,7 @@ void BlProgramDebug::init()
 
         locView = glGetUniformLocation(programId, "V");
         locProjection = glGetUniformLocation(programId, "P");
+        locHasTexture = glGetUniformLocation(programId, "hasTexture");
 
         locVertices = glGetAttribLocation(programId, "vertexPosition_modelspace");
         locColor = glGetAttribLocation(programId, "vertexColor");
@@ -36,7 +37,7 @@ void BlProgramDebug::init()
                 ERROR("A location is unused");
         }
 
-        glUniform1i(samplerTexture, 4);
+        glUniform1i(samplerTexture, 5);
 
         bindProjectionMatrix(programId, locProjection, blConfig->projection);
 }
