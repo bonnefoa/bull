@@ -6,7 +6,7 @@
 
 void addRectangle(std::vector<btVector3> *vertices,
                 btVector3 lowerLeft,
-                btVector3 upRight,
-                bool zUp);
+                btVector3 upRight);
+void addRectangleUV(std::vector<float> *uvs);
 
 #endif

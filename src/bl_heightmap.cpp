@@ -125,8 +125,7 @@ std::vector<btVector3> generateOffGrid(BlImage *heightmap, int gridWidth
                         }
                         if(lastPoint[3] < z) {
                                 addRectangle(&vertices, lastPoint
-                                                , btVector3(leftX, 0, z - 1),
-                                                true);
+                                                , btVector3(leftX, 0, z - 1));
                                 lastPoint = btVector3(x, 0 , z);
                         }
                 }
