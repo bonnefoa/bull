@@ -11,7 +11,7 @@
 class BlTexture
 {
         public:
-                BlTexture();
+                BlTexture() {};
                 ~BlTexture();
                 GLuint fetchTexture(std::string filename);
                 GLuint fillTextureAtlas(std::string setName

@@ -1,10 +1,6 @@
 #include "bl_texture.h"
 #include <bl_log.h>
 
-BlTexture::BlTexture()
-{
-}
-
 GLuint BlTexture::fetchTexture(std::string filename)
 {
         if(mapTextureToBuffer.count(filename) > 0) {
