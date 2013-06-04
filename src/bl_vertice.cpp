@@ -5,20 +5,20 @@ void addRectangleUV(std::vector<float> *uvs)
         uvs->push_back(0.0f);
         uvs->push_back(0.0f);
 
-        uvs->push_back(0.0f);
-        uvs->push_back(1.0f);
-
         uvs->push_back(1.0f);
         uvs->push_back(1.0f);
 
         uvs->push_back(0.0f);
+        uvs->push_back(1.0f);
+
+        uvs->push_back(0.0f);
+        uvs->push_back(0.0f);
+
+        uvs->push_back(1.0f);
         uvs->push_back(0.0f);
 
         uvs->push_back(1.0f);
         uvs->push_back(1.0f);
-
-        uvs->push_back(1.0f);
-        uvs->push_back(0.0f);
 }
 
 void addRectangle(std::vector<btVector3> *vertices,
@@ -31,10 +31,10 @@ void addRectangle(std::vector<btVector3> *vertices,
         btVector3 right = btVector3(upRight[0], 0, 0);
 
         vertices->push_back(lower + left);
-        vertices->push_back(up + left);
         vertices->push_back(up + right);
+        vertices->push_back(up + left);
 
         vertices->push_back(lower + left);
-        vertices->push_back(up + right);
         vertices->push_back(lower + right);
+        vertices->push_back(up + right);
 }
