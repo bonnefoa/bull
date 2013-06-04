@@ -9,5 +9,8 @@ out vec3 color;
 
 void main()
 {
-        color = fragmentColor + texture(textureSampler, UV).xyz;
+        color = texture(textureSampler, UV).xyz;
+        if(color == vec3(0,0,0)){
+                color = fragmentColor;
+        }
 }
