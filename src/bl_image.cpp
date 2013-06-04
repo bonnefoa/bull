@@ -114,7 +114,7 @@ BlImage *readPngImage(const char *filename)
         unsigned char *lines = (unsigned char *) malloc(sizeof(unsigned char)
                                 * width * height * numChannels);
         for (i = 0;  i < height;  ++i)
-                row_pointers[i] = lines + i*rowbytes;
+                row_pointers[i] = lines + (height - 1 - i)*rowbytes;
         png_read_image(pngPtr, row_pointers);
         png_read_end(pngPtr, NULL);
         png_destroy_read_struct(&pngPtr, &infoPtr, NULL);
