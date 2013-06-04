@@ -67,7 +67,7 @@ void BlDebugDrawer::draw3dText(const btVector3& location,const char* textString)
         memset(pix, 0, width * height * sizeof(unsigned char) * RGBA_CHANNEL);
         for(int x=0; x < surface->w; x++) {
                 for(int y=0; y < surface->h; y++) {
-                        int indexSrc = x + y * surface->pitch;
+                        int indexSrc = x + (surface-> h - 1 - y) * surface->pitch;
                         int index = x * RGBA_CHANNEL + y * width * RGBA_CHANNEL;
                         int val = surfPix[indexSrc] * 255;
                         pix[index] = val;
@@ -84,7 +84,7 @@ void BlDebugDrawer::draw3dText(const btVector3& location,const char* textString)
         SDL_FreeSurface(surface);
 
         addRectangle(&vertices, location, location +
-                        btVector3(10, 10, 0));
+                        btVector3(surface->w, 10, 0));
         addRectangleUV(&uvs);
 
         glUniform1i(blProgramDebug->locHasTexture, 1);
