@@ -4,6 +4,7 @@
 #include <zlib.h>
 #include <math.h>
 #include <string.h>
+#include <bl_util.h>
 
 int colorTypeToNumberChannels(int colorType)
 {
@@ -118,8 +119,8 @@ BlImage *readPngImage(const char *filename)
         png_read_end(pngPtr, NULL);
         png_destroy_read_struct(&pngPtr, &infoPtr, NULL);
 
-        unsigned int texWidth = pow(2, ceil(log2(width)));
-        unsigned int texHeight = pow(2, ceil(log2(height)));
+        unsigned int texWidth = roundUpPowerOfTwo(width);
+        unsigned int texHeight = roundUpPowerOfTwo(height);
         if(texWidth == width && texHeight == height) {
                 return new BlImage(width, height, lines, format, numChannels);
         }
