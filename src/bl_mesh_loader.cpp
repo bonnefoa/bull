@@ -149,7 +149,7 @@ void BlMeshLoader::fillConvexShapePoints(std::vector <btVector3> *vertices,
 
 std::vector<BlModel*> BlMeshLoader::loadModelFile(const char *modelPath,
                 btVector3 position,
-                btRigidBody *rigidBody,
+                std::map<int, btRigidBody*> mapIndexBody,
                 const char *image)
 {
         INFO("Loading asset from file %s, image %s, position %f %f %f\n",
@@ -160,6 +160,11 @@ std::vector<BlModel*> BlMeshLoader::loadModelFile(const char *modelPath,
 
         for (unsigned int i = 0; i < scene->mNumMeshes; i++){
                 aiMesh * mesh = scene->mMeshes[i];
+                btRigidBody *rigidBody = NULL;
+                if(mapIndexBody.count(i) > 0) {
+                        rigidBody = mapIndexBody[i];
+                }
+
                 std::vector <btVector3> vertices = loadVertices(mesh);
                 std::vector <btVector3> normals = loadVerticesInformation(
                                 mesh, mesh->mNormals);

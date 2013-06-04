@@ -152,12 +152,14 @@ btCollisionShape *BlLoader::readCollisionShape(YAML::Node node)
         return collisionShape;
 }
 
-btRigidBody *BlLoader::readShapeNode(YAML::Node node, btVector3 position)
+std::map<int, btRigidBody*> BlLoader::readShapeNode(YAML::Node node, btVector3 position)
 {
-        if(!node["shape"]) { return NULL; }
+        std::map<int, btRigidBody*> mapIndexBody;
+        if(!node["shape"]) { return mapIndexBody; }
         const char *shapeFile = (node["shape"].as<std::string>()).c_str();
         YAML::Node shapeNode = YAML::LoadFile(shapeFile);
 
+        int index = shapeNode["index"].as<int>();
         float mass = shapeNode["mass"].as<float>();
         bool isDynamic = (mass != 0.f);
         btCollisionShape *collisionShape = readCollisionShape(shapeNode);
@@ -177,7 +179,8 @@ btRigidBody *BlLoader::readShapeNode(YAML::Node node, btVector3 position)
         if(!isDynamic) {
                 body->proceedToTransform(transform);
         }
-        return body;
+        mapIndexBody[index] = body;
+        return mapIndexBody;
 }
 
 BlTerrain* BlLoader::loadTerrain(YAML::Node node)
@@ -218,9 +221,10 @@ std::vector<BlModel*> BlLoader::loadModel(YAML::Node node)
                 image = strduplicate((node["image"].as<std::string>()).c_str());
         }
         btVector3 position = readVector3(node["position"]);
-        btRigidBody *rigidBody = readShapeNode(node, position);
+        std::map<int, btRigidBody*> mapRigidBody =
+                readShapeNode(node, position);
         return blMeshLoader.loadModelFile(modelPath.c_str(), position,
-                        rigidBody, image);
+                        mapRigidBody, image);
 }
 
 BlLightAmbient *BlLoader::loadAmbientNode(YAML::Node node)

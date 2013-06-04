@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <bl_texture.h>
+#include <map>
 
 class BlMeshLoader
 {
@@ -25,7 +26,8 @@ class BlMeshLoader
 
                 BlLightAmbient *loadAmbientFile(const char *path);
                 std::vector<BlModel*> loadModelFile(const char *modelPath,
-                                btVector3 position, btRigidBody *rigidBody,
+                                btVector3 position,
+                                std::map<int, btRigidBody*> mapIndexBody,
                                 const char *image);
                 std::vector<BlLightPoint*> loadLightFile(const char *path,
                                 btVector3 position,
