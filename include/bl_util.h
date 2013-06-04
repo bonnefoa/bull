@@ -21,5 +21,6 @@ float ***initMatrixVector(int width, int height, int sizeVector);
 std::vector <btVector3> matrixVectorToVectorList(float ***arr, int width, int lenght);
 void freeMatrixVector(float ***mat, int width, int height);
 void freeMatrix(float **mat, int width);
+int roundUpPowerOfTwo(int num);
 
 #endif
