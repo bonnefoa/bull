@@ -59,7 +59,7 @@ def convert_properties(properties, y_up):
                         results[k] = v
         return results
 
-def get_shape(obj, y_up):
+def get_shape(obj, y_up, index):
         shape = obj.rigid_body.collision_shape
         margin = obj.rigid_body.collision_margin
         bound_box = obj.bound_box.data
@@ -79,6 +79,7 @@ def get_shape(obj, y_up):
         elif shape == SHAPE_CONE:
                 properties['radius'] = bound_box.dimensions.x / 2
                 properties['height'] = bound_box.dimensions.z
+        properties['index'] = index
         properties['origin'] = bound_box.location
         properties['rotation'] = bound_box.matrix_local.to_quaternion()
         return convert_properties(properties, y_up)
@@ -99,17 +100,20 @@ class ExportBulletShape(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
         def poll(cls, context):
                 return any([obj.rigid_body for obj in bpy.data.objects])
 
-        def process_obj(self, f, obj):
+        def process_obj(self, f, obj, index):
                 if not obj.rigid_body:
                         return
-                properties = get_shape(obj, self.y_up )
+                properties = get_shape(obj, self.y_up, index)
                 for k, v in properties.items():
                         f.write( "%s: %s\n" % (k, v) )
 
         def execute(self, context):
+                index = 0
                 with open(self.filepath, "w") as f:
                         for obj in bpy.data.objects:
-                                self.process_obj(f, obj)
+                                if obj.type == 'MESH':
+                                        self.process_obj(f, obj, index)
+                                        index += 1
                 self.report({'INFO'}, "Export succeeded!")
                 return {'FINISHED'}
 
