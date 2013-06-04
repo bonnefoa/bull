@@ -55,9 +55,10 @@ void BlDebugDrawer::draw3dText(const btVector3& location,const char* textString)
         (void)location;
         (void)textString;
 
-        SDL_Color textColor = {255,255,255,0};
+        SDL_Color textColor = {255,255,255,1};
+        SDL_Color bg = {0,0,0,0};
         SDL_Surface *surface =
-                TTF_RenderText_Solid(blState->font, textString, textColor);
+                TTF_RenderText_Shaded(blState->font, textString, textColor, bg);
         GLenum textureFormat = GL_RGBA;
 
         int width = roundUpPowerOfTwo(surface->w);
@@ -69,7 +70,7 @@ void BlDebugDrawer::draw3dText(const btVector3& location,const char* textString)
                 for(int y=0; y < surface->h; y++) {
                         int indexSrc = x + (surface-> h - 1 - y) * surface->pitch;
                         int index = x * RGBA_CHANNEL + y * width * RGBA_CHANNEL;
-                        int val = surfPix[indexSrc] * 255;
+                        int val = surfPix[indexSrc];
                         pix[index] = val;
                         pix[index+1] = val;
                         pix[index+2] = val;
@@ -81,11 +82,13 @@ void BlDebugDrawer::draw3dText(const btVector3& location,const char* textString)
         glBindTexture(GL_TEXTURE_2D, textureBuffer);
         glTexImage2D(GL_TEXTURE_2D, 0, textureFormat, width, height,
                         0, textureFormat, GL_UNSIGNED_BYTE, pix);
-        SDL_FreeSurface(surface);
 
         addRectangle(&vertices, location, location +
-                        btVector3(surface->w, 10, 0));
+                        btVector3(20, 5 * float(surface->w) / float(surface->h),
+                                0));
         addRectangleUV(&uvs);
+
+        SDL_FreeSurface(surface);
 
         glUniform1i(blProgramDebug->locHasTexture, 1);
         glEnableVertexAttribArray(blProgramDebug->locUV);
