@@ -132,17 +132,19 @@ void BlInput::handleMovement()
         deltaTime = getDeltaTime();
         computeNewAngles(deltaTime);
 
-        direction = -1.0f * btVector3(sin(blState->theta) * sin(blState->phi),
+        blState->direction = -1.0f * btVector3(sin(blState->theta)
+                        * sin(blState->phi),
                         cos(blState->theta),
                         sin(blState->theta) * cos(blState->phi));
         right = btVector3(sin(blState->phi + M_PI_2),
                         0,
                         cos(blState->phi + M_PI_2));
-        up = right.cross(direction);
-        blState->view = computeView(right, up, direction, blState->position);
+        up = right.cross(blState->direction);
+        blState->view = computeView(right, up,
+                        blState->direction, blState->position);
 
         blState->position += float(blState->axisUp - blState->axisDown)
-                * direction * deltaTime * blConfig->speed;
+                * blState->direction * deltaTime * blConfig->speed;
         blState->position += float(blState->axisRight - blState->axisLeft)
                 * right * deltaTime * blConfig->speed;
 }

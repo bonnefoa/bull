@@ -29,7 +29,6 @@ class BlInput
                 void handleMouseUp(SDL_Event *event);
 
                 Uint32 lastTicks;
-                btVector3 direction;
                 btVector3 right;
                 btVector3 up;
 

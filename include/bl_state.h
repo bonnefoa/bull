@@ -24,6 +24,7 @@ class BlState {
                         phi(0.0f),
                         theta(M_PI_2),
                         position(_position),
+                        direction(btVector3(0,0,0)),
                         view(btTransform()),
 
                         lightState(0),
@@ -38,7 +39,8 @@ class BlState {
                         sAxisUp(0),
                         sAxisDown(0),
                         leftMouse(0),
-                        rightMouse(0) {};
+                        rightMouse(0) {
+                        };
 
                 gamestate_enum gamestate;
                 TTF_Font *font;
@@ -47,6 +49,7 @@ class BlState {
                 float theta;
 
                 btVector3 position;
+                btVector3 direction;
                 btTransform view;
 
                 int lightState;
@@ -83,7 +86,8 @@ class BlState {
                 void logState();
 
         private:
-                void incrementAxis(SDL_Keymod mod, int *normalAxis, int *modAxis);
+                void incrementAxis(SDL_Keymod mod, int *normalAxis,
+                                int *modAxis);
 };
 
 #endif
