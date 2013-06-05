@@ -9,6 +9,7 @@
 #include <bl_scene.h>
 #include <bl_simulation.h>
 #include <bl_sdl.h>
+#include <bl_matrix.h>
 
 #define TICK_INTERVAL 1000
 
@@ -132,7 +133,8 @@ void debugScene()
                         it = blScene->blTerrains->begin();
                         it != blScene->blTerrains->end(); ++it) {
                 BlTerrain *terrain = *it;
-                blDebugDrawer->drawXYZAxis(terrain->model);
+                blDebugDrawer->drawXYZAxis(buildModelMatrix(btVector3(1,1,1),
+                                        terrain->position));
         }
 }
 
