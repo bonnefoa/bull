@@ -2,7 +2,6 @@
 #include <bl_matrix.h>
 #include <bl_log.h>
 #include <bl_heightmap.h>
-#include <BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h>
 #include <map>
 
 void BlTerrain::initVertices()
@@ -51,6 +50,9 @@ void BlTerrain::initUVs()
 void BlTerrain::createRigidBody()
 {
         int upAxis = 1;
+        INFO("Constructing terrain shape with gridWith %i, gridLenght %i, heightScale %f, minHeight %f, maxHeight %f\n",
+                        gridWidth, gridLenght, heightScale,
+                        minHeight, maxHeight);
         btHeightfieldTerrainShape *shape =
                 new btHeightfieldTerrainShape(
                                 gridWidth,
@@ -63,14 +65,10 @@ void BlTerrain::createRigidBody()
                                 PHY_UCHAR,
                                 false
                                 );
-        float mass = 0.0f;
-        btDefaultMotionState *motionState = NULL;
-        btVector3 localInertia(0,0,0);
-
-        btRigidBody::btRigidBodyConstructionInfo rbInfo(mass
-                        , motionState, shape, localInertia);
+        btRigidBody::btRigidBodyConstructionInfo rbInfo(0.0f
+                        , NULL, shape, btVector3(0,0,0) );
         rigidBody = new btRigidBody(rbInfo);
-        rigidBody->proceedToTransform(model);
+        rigidBody->setWorldTransform(model);
 }
 
 char *BlTerrain::extractHeightmapData(BlImage *blImage)

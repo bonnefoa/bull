@@ -4,10 +4,11 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 #include <vector>
-#include <bullet.h>
 #include <bl_image.h>
 #include <bl_texture.h>
 #include <bl_util.h>
+#include <bullet.h>
+#include <BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h>
 
 class BlTerrain
 {
