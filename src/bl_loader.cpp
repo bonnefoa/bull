@@ -196,7 +196,6 @@ BlTerrain* BlLoader::loadTerrain(YAML::Node node)
                         (node["image"].as<std::string>()).c_str());
         btVector3 position = readVector3(node["position"]);
         btVector3 scale = readVector3(node["scale"]);
-        btTransform model = buildModelMatrix(scale, position);
 
         int   gridWidth = node["gridWidth"].as<int>();
         int   gridLenght = node["gridLenght"].as<int>();
@@ -213,7 +212,7 @@ BlTerrain* BlLoader::loadTerrain(YAML::Node node)
                         gridWidth, gridLenght,
                         heightScale,
                         minHeight, maxHeight,
-                        model, image,
+                        position, scale, image,
                         textureSetName,
                         textureSetHeights);
         return blTerrain;

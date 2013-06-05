@@ -18,12 +18,14 @@ class BlTerrain
                                 int   _gridWidth, int   _gridLenght,
                                 float _heightScale,
                                 float _minHeight, float _maxHeight,
-                                btTransform _model,
+                                btVector3 _position,
+                                btVector3 _scale,
                                 const char *_heightmapImage,
                                 const char *_textureSetName,
                                 std::vector<float> _textureSetHeights
                          ) :
-                        model(_model),
+                        position(_position),
+                        scale(_scale),
                         blTexture(_blTexture),
                         gridWidth(_gridWidth),
                         gridLenght(_gridLenght),
@@ -46,7 +48,8 @@ class BlTerrain
                 void bindGridSize(GLint locGridLenght, GLint locGridWidth);
 
                 btRigidBody *rigidBody;
-                btTransform model;
+                btVector3 position;
+                btVector3 scale;
 
         private:
                 BlTexture *blTexture;

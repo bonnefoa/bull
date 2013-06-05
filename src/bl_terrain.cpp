@@ -65,9 +65,11 @@ void BlTerrain::createRigidBody()
                                 PHY_UCHAR,
                                 false
                                 );
+        shape->setLocalScaling(scale);
         btRigidBody::btRigidBodyConstructionInfo rbInfo(0.0f
                         , NULL, shape, btVector3(0,0,0) );
         rigidBody = new btRigidBody(rbInfo);
+        btTransform model = buildModelMatrix(btVector3(1,1,1), position);
         rigidBody->setWorldTransform(model);
 }
 
@@ -120,6 +122,7 @@ BlTerrain::~BlTerrain()
         glDeleteBuffers(1, &uvBuffer);
         if(heightmapBuffer > 0)
                 glDeleteTextures(1, &heightmapBuffer);
+        free(heightMapData);
 }
 
 void BlTerrain::loadInBuffer()
@@ -174,6 +177,7 @@ void BlTerrain::bindTextures()
 
 void BlTerrain::bindModelMatrix(GLint uniformModel)
 {
+        btTransform model = buildModelMatrix(scale, position);
         sendTransform(model, uniformModel);
 }
 
