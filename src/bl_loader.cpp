@@ -110,7 +110,7 @@ btTransform BlLoader::readShapeTransform(YAML::Node node, btVector3 position)
 {
         btQuaternion rotation = node["rotation"].as<btQuaternion>();
         btVector3 origin = node["origin"].as<btVector3>();
-        return btTransform(rotation, origin + position);
+        return btTransform(rotation, position - origin);
 }
 
 btCollisionShape *BlLoader::readCollisionShape(YAML::Node node)
@@ -152,12 +152,9 @@ btCollisionShape *BlLoader::readCollisionShape(YAML::Node node)
         return collisionShape;
 }
 
-std::map<int, btRigidBody*> BlLoader::readShapeNode(YAML::Node node, btVector3 position)
+std::map<int, btRigidBody*> BlLoader::readShapeNode(YAML::Node shapeNode, btVector3 position)
 {
         std::map<int, btRigidBody*> mapIndexBody;
-        if(!node["shape"]) { return mapIndexBody; }
-        const char *shapeFile = (node["shape"].as<std::string>()).c_str();
-        YAML::Node shapeNode = YAML::LoadFile(shapeFile);
 
         int index = shapeNode["index"].as<int>();
         float mass = shapeNode["mass"].as<float>();
@@ -181,6 +178,15 @@ std::map<int, btRigidBody*> BlLoader::readShapeNode(YAML::Node node, btVector3 p
         }
         mapIndexBody[index] = body;
         return mapIndexBody;
+}
+
+std::map<int, btVector3> BlLoader::readShapeOffset(YAML::Node node)
+{
+        std::map<int, btVector3> mapIndexOffset;
+        int index = node["index"].as<int>();
+        btVector3 origin = node["origin"].as<btVector3>();
+        mapIndexOffset[index] = origin;
+        return mapIndexOffset;
 }
 
 BlTerrain* BlLoader::loadTerrain(YAML::Node node)
@@ -221,10 +227,18 @@ std::vector<BlModel*> BlLoader::loadModel(YAML::Node node)
                 image = strduplicate((node["image"].as<std::string>()).c_str());
         }
         btVector3 position = readVector3(node["position"]);
-        std::map<int, btRigidBody*> mapRigidBody =
-                readShapeNode(node, position);
+
+        std::map<int, btRigidBody*> mapIndexBody;
+        std::map<int, btVector3> mapIndexOffset;
+        if(node["shape"]) {
+                const char *shapeFile = (node["shape"].as<std::string>()).c_str();
+                YAML::Node shapeNode = YAML::LoadFile(shapeFile);
+                mapIndexBody = readShapeNode(shapeNode, position);
+                mapIndexOffset = readShapeOffset(shapeNode);
+        }
+
         return blMeshLoader.loadModelFile(modelPath.c_str(), position,
-                        mapRigidBody, image);
+                        mapIndexBody, mapIndexOffset, image);
 }
 
 BlLightAmbient *BlLoader::loadAmbientNode(YAML::Node node)

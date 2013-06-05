@@ -32,6 +32,8 @@ class BlLoader
                                 btVector3 position);
                 btCollisionShape *readCollisionShape(YAML::Node node);
                 btTransform readShapeTransform(YAML::Node node, btVector3 position);
+                std::map<int, btVector3> readShapeOffset(YAML::Node node);
+
                 btVector3 readVector3(YAML::Node node);
                 void loadTextureSet(YAML::Node node);
 };

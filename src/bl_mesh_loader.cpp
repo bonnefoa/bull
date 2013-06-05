@@ -11,11 +11,15 @@ btVector3 BlMeshLoader::convertAiVectorToBtVector(aiVector3D vec)
         return btVector3(vec.x, vec.y, vec.z);
 }
 
-std::vector <btVector3> BlMeshLoader::loadVertices(aiMesh *mesh)
+std::vector <btVector3> BlMeshLoader::loadVertices(aiMesh *mesh,
+                btVector3 offset)
 {
         std::vector <btVector3> vertices;
+        btVector3 centerOffset = offset / 2;
         for(unsigned int j=0; j < mesh->mNumVertices; j++){
-                vertices.push_back(convertAiVectorToBtVector(mesh->mVertices[j]));
+                vertices.push_back(
+                                convertAiVectorToBtVector(mesh->mVertices[j])
+                                - centerOffset);
         }
         return vertices;
 }
@@ -150,6 +154,7 @@ void BlMeshLoader::fillConvexShapePoints(std::vector <btVector3> *vertices,
 std::vector<BlModel*> BlMeshLoader::loadModelFile(const char *modelPath,
                 btVector3 position,
                 std::map<int, btRigidBody*> mapIndexBody,
+                std::map<int, btVector3> mapIndexOffset,
                 const char *image)
 {
         INFO("Loading asset from file %s, image %s, position %f %f %f\n",
@@ -160,12 +165,15 @@ std::vector<BlModel*> BlMeshLoader::loadModelFile(const char *modelPath,
 
         for (unsigned int i = 0; i < scene->mNumMeshes; i++){
                 aiMesh * mesh = scene->mMeshes[i];
+                btVector3 offset;
                 btRigidBody *rigidBody = NULL;
                 if(mapIndexBody.count(i) > 0) {
                         rigidBody = mapIndexBody[i];
                 }
-
-                std::vector <btVector3> vertices = loadVertices(mesh);
+                if(mapIndexOffset.count(i) > 0) {
+                        offset = mapIndexOffset[i];
+                }
+                std::vector <btVector3> vertices = loadVertices(mesh, offset);
                 std::vector <btVector3> normals = loadVerticesInformation(
                                 mesh, mesh->mNormals);
 

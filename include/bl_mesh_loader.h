@@ -28,6 +28,7 @@ class BlMeshLoader
                 std::vector<BlModel*> loadModelFile(const char *modelPath,
                                 btVector3 position,
                                 std::map<int, btRigidBody*> mapIndexBody,
+                                std::map<int, btVector3> mapIndexOffset,
                                 const char *image);
                 std::vector<BlLightPoint*> loadLightFile(const char *path,
                                 btVector3 position,
@@ -37,7 +38,8 @@ class BlMeshLoader
                 Assimp::Importer importer;
                 btVector3 convertAiColorToBtVector(aiColor3D color);
                 btVector3 convertAiVectorToBtVector(aiVector3D vec);
-                std::vector <btVector3> loadVertices(aiMesh *mesh);
+                std::vector <btVector3> loadVertices(aiMesh *mesh,
+                                btVector3 offset);
                 std::vector <btVector3> loadVerticesInformation(aiMesh *mesh,
                                 aiVector3D *infos);
                 std::vector <btVector3> loadNormals(aiMesh *mesh);
