@@ -34,7 +34,7 @@ btCollisionWorld::ClosestRayResultCallback BlSimulation::getCenterObject()
         btCollisionWorld::ClosestRayResultCallback rayCallback(
                         blState->position, blState->direction);
         dynamicsWorld->rayTest(blState->position,
-                        blState->direction * 1000,
+                        blState->direction * 100,
                         rayCallback);
         return rayCallback;
 }
@@ -95,11 +95,12 @@ void BlSimulation::pushObject()
         btCollisionWorld::ClosestRayResultCallback rayCallback =
                 getCenterObject();
         if(rayCallback.hasHit()) {
-                btCollisionObject *obj = rayCallback.m_collisionObject;
-                if(!obj->isStaticObject()) {
+                btRigidBody *body = btRigidBody::upcast(
+                                rayCallback.m_collisionObject);
+                if(!body->isStaticObject()) {
                         btVector3 str = blState->direction;
-                        obj->getCollisionShape()->calculateLocalInertia(1.0f,
-                                        str);
+                        body->activate(true);
+                        body->setLinearVelocity(body->getLinearVelocity() + str);
                 }
         }
 }
