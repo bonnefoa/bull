@@ -6,6 +6,7 @@
 #include <bl_light_point.h>
 #include <bl_light_ambient.h>
 #include <bl_character.h>
+#include <bl_simulation.h>
 
 class BlScene {
         public:
@@ -28,6 +29,9 @@ class BlScene {
                 std::vector<BlTerrain*> *blTerrains;
                 BlCharacter *blCharacter;
         virtual ~BlScene ();
+
+        void init(BlSimulation *blSimulation, GLuint programModelId);
+
 };
 
 #endif

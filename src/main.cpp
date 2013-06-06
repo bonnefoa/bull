@@ -81,36 +81,14 @@ void initScene(const char *filename)
         blScene = blLoader->loadScene(filename);
         blProgramModel->bindProjection();
         blProgramTerrain->bindProjection();
-        for (std::vector<BlModel*>::iterator it = blScene->blModels->begin();
-                        it != blScene->blModels->end(); ++it) {
-                BlModel *model = *it;
-                model->init();
-                model->loadInBuffer();
-                blSimulation->addRigidBody(model->rigidBody);
-        }
-        for (std::vector<BlTerrain*>::iterator
-                        it = blScene->blTerrains->begin();
-                        it != blScene->blTerrains->end(); ++it) {
-                BlTerrain *terrain = *it;
-                terrain->init();
-                terrain->loadInBuffer();
-                blSimulation->addRigidBody(terrain->rigidBody);
-        }
-        for (std::vector<BlLightPoint*>::iterator it = blScene->blLightPoints->begin();
-                        it != blScene->blLightPoints->end(); ++it) {
-                BlLightPoint *light = *it;
-                light->init();
-                light->loadInBuffer(blProgramModel->programId);
-        }
-        blScene->blLightAmbient->loadInBuffer(blProgramModel->programId);
-        blScene->blCharacter->loadInBuffer();
+        blScene->init(blSimulation, blProgramModel->programId);
 }
 
 void logState()
 {
         if(nextTime <= blInput->now) {
                 nextTime = blInput->now + TICK_INTERVAL;
-                blState->logState();
+                //blState->logState();
         }
 }
 
