@@ -17,6 +17,11 @@ BlCharacter::~BlCharacter()
 {
         delete controller;
         delete ghostObject;
+        for (std::vector<BlModel*>::iterator it = blModels->begin();
+                        it != blModels->end(); ++it) {
+                delete *it;
+        }
+        delete blModels;
 }
 
 void BlCharacter::loadInBuffer()
