@@ -113,11 +113,11 @@ btTransform BlLoader::readShapeTransform(YAML::Node node, btVector3 position)
         return btTransform(rotation, position - origin);
 }
 
-btCollisionShape *BlLoader::readCollisionShape(YAML::Node node)
+btConvexShape *BlLoader::readCollisionShape(YAML::Node node)
 {
         std::string shape = node["shape"].as<std::string>();
-        btCollisionShape *collisionShape = (btCollisionShape*)
-                malloc(sizeof(btCollisionShape));
+        btConvexShape *collisionShape = (btConvexShape*)
+                malloc(sizeof(btConvexShape));
         if(shape == "BOX") {
                 btVector3 halfExtents = node["half-extents"]
                         .as<btVector3>();
@@ -159,7 +159,7 @@ std::map<int, btRigidBody*> BlLoader::readShapeNode(YAML::Node shapeNode, btVect
         int index = shapeNode["index"].as<int>();
         float mass = shapeNode["mass"].as<float>();
         bool isDynamic = (mass != 0.f);
-        btCollisionShape *collisionShape = readCollisionShape(shapeNode);
+        btConvexShape *collisionShape = readCollisionShape(shapeNode);
         INFO("Shape of mass %f and type %s\n", mass,
                         collisionShape->getName());
         btTransform transform = readShapeTransform(shapeNode, position);
@@ -243,7 +243,10 @@ std::vector<BlModel*> BlLoader::loadModel(YAML::Node node)
 BlCharacter *BlLoader::loadCharacter(YAML::Node node)
 {
         std::vector<BlModel*> blModels = loadModel(node);
-        BlCharacter *blCharacter = new BlCharacter(blModels);
+        const char *shapeFile = (node["shape"].as<std::string>()).c_str();
+        YAML::Node shapeNode = YAML::LoadFile(shapeFile);
+        btConvexShape *collisionShape = readCollisionShape(shapeNode);
+        BlCharacter *blCharacter = new BlCharacter(blModels, collisionShape);
         return blCharacter;
 }
 

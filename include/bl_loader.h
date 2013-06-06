@@ -31,7 +31,7 @@ class BlLoader
                 BlTerrain* loadTerrain(YAML::Node node);
                 std::map<int, btRigidBody*> readShapeNode(YAML::Node node,
                                 btVector3 position);
-                btCollisionShape *readCollisionShape(YAML::Node node);
+                btConvexShape *readCollisionShape(YAML::Node node);
                 btTransform readShapeTransform(YAML::Node node, btVector3 position);
                 std::map<int, btVector3> readShapeOffset(YAML::Node node);
                 BlCharacter *loadCharacter(YAML::Node node);
