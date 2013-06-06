@@ -53,7 +53,7 @@ void initComponents()
         blProgramDebug = getProgramDebug(blConfig);
         blDebugDrawer = new BlDebugDrawer(blProgramDebug, blState);
         blDebugDrawer->init();
-        blSimulation = new BlSimulation(blDebugDrawer);
+        blSimulation = new BlSimulation(blDebugDrawer, blState);
 }
 
 void clean()
@@ -165,6 +165,14 @@ void mainLoop()
 
         blInput->handleInput();
         blInput->handleMovement();
+        if(blState->leftMouse == 1) {
+                blSimulation->pushObject();
+        }
+        if(blState->rightMouse == 1) {
+                blSimulation->pickObject();
+        } else {
+                blSimulation->endPickObject();
+        }
         logState();
 
         moveLight();

@@ -9,7 +9,8 @@
 
 class BlSimulation {
         public:
-                BlSimulation(BlDebugDrawer *blDebugDrawer);
+                BlSimulation(BlDebugDrawer *blDebugDrawer,
+                                BlState *_blState);
                 void doSimulation();
                 virtual ~BlSimulation();
                 void step(void);
@@ -18,8 +19,14 @@ class BlSimulation {
                 void toggleDebug(int debugState);
                 void debugDraw();
 
+                void pushObject();
+                void pickObject();
+                void endPickObject();
+
         private:
+                BlDebugDrawer *blDebugDrawer;
                 BlState *blState;
+                btRigidBody *pickedBody;
 
                 btAlignedObjectArray<btCollisionShape*> collisionShapes;
                 btDiscreteDynamicsWorld* dynamicsWorld;
@@ -28,6 +35,9 @@ class BlSimulation {
                 btBroadphaseInterface *overlappingPairCache;
                 btSequentialImpulseConstraintSolver *solver;
 
+                btCollisionWorld::ClosestRayResultCallback getCenterObject();
+                void movePickedObject();
+                void initializePickedObject(btCollisionWorld::ClosestRayResultCallback rayCallback);
 };
 
 #endif
