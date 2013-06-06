@@ -9,6 +9,7 @@
 #include <bl_scene.h>
 #include <bl_mesh_loader.h>
 #include <yaml.h>
+#include <bl_character.h>
 
 class BlLoader
 {
@@ -33,6 +34,7 @@ class BlLoader
                 btCollisionShape *readCollisionShape(YAML::Node node);
                 btTransform readShapeTransform(YAML::Node node, btVector3 position);
                 std::map<int, btVector3> readShapeOffset(YAML::Node node);
+                BlCharacter *loadCharacter(YAML::Node node);
 
                 btVector3 readVector3(YAML::Node node);
                 void loadTextureSet(YAML::Node node);

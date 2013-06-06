@@ -5,6 +5,7 @@
 #include <bl_terrain.h>
 #include <bl_light_point.h>
 #include <bl_light_ambient.h>
+#include <bl_character.h>
 
 class BlScene {
         public:
@@ -12,17 +13,20 @@ class BlScene {
                                 , std::vector<BlLightPoint*> *_lightPoints
                                 , BlLightAmbient *_ambient
                                 , std::vector<BlTerrain*> *_terrains
+                                , BlCharacter *_blCharacter
                                 ) :
                         blModels(_models),
                         blLightPoints(_lightPoints),
                         blLightAmbient(_ambient),
-                        blTerrains(_terrains)
+                        blTerrains(_terrains),
+                        blCharacter(_blCharacter)
         {} ;
 
                 std::vector<BlModel*> *blModels;
                 std::vector<BlLightPoint*> *blLightPoints;
                 BlLightAmbient *blLightAmbient;
                 std::vector<BlTerrain*> *blTerrains;
+                BlCharacter *blCharacter;
         virtual ~BlScene ();
 };
 

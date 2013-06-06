@@ -240,6 +240,13 @@ std::vector<BlModel*> BlLoader::loadModel(YAML::Node node)
                         mapIndexBody, mapIndexOffset, image);
 }
 
+BlCharacter *BlLoader::loadCharacter(YAML::Node node)
+{
+        std::vector<BlModel*> blModels = loadModel(node);
+        BlCharacter *blCharacter = new BlCharacter(blModels);
+        return blCharacter;
+}
+
 BlLightAmbient *BlLoader::loadAmbientNode(YAML::Node node)
 {
         std::string filename = node["filename"].as<std::string>();
@@ -297,8 +304,10 @@ BlScene *BlLoader::loadScene(const char *filename)
                 BlTerrain *nodeTerrain = loadTerrain(*it);
                 terrains->push_back(nodeTerrain);
         }
+        YAML::Node characterNode = config["character"];
+        BlCharacter *blCharacter = loadCharacter(characterNode);
         if(config["ambient"]) {
                 ambient = loadAmbientNode(config["ambient"]);
         }
-        return new BlScene(models, lights, ambient, terrains);
+        return new BlScene(models, lights, ambient, terrains, blCharacter);
 }
