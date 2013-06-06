@@ -19,4 +19,5 @@ BlScene::~BlScene()
                 delete (*it);
         }
         delete blTerrains;
+        delete blCharacter;
 }
