@@ -160,7 +160,7 @@ void BlDebugDrawer::drawAxis(const btTransform& center,
         colors.push_back(direction);
 
         lines.push_back(center.getOrigin());
-        lines.push_back(direction * 5);
+        lines.push_back(center.getOrigin() + direction);
 }
 
 void BlDebugDrawer::drawXYZAxis(const btTransform& center)
