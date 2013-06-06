@@ -103,6 +103,7 @@ void initScene(const char *filename)
                 light->loadInBuffer(blProgramModel->programId);
         }
         blScene->blLightAmbient->loadInBuffer(blProgramModel->programId);
+        blScene->blCharacter->loadInBuffer();
 }
 
 void logState()

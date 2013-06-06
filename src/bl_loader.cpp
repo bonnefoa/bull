@@ -242,7 +242,8 @@ std::vector<BlModel*> BlLoader::loadModel(YAML::Node node)
 
 BlCharacter *BlLoader::loadCharacter(YAML::Node node)
 {
-        std::vector<BlModel*> blModels = loadModel(node);
+        std::vector<BlModel*> *blModels =
+                new std::vector<BlModel*>(loadModel(node));
         const char *shapeFile = (node["shape"].as<std::string>()).c_str();
         YAML::Node shapeNode = YAML::LoadFile(shapeFile);
         btConvexShape *collisionShape = readCollisionShape(shapeNode);

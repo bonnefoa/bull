@@ -10,12 +10,13 @@
 class BlCharacter
 {
         public:
-                BlCharacter(std::vector<BlModel*> _blModels,
+                BlCharacter(std::vector<BlModel*> *_blModels,
                                 btConvexShape *_shape);
                 ~BlCharacter();
+                void loadInBuffer();
 
         private:
-                std::vector<BlModel*> blModels;
+                std::vector<BlModel*> *blModels;
                 btConvexShape* shape;
                 btPairCachingGhostObject* ghostObject;
                 btKinematicCharacterController *controller;
