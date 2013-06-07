@@ -20,8 +20,11 @@ void BlCharacter::handleMovement()
 {
         btTransform tr;
         btVector3 deltaPosition = blState->getDeltaPosition();
+        if(deltaPosition == btVector3()){
+                return;
+        }
+        rigidBody->forceActivationState(ACTIVE_TAG);
         rigidBody->setLinearVelocity(deltaPosition);
-
         rigidBody->getMotionState()->getWorldTransform(tr);
         blState->position = tr.getOrigin() - blState->direction * 2;
 }
