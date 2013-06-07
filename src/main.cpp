@@ -41,14 +41,15 @@ void initWindow()
 
 void initComponents()
 {
-        blState = new BlState(btVector3(0,0,8), blSdl->font);
+        blState = new BlState(btVector3(0,0,8), blSdl->font,
+                        blConfig);
         blInput = new BlInput(blState, blConfig);
 
         blProgramModel = getProgramModel(blInput, blConfig, blState);
         blProgramTerrain = getProgramTerrain(blConfig, blState);
         blProgramTexture = getProgramTexture();
         blProgramShadow = getProgramShadow(btVector3());
-        blLoader = new BlLoader(blTexture);
+        blLoader = new BlLoader(blTexture, blState);
 
         blProgramDebug = getProgramDebug(blConfig);
         blDebugDrawer = new BlDebugDrawer(blProgramDebug, blState);
@@ -82,14 +83,6 @@ void initScene(const char *filename)
         blProgramModel->bindProjection();
         blProgramTerrain->bindProjection();
         blScene->init(blSimulation, blProgramModel->programId);
-}
-
-void logState()
-{
-        if(nextTime <= blInput->now) {
-                nextTime = blInput->now + TICK_INTERVAL;
-                //blState->logState();
-        }
 }
 
 void setLight() {
@@ -142,8 +135,13 @@ void mainLoop()
         glClearColor( 0.0, 0.0, 0.2, 1.0 );
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        blState->refreshDeltaTime();
         blInput->handleInput();
-        blInput->handleMovement();
+
+        blState->computeDirection();
+        //blScene->blCharacter->handleMovement();
+        blState->computeView();
+
         if(blState->leftMouse == 1) {
                 blSimulation->pushObject();
         }
@@ -152,7 +150,6 @@ void mainLoop()
         } else {
                 blSimulation->endPickObject();
         }
-        logState();
 
         moveLight();
         render();
