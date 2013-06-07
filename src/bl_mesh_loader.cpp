@@ -99,13 +99,14 @@ const aiScene *BlMeshLoader::loadAssimpScene(const char *path)
 BlLightAmbient *BlMeshLoader::loadAmbientFile(const char *path)
 {
         INFO("Loading ambient from file %s\n", path);
+
         const aiScene *scene = loadAssimpScene(path);
-        if (scene->mNumLights > 0 ) {
-                aiLight * light = scene->mLights[0];
-                btVector3 color = convertAiColorToBtVector(light->mColorDiffuse);
-                return new BlLightAmbient(color);
+        if (scene->mNumLights == 0) {
+                return new BlLightAmbient(btVector3());
         }
-        return new BlLightAmbient(btVector3());
+        aiLight * light = scene->mLights[0];
+        btVector3 color = convertAiColorToBtVector(light->mColorDiffuse);
+        return new BlLightAmbient(color);
 }
 
 std::vector<BlLightPoint*> BlMeshLoader::loadLightFile(const char *path,
