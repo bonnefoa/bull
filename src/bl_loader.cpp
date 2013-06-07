@@ -277,6 +277,9 @@ BlScene *BlLoader::loadScene(const char *filename)
         BlLightAmbient* ambient = new BlLightAmbient(btVector3());
         YAML::Node config = YAML::LoadFile(filename);
         YAML::Node lightNodes = config["lights"];
+        if(config["ambient"]) {
+                ambient = loadAmbientNode(config["ambient"]);
+        }
         for(YAML::const_iterator it=lightNodes.begin();
                         it!=lightNodes.end(); ++it) {
                 std::vector<BlLightPoint*> nodeLights = loadLightNode(*it);
@@ -305,8 +308,5 @@ BlScene *BlLoader::loadScene(const char *filename)
         }
         YAML::Node characterNode = config["character"];
         BlCharacter *blCharacter = loadCharacter(characterNode);
-        if(config["ambient"]) {
-                ambient = loadAmbientNode(config["ambient"]);
-        }
         return new BlScene(models, lights, ambient, terrains, blCharacter);
 }
