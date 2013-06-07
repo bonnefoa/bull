@@ -13,6 +13,7 @@ BlCharacter::BlCharacter(std::vector<BlModel*> *_blModels,
         (void) blModels;
         (void) blState;
         rigidBody = buildRigidBody(mass, shape, transform);
+        rigidBody->setAngularFactor(btVector3(0,0,0));
 }
 
 void BlCharacter::handleMovement()
