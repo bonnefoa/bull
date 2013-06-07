@@ -24,7 +24,9 @@ void BlScene::init(BlSimulation *blSimulation, GLuint programModelId)
                 light->loadInBuffer(programModelId);
         }
         blLightAmbient->loadInBuffer(programModelId);
+
         blCharacter->loadInBuffer();
+        blSimulation->addCharacter(blCharacter);
 }
 
 BlScene::~BlScene()

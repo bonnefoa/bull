@@ -4,6 +4,7 @@
 #include <bl_debug_drawer.h>
 #include <bl_program_debug.h>
 #include <bl_matrix.h>
+#include <BulletCollision/BroadphaseCollision/btBroadphaseProxy.h>
 
 BlSimulation::BlSimulation(BlDebugDrawer *_blDebugDrawer
                 , BlState *_blState)
@@ -111,6 +112,12 @@ void BlSimulation::addRigidBody(btRigidBody *rigidBody)
                 dynamicsWorld->addRigidBody(rigidBody);
         }
 }
+
+void BlSimulation::addCharacter(BlCharacter *blCharacter)
+{
+        dynamicsWorld->addRigidBody(blCharacter->rigidBody);
+}
+
 
 void BlSimulation::toggleDebug(int debugState)
 {

@@ -6,6 +6,7 @@
 #include <bl_state.h>
 #include <bl_config.h>
 #include <bl_debug_drawer.h>
+#include <bl_character.h>
 
 class BlSimulation {
         public:
@@ -15,6 +16,7 @@ class BlSimulation {
                 virtual ~BlSimulation();
                 void step(void);
                 void addRigidBody(btRigidBody *rigidBody);
+                void addCharacter(BlCharacter *blCharacter);
                 void clearWorld(void);
                 void toggleDebug(int debugState);
                 void debugDraw();
