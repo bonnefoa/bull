@@ -98,6 +98,12 @@ void BlProgramModel::displayScene(BlScene *blScene, GLuint depthTexture)
                         it != blScene->blModels->end(); ++it) {
                 displayModel((*it));
         }
+        for (std::vector<BlModel*>::iterator
+                        it = blScene->blCharacter->blModels->begin();
+                        it != blScene->blCharacter->blModels->end(); ++it) {
+                displayModel((*it));
+        }
+
 
         glDisableVertexAttribArray(locVertices);
         glDisableVertexAttribArray(locNormals);
