@@ -115,6 +115,10 @@ void BlState::computeNewAngles()
                 float(deltaX + sAxisRight - sAxisLeft);
         theta += blConfig->mouseSpeed * deltaTime
                 * float(-deltaY + sAxisUp - sAxisDown);
+        rightDirection = btVector3(sin(phi + M_PI_2),
+                        0,
+                        cos(phi + M_PI_2));
+        upDirection = rightDirection.cross(direction);
 }
 
 void BlState::computeDirection()
@@ -126,16 +130,17 @@ void BlState::computeDirection()
                         sin(theta) * cos(phi));
 }
 
+btVector3 BlState::getDeltaPosition()
+{
+        btVector3 deltaPosition = float(axisUp - axisDown)
+                * direction * deltaTime * blConfig->speed;
+        deltaPosition += float(axisRight - axisLeft)
+                * rightDirection * deltaTime * blConfig->speed;
+        return deltaPosition;
+}
+
 void BlState::computeView()
 {
-        btVector3 right = btVector3(sin(phi + M_PI_2),
-                        0,
-                        cos(phi + M_PI_2));
-        btVector3 up = right.cross(direction);
-        view = computeViewMatrix(right, up,
+        view = computeViewMatrix(rightDirection, upDirection,
                         direction, position);
-        position += float(axisUp - axisDown)
-                * direction * deltaTime * blConfig->speed;
-        position += float(axisRight - axisLeft)
-                * right * deltaTime * blConfig->speed;
 }

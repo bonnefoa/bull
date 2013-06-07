@@ -57,6 +57,8 @@ class BlState {
                 btVector3 position;
                 btVector3 direction;
                 btTransform view;
+                btVector3 rightDirection;
+                btVector3 upDirection;
 
                 int lightState;
                 int debugState;
@@ -97,6 +99,7 @@ class BlState {
 
                 void computeDirection();
                 void computeView();
+                btVector3 getDeltaPosition();
 
         private:
                 void computeNewAngles();
