@@ -1,5 +1,6 @@
 #include "bl_loader.h"
 #include <bl_matrix.h>
+#include <bl_physic.h>
 
 namespace YAML {
         template<>
@@ -158,24 +159,13 @@ std::map<int, btRigidBody*> BlLoader::readShapeNode(YAML::Node shapeNode, btVect
 
         int index = shapeNode["index"].as<int>();
         float mass = shapeNode["mass"].as<float>();
-        bool isDynamic = (mass != 0.f);
         btConvexShape *collisionShape = readCollisionShape(shapeNode);
         INFO("Shape of mass %f and type %s\n", mass,
                         collisionShape->getName());
         btTransform transform = readShapeTransform(shapeNode, position);
 
-        btVector3 localInertia(0,0,0);
-        btDefaultMotionState *motionState = NULL;
-        if(isDynamic) {
-                collisionShape->calculateLocalInertia(mass, localInertia);
-                motionState = new btDefaultMotionState(transform);
-        }
-        btRigidBody::btRigidBodyConstructionInfo rbInfo(mass
-                        , motionState, collisionShape, localInertia);
-        btRigidBody *body = new btRigidBody(rbInfo);
-        if(!isDynamic) {
-                body->proceedToTransform(transform);
-        }
+        btRigidBody *body = buildRigidBody(mass, collisionShape,
+                        transform);
         mapIndexBody[index] = body;
         return mapIndexBody;
 }
@@ -246,8 +236,13 @@ BlCharacter *BlLoader::loadCharacter(YAML::Node node)
                 new std::vector<BlModel*>(loadModel(node));
         const char *shapeFile = (node["shape"].as<std::string>()).c_str();
         YAML::Node shapeNode = YAML::LoadFile(shapeFile);
+        float mass = shapeNode["mass"].as<float>();
+        btVector3 position = readVector3(node["position"]);
+        btTransform transform = readShapeTransform(shapeNode, position);
         btConvexShape *collisionShape = readCollisionShape(shapeNode);
-        BlCharacter *blCharacter = new BlCharacter(blModels, collisionShape);
+        BlCharacter *blCharacter = new BlCharacter(blModels,
+                        mass, collisionShape,
+                        blState, transform);
         return blCharacter;
 }
 

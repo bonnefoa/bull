@@ -10,13 +10,15 @@
 #include <bl_mesh_loader.h>
 #include <yaml.h>
 #include <bl_character.h>
+#include <bl_state.h>
 
 class BlLoader
 {
         public:
-                BlLoader(BlTexture *_blTexture) :
+                BlLoader(BlTexture *_blTexture, BlState *_blState) :
                         blTexture(_blTexture),
-                        blMeshLoader(BlMeshLoader(_blTexture))
+                        blMeshLoader(BlMeshLoader(_blTexture)),
+                        blState(_blState)
                                 { } ;
                 ~BlLoader();
 
@@ -25,6 +27,7 @@ class BlLoader
         private:
                 BlTexture *blTexture;
                 BlMeshLoader blMeshLoader;
+                BlState *blState;
                 std::vector<BlLightPoint*> loadLightNode(YAML::Node node);
                 BlLightAmbient *loadAmbientNode(YAML::Node node);
                 std::vector<BlModel*> loadModel(YAML::Node node);
