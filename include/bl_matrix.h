@@ -14,7 +14,7 @@ void printBtTransform(btTransform *mat);
 btTransform computeOrthogonal(btScalar left, btScalar right,
                 btScalar bottom, btScalar top,
                 btScalar zNear, btScalar zFar);
-btTransform computeView(const btVector3 &right
+btTransform computeViewMatrix(const btVector3 &right
                 , const btVector3 &up
                 , const btVector3 &direction
                 , const btVector3 &position);

@@ -54,7 +54,7 @@ btTransform computeOrthogonal(btScalar left, btScalar right,
         return btTransform(basis, origin);
 }
 
-btTransform computeView(const btVector3 &right
+btTransform computeViewMatrix(const btVector3 &right
                 , const btVector3 &up
                 , const btVector3 &direction
                 , const btVector3 &position)
@@ -80,7 +80,7 @@ btTransform computeVPShadowMatrix(btVector3 position)
         btVector3 direction = -btVector3(position);
         btVector3 right = btVector3(sin(phi + M_PI_2), 0 , cos(phi + M_PI_2));
         btVector3 up = right.cross(direction);
-        btTransform depthViewMatrix = computeView(right, up,
+        btTransform depthViewMatrix = computeViewMatrix(right, up,
                         direction, position);
         return depthProjectionMatrix * depthViewMatrix;
 }
