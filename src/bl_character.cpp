@@ -1,27 +1,22 @@
 #include "bl_character.h"
+#include <bl_matrix.h>
+#include <bl_physic.h>
 
 BlCharacter::BlCharacter(std::vector<BlModel*> *_blModels,
-                btConvexShape *_shape)
-: blModels(_blModels), shape(_shape)
+                float mass,
+                btConvexShape *_shape,
+                BlState* _blState,
+                btTransform transform
+                )
+: blModels(_blModels), shape(_shape), blState(_blState)
 {
-        ghostObject = new btPairCachingGhostObject();
-        ghostObject->setCollisionShape(shape);
-        ghostObject->setCollisionFlags(btCollisionObject::CF_CHARACTER_OBJECT);
-        btScalar stepHeight = 0.35;
-        controller = new btKinematicCharacterController(ghostObject,
-                        shape, stepHeight);
         (void) blModels;
+        (void) blState;
+        rigidBody = buildRigidBody(mass, shape, transform);
 }
 
-BlCharacter::~BlCharacter()
+void BlCharacter::handleMovement()
 {
-        delete controller;
-        delete ghostObject;
-        for (std::vector<BlModel*>::iterator it = blModels->begin();
-                        it != blModels->end(); ++it) {
-                delete *it;
-        }
-        delete blModels;
 }
 
 void BlCharacter::loadInBuffer()
@@ -31,4 +26,21 @@ void BlCharacter::loadInBuffer()
                 (*it)->init();
                 (*it)->loadInBuffer();
         }
+}
+
+void BlCharacter::bindModelMatrix(GLint uniformM)
+{
+        btTransform trans;
+        rigidBody->getMotionState()->getWorldTransform(trans);
+        sendTransform(trans, uniformM);
+}
+
+BlCharacter::~BlCharacter()
+{
+        delete rigidBody;
+        for (std::vector<BlModel*>::iterator it = blModels->begin();
+                        it != blModels->end(); ++it) {
+                delete *it;
+        }
+        delete blModels;
 }

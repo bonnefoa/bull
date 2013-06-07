@@ -4,6 +4,7 @@
 #include <bl_model.h>
 #include <vector>
 #include <bullet.h>
+#include <bl_state.h>
 #include "BulletCollision/CollisionDispatch/btGhostObject.h"
 #include "BulletDynamics/Character/btKinematicCharacterController.h"
 
@@ -11,15 +12,20 @@ class BlCharacter
 {
         public:
                 BlCharacter(std::vector<BlModel*> *_blModels,
-                                btConvexShape *_shape);
+                                float mass,
+                                btConvexShape *_shape,
+                                BlState* _blState,
+                                btTransform transform);
                 ~BlCharacter();
+                void handleMovement();
                 void loadInBuffer();
+                void bindModelMatrix(GLint uniformM);
 
-        private:
                 std::vector<BlModel*> *blModels;
+                btRigidBody *rigidBody;
+        private:
                 btConvexShape* shape;
-                btPairCachingGhostObject* ghostObject;
-                btKinematicCharacterController *controller;
+                BlState* blState;
 };
 
 #endif
