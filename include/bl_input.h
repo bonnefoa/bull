@@ -15,20 +15,12 @@ class BlInput
                 BlInput(BlState *blState, BlConfig *config);
                 void handleInput();
 
-                Uint32 now;
-
-                void logState();
-                void handleMovement();
-
         private:
-                float getDeltaTime();
-                void computeNewAngles(float deltaTime);
                 void handleKeyDown(SDL_Event *event);
                 void handleKeyUp(SDL_Event *event);
                 void handleMouseDown(SDL_Event *event);
                 void handleMouseUp(SDL_Event *event);
 
-                Uint32 lastTicks;
                 btVector3 right;
                 btVector3 up;
 

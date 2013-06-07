@@ -6,8 +6,6 @@
 
 BlInput::BlInput(BlState *state, BlConfig *config)
 {
-        lastTicks = 0 ;
-        now = 0;
         blState = state;
         blConfig = config;
 
@@ -105,46 +103,4 @@ void BlInput::handleInput()
                                 break;
                 }
         }
-}
-
-float BlInput::getDeltaTime()
-{
-        now = SDL_GetTicks();
-        float deltaTime = float(now - lastTicks);
-        lastTicks = now;
-        return deltaTime;
-}
-
-void BlInput::computeNewAngles(float deltaTime)
-{
-        int deltaX, deltaY;
-        SDL_GetRelativeMouseState(&deltaX, &deltaY);
-        blState->phi -= blConfig->mouseSpeed * deltaTime *
-                float(deltaX + blState->sAxisRight - blState->sAxisLeft);
-        blState->theta += blConfig->mouseSpeed * deltaTime
-                * float(-deltaY + blState->sAxisUp - blState->sAxisDown);
-}
-
-void BlInput::handleMovement()
-{
-        float deltaTime;
-
-        deltaTime = getDeltaTime();
-        computeNewAngles(deltaTime);
-
-        blState->direction = -1.0f * btVector3(sin(blState->theta)
-                        * sin(blState->phi),
-                        cos(blState->theta),
-                        sin(blState->theta) * cos(blState->phi));
-        right = btVector3(sin(blState->phi + M_PI_2),
-                        0,
-                        cos(blState->phi + M_PI_2));
-        up = right.cross(blState->direction);
-        blState->view = computeView(right, up,
-                        blState->direction, blState->position);
-
-        blState->position += float(blState->axisUp - blState->axisDown)
-                * blState->direction * deltaTime * blConfig->speed;
-        blState->position += float(blState->axisRight - blState->axisLeft)
-                * right * deltaTime * blConfig->speed;
 }

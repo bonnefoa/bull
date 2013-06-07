@@ -93,10 +93,49 @@ void BlState::pause()
         };
 }
 
+void BlState::refreshDeltaTime()
+{
+        Uint32 now = SDL_GetTicks();
+        deltaTime = float(now - lastTicks);
+        lastTicks = now;
+}
 
 void BlState::logState()
 {
         INFO("position %f %f %f\n", position[0], position[1], position[2]);
         INFO("V\n");
         printBtTransform(&view);
+}
+
+void BlState::computeNewAngles()
+{
+        int deltaX, deltaY;
+        SDL_GetRelativeMouseState(&deltaX, &deltaY);
+        phi -= blConfig->mouseSpeed * deltaTime *
+                float(deltaX + sAxisRight - sAxisLeft);
+        theta += blConfig->mouseSpeed * deltaTime
+                * float(-deltaY + sAxisUp - sAxisDown);
+}
+
+void BlState::computeDirection()
+{
+        computeNewAngles();
+        direction = -1.0f * btVector3(sin(theta)
+                        * sin(phi),
+                        cos(theta),
+                        sin(theta) * cos(phi));
+}
+
+void BlState::computeView()
+{
+        btVector3 right = btVector3(sin(phi + M_PI_2),
+                        0,
+                        cos(phi + M_PI_2));
+        btVector3 up = right.cross(direction);
+        view = computeViewMatrix(right, up,
+                        direction, position);
+        position += float(axisUp - axisDown)
+                * direction * deltaTime * blConfig->speed;
+        position += float(axisRight - axisLeft)
+                * right * deltaTime * blConfig->speed;
 }

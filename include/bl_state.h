@@ -4,6 +4,7 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <bullet.h>
+#include <bl_config.h>
 
 #define MAX_AXIS 20
 
@@ -17,9 +18,11 @@ enum gamestate_enum {
 
 class BlState {
         public:
-                BlState(btVector3 _position, TTF_Font *_font) :
+                BlState(btVector3 _position, TTF_Font *_font,
+                                BlConfig *_blConfig) :
                         gamestate(NORMAL),
                         font(_font),
+                        blConfig(_blConfig),
 
                         phi(0.0f),
                         theta(M_PI_2),
@@ -39,11 +42,14 @@ class BlState {
                         sAxisUp(0),
                         sAxisDown(0),
                         leftMouse(0),
-                        rightMouse(0) {
-                        };
+                        rightMouse(0),
+                        lastTicks(0),
+                        deltaTime(0)
+                        { };
 
                 gamestate_enum gamestate;
                 TTF_Font *font;
+                BlConfig *blConfig;
 
                 float phi;
                 float theta;
@@ -68,6 +74,9 @@ class BlState {
                 int leftMouse;
                 int rightMouse;
 
+                Uint32 lastTicks;
+                float deltaTime;
+
                 void forward(SDL_Keymod mod);
                 void back(SDL_Keymod mod);
                 void left(SDL_Keymod mod);
@@ -84,8 +93,13 @@ class BlState {
 
                 void debug();
                 void logState();
+                void refreshDeltaTime();
+
+                void computeDirection();
+                void computeView();
 
         private:
+                void computeNewAngles();
                 void incrementAxis(SDL_Keymod mod, int *normalAxis,
                                 int *modAxis);
 };
