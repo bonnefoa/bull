@@ -100,11 +100,10 @@ void BlModel::bindUVs(GLint locUVs) {
 
 void BlModel::bindModelMatrix(GLint uniformM)
 {
-        btRigidBody *body = rigidBody;
         btTransform trans;
         trans.setIdentity();
-        if(body && body->getMotionState()) {
-                body->getMotionState()->getWorldTransform(trans);
+        if(rigidBody && rigidBody->getMotionState()) {
+                rigidBody->getMotionState()->getWorldTransform(trans);
         } else {
                 trans.setOrigin(position);
         }
