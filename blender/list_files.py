@@ -14,7 +14,10 @@ def process_model(model):
                         files.append(to_blender(v))
 
 for _, models in data.items():
-        for model in models:
-                process_model(model)
+        if(type(models) == list):
+                for model in models:
+                        process_model(model)
+        else:
+                process_model(models)
 
 print('files = %s' % files)
