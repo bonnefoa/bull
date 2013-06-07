@@ -139,7 +139,7 @@ void mainLoop()
         blInput->handleInput();
 
         blState->computeDirection();
-        //blScene->blCharacter->handleMovement();
+        blScene->blCharacter->handleMovement();
         blState->computeView();
 
         if(blState->leftMouse == 1) {

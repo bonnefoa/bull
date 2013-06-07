@@ -18,6 +18,12 @@ BlCharacter::BlCharacter(std::vector<BlModel*> *_blModels,
 
 void BlCharacter::handleMovement()
 {
+        btTransform tr;
+        btVector3 deltaPosition = blState->getDeltaPosition();
+        rigidBody->setLinearVelocity(deltaPosition);
+
+        rigidBody->getMotionState()->getWorldTransform(tr);
+        blState->position = tr.getOrigin() - blState->direction * 2;
 }
 
 void BlCharacter::loadInBuffer()
