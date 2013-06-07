@@ -23,6 +23,7 @@ class  BlProgramModel : public BlProgram
                 void init(void);
                 void bindModelMatrix(BlModel *blModel);
                 void displayModel(BlModel *model);
+                void displayCharacter(BlCharacter *blCharacter);
                 void displayScene(BlScene *blScene, GLuint depthTexture);
                 void moveLight(btVector3 position);
                 void bindProjection();
