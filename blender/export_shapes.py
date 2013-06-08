@@ -17,6 +17,7 @@ import mathutils
 import bpy_extras
 import os.path
 import math
+from mathutils import Vector
 
 SHAPE_BOX = 'BOX'
 SHAPE_SPHERE = 'SPHERE'
@@ -26,10 +27,10 @@ SHAPE_CAPSULE = 'CAPSULE'
 
 DIMENSIONS = set(['half-extents'])
 
-def vector_y_up(v, f):
+def vector_z_up(v, f):
         return '[%g,%g,%g]' % (f(v.x), f(v.y), f(v.z))
 
-def vector_z_up(v, f):
+def vector_y_up(v, f):
         return '[%g,%g,%g]' % (f(v.x), f(v.z), f(-v.y))
 
 def quaternion_z_up(q):
@@ -60,13 +61,10 @@ def convert_properties(properties, y_up):
         return results
 
 def get_bound_box_center(bound_box):
-        res = [0, 0, 0]
-        for vert in bound_box:
-                for i in range(0, 2):
-                        res[i] += vert[i]
-        for i in range(0, 2):
-                res[i] /= len(bound_box)
-        return res
+        centre = sum((Vector(b) for b in bound_box), Vector())
+        centre /= 8
+        print('GRA %s' % type(centre))
+        return centre
 
 def get_shape(obj, y_up, index):
         shape = obj.rigid_body.collision_shape
@@ -82,9 +80,10 @@ def get_shape(obj, y_up, index):
                 properties['radius'] = max(bound_box_data.dimensions) / 2
         elif shape == SHAPE_CYLINDER:
                 properties['half-extents'] = bound_box_data.dimensions / 2
+                properties['half-extents'].z = bound_box_data.dimensions.z
         elif shape == SHAPE_CAPSULE:
                 properties['radius'] = bound_box_data.dimensions.x / 2
-                properties['height'] = bound_box_data.dimensions.y / 2
+                properties['height'] = bound_box_data.dimensions.y
         elif shape == SHAPE_CONE:
                 properties['radius'] = bound_box_data.dimensions.x / 2
                 properties['height'] = bound_box_data.dimensions.z
