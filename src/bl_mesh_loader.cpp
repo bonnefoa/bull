@@ -173,6 +173,8 @@ std::vector<BlModel*> BlMeshLoader::loadModelFile(const char *modelPath,
                 }
                 if(mapIndexOffset.count(i) > 0) {
                         offset = mapIndexOffset[i];
+                        INFO("Found offset %f %f %f\n",
+                                        offset[0], offset[1], offset[2]);
                 }
                 std::vector <btVector3> vertices = loadVertices(mesh, offset);
                 std::vector <btVector3> normals = loadVerticesInformation(
