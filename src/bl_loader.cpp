@@ -229,7 +229,6 @@ std::vector<BlModel*> *BlLoader::loadModel(YAML::Node node)
         std::vector<BlModel*> * models =
                 blMeshLoader.loadModelFile(modelPath.c_str(), position,
                         mapIndexBody, mapIndexOffset, image);
-        INFO("GOT models %i \n", models->size());
         return models;
 }
 
