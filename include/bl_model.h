@@ -12,6 +12,7 @@
 class BlModel {
         public:
                 BlModel(BlTexture *_blTexture,
+                                std::vector< std::vector<BlModel*>* > *_children,
                                 std::vector<btVector3> _vertices,
                                 std::vector<unsigned int> _indices,
                                 std::vector<btVector3> _normals,
@@ -20,10 +21,12 @@ class BlModel {
                                 std::vector<BlUvs> _blUVs,
                                 btVector3 _position,
                                 btRigidBody *_rigidBody,
+
                                 const char *_name,
                                 const char *_textureFile
                        ) :
                         blTexture(_blTexture),
+                        children(_children),
                         vertices(_vertices),
                         indices(_indices),
                         normals(_normals),
@@ -38,13 +41,11 @@ class BlModel {
                 void init();
                 void loadInBuffer();
 
-                void bindVertices(GLint locationVertex);
-                void bindNormals(GLint locNormals);
-                void bindUVs(GLint locUVs);
-                void drawElement();
-                void bindModelMatrix(GLint uniformM);
+                void drawElement(GLint locModel, GLint locVertices,
+                GLint locNormals, GLint locUVS);
 
                 BlTexture *blTexture;
+                std::vector< std::vector<BlModel*>* > *children;
 
                 std::vector <btVector3> vertices;
                 std::vector <unsigned int> indices;
@@ -68,6 +69,12 @@ class BlModel {
                 GLuint normalBuffer;
                 GLuint tangentBuffer;
                 GLuint bitangentBuffer;
+
+                void bindVertices(GLint locationVertex);
+                void bindNormals(GLint locNormals);
+                void bindUVs(GLint locUVs);
+                void bindModelMatrix(GLint uniformM);
+
 };
 
 #endif

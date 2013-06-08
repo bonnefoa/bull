@@ -29,6 +29,15 @@ void BlModel::init()
         INFO("Generated buffers for %s: indice %i, vertex %i, normal %i, tangent %i, bitangent %i, uv %i, texture %i\n",
                         name, indiceBuffer, vertexBuffer, normalBuffer,
                         tangentBuffer, bitangentBuffer, uvBuffer, textureBuffer);
+        for(std::vector< std::vector<BlModel*> *>::iterator
+                        it=children->begin();
+                        it != children->end(); ++it) {
+                for(std::vector< BlModel*>::iterator
+                                it2=(*it)->begin();
+                                it2 != (*it)->end(); ++it2) {
+                        (*it2)->init();
+                }
+        }
 }
 
 BlModel::~BlModel(void)
@@ -40,6 +49,15 @@ BlModel::~BlModel(void)
         glDeleteBuffers(1, &bitangentBuffer);
         if(uvBuffer > 0)
                 glDeleteBuffers(1, &uvBuffer);
+        for(std::vector< std::vector<BlModel*> *>::iterator
+                        it=children->begin();
+                        it != children->end(); ++it) {
+                for(std::vector< BlModel*>::iterator
+                                it2=(*it)->begin();
+                                it2 != (*it)->end(); ++it2) {
+                        delete (*it2);
+                }
+        }
 }
 
 void BlModel::loadInBuffer()
@@ -69,6 +87,16 @@ void BlModel::loadInBuffer()
                         , indices.size() * sizeof(unsigned int)
                         , &indices[0], GL_STATIC_DRAW);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+        for(std::vector< std::vector<BlModel*> *>::iterator
+                        it=children->begin();
+                        it != children->end(); ++it) {
+                for(std::vector< BlModel*>::iterator
+                                it2=(*it)->begin();
+                                it2 != (*it)->end(); ++it2) {
+                        (*it2)->loadInBuffer();
+                }
+        }
 }
 
 void BlModel::bindVertices(GLint locVertices) {
@@ -110,7 +138,24 @@ void BlModel::bindModelMatrix(GLint uniformM)
         sendTransform(trans, uniformM);
 }
 
-void BlModel::drawElement() {
+void BlModel::drawElement(GLint locModel, GLint locVertices,
+                GLint locNormals, GLint locUVs) {
+        for(std::vector< std::vector<BlModel*> *>::iterator
+                        it=children->begin();
+                        it != children->end(); ++it) {
+                for(std::vector< BlModel*>::iterator
+                                it2=(*it)->begin();
+                                it2 != (*it)->end(); ++it2) {
+                        (*it2)->drawElement(locModel, locVertices,
+                                        locNormals, locUVs);
+                }
+        }
+
+        bindModelMatrix(locModel);
+        bindVertices(locVertices);
+        bindNormals(locNormals);
+        bindUVs(locUVs);
+
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indiceBuffer);
         glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (void *)0);
 }
