@@ -84,11 +84,11 @@ def get_shape(obj, y_up, index):
                 properties['half-extents'] = bound_box_data.dimensions / 2
         elif shape == SHAPE_CAPSULE:
                 properties['radius'] = bound_box_data.dimensions.x / 2
-                properties['height'] = bound_box_data.dimensions.y
+                properties['height'] = bound_box_data.dimensions.y / 2
         elif shape == SHAPE_CONE:
                 properties['radius'] = bound_box_data.dimensions.x / 2
                 properties['height'] = bound_box_data.dimensions.z
-        properties['index'] = index
+        properties['name'] = obj.name
         properties['origin'] = get_bound_box_center(obj.bound_box)
         properties['rotation'] = bound_box_data.matrix_local.to_quaternion()
         return convert_properties(properties, y_up)
