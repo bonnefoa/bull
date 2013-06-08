@@ -151,10 +151,10 @@ void BlModel::drawElement(GLint locModel, GLint locVertices,
                 }
         }
 
-        bindModelMatrix(locModel);
+        if(locModel) bindModelMatrix(locModel);
         bindVertices(locVertices);
-        bindNormals(locNormals);
-        bindUVs(locUVs);
+        if(locNormals) bindNormals(locNormals);
+        if(locUVs) bindUVs(locUVs);
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indiceBuffer);
         glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (void *)0);
