@@ -172,6 +172,22 @@ BlModel *BlMeshLoader::loadMesh(
                                 offset[0], offset[1], offset[2]);
         }
 
+        for (std::vector< std::vector<BlModel*>*>::iterator
+                        it = children->begin();
+                        it != children->end(); ++it) {
+                for (std::vector<BlModel*>::iterator
+                                it2 = (*it)->begin();
+                                it2 != (*it)->end(); ++it2) {
+                        BlModel *model = *it2;
+                        for (std::vector<btVector3>::iterator
+                                        itv = model->vertices.begin();
+                                        itv != model->vertices.end(); ++itv) {
+                                (*itv) -= offset;
+                        }
+                }
+        }
+
+
         std::vector <btVector3> vertices = loadVertices(mesh, offset);
         std::vector <btVector3> normals = loadVerticesInformation(
                         mesh, mesh->mNormals);
