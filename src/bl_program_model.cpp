@@ -59,26 +59,14 @@ void BlProgramModel::bindProjection()
         bindProjectionMatrix(programId, locProjection, blConfig->projection);
 }
 
-void BlProgramModel::displayModel(BlModel *blModel)
-{
-        blModel->bindModelMatrix(locModel);
-        blModel->bindVertices(locVertices);
-        blModel->bindNormals(locNormals);
-        blModel->bindUVs(locUVs);
-        blModel->drawElement();
-}
-
 void BlProgramModel::displayCharacter(BlCharacter *blCharacter)
 {
-        blCharacter->bindModelMatrix(locModel);
         for (std::vector<BlModel*>::iterator
                         it = blCharacter->blModels->begin();
                         it != blCharacter->blModels->end(); ++it) {
                 BlModel *blModel = *it;
-                blModel->bindVertices(locVertices);
-                blModel->bindNormals(locNormals);
-                blModel->bindUVs(locUVs);
-                blModel->drawElement();
+                blModel->drawElement(locModel, locVertices,
+                                locNormals, locUVs);
         }
 }
 
@@ -104,15 +92,16 @@ void BlProgramModel::displayScene(BlScene *blScene, GLuint depthTexture)
                 std::vector<BlModel*> *models = (*it)->blModels;
                 for (std::vector<BlModel*>::iterator it2 = models->begin();
                                 it2 != models->end(); ++it2) {
-                        displayModel(*it2);
+                        (*it2)->drawElement(locModel, locVertices,
+                                        locNormals, locUVs);
                 }
         }
         for (std::vector<BlModel*>::iterator it = blScene->blModels->begin();
                         it != blScene->blModels->end(); ++it) {
-                displayModel((*it));
+                (*it)->drawElement(locModel, locVertices,
+                                locNormals, locUVs);
         }
         displayCharacter(blScene->blCharacter);
-
 
         glDisableVertexAttribArray(locVertices);
         glDisableVertexAttribArray(locNormals);

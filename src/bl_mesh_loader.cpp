@@ -15,11 +15,11 @@ std::vector <btVector3> BlMeshLoader::loadVertices(aiMesh *mesh,
                 btVector3 offset)
 {
         std::vector <btVector3> vertices;
-        btVector3 centerOffset = offset / 2;
+        (void) offset;
         for(unsigned int j=0; j < mesh->mNumVertices; j++){
                 vertices.push_back(
                                 convertAiVectorToBtVector(mesh->mVertices[j])
-                                - centerOffset);
+                                );
         }
         return vertices;
 }
@@ -152,55 +152,115 @@ void BlMeshLoader::fillConvexShapePoints(std::vector <btVector3> *vertices,
         }
 }
 
-std::vector<BlModel*> BlMeshLoader::loadModelFile(const char *modelPath,
+BlModel *BlMeshLoader::loadMesh(
+                aiMesh *mesh,
+                const char*name,
+                std::vector< std::vector<BlModel*>* > *children,
                 btVector3 position,
-                std::map<int, btRigidBody*> mapIndexBody,
-                std::map<int, btVector3> mapIndexOffset,
+                std::map<std::string, btRigidBody*> mapIndexBody,
+                std::map<std::string, btVector3> mapIndexOffset,
+                const char *image)
+{
+        btVector3 offset;
+        btRigidBody *rigidBody = NULL;
+
+        if(mapIndexBody.count(name) > 0) {
+                rigidBody = mapIndexBody[name];
+        }
+        if(mapIndexOffset.count(name) > 0) {
+                offset = mapIndexOffset[name];
+                INFO("Found offset %f %f %f\n",
+                                offset[0], offset[1], offset[2]);
+        }
+
+        std::vector <btVector3> vertices = loadVertices(mesh, offset);
+        std::vector <btVector3> normals = loadVerticesInformation(
+                        mesh, mesh->mNormals);
+
+        std::vector <btVector3> tangents = loadVerticesInformation(
+                        mesh, mesh->mTangents);
+        std::vector <btVector3> bitangents = loadVerticesInformation(
+                        mesh, mesh->mBitangents);
+        std::vector <unsigned int> indices = loadIndices(mesh);
+        std::vector <BlUvs> uvs = loadUvs(mesh);
+        INFO("Got %i vertices, %i indices, %i uvs, %i normals, %i tangents, %i bitangents\n",
+                        vertices.size(), indices.size(), uvs.size(),
+                        normals.size(), tangents.size(),
+                        bitangents.size());
+        if(rigidBody && rigidBody->getCollisionShape()->getShapeType()
+                        == CONVEX_HULL_SHAPE_PROXYTYPE) {
+                btConvexHullShape *colShape = (btConvexHullShape*) rigidBody->getCollisionShape();
+                fillConvexShapePoints(&vertices, colShape);
+        }
+        INFO("Got a model %s with %i children\n",
+                        name, children->size());
+        BlModel *blModel = new BlModel(blTexture,
+                        children,
+                        vertices, indices, normals,
+                        tangents, bitangents,
+                        uvs, position, rigidBody,
+                        name, image);
+        return blModel;
+}
+
+std::vector<BlModel*> *BlMeshLoader::loadNode(const aiScene *scene,
+                aiNode *node,
+                btVector3 position,
+                std::map<std::string, btRigidBody*> mapIndexBody,
+                std::map<std::string, btVector3> mapIndexOffset,
+                const char *image )
+{
+        std::vector< std::vector<BlModel*>* > *children =
+                new std::vector< std::vector<BlModel*>* >();
+        std::vector<BlModel*> *res = new std::vector<BlModel*>();
+
+        for(unsigned int i = 0; i < node->mNumChildren; i++) {
+                aiNode *childNode = node->mChildren[i];
+                std::vector<BlModel*> *currentChild =
+                        loadNode(scene, childNode,
+                                        position,
+                                        mapIndexBody,
+                                        mapIndexOffset,
+                                        image);
+                children->push_back(currentChild);
+        }
+
+        const char* name = strduplicate(node->mName.C_Str());
+        for (unsigned int i = 0; i < node->mNumMeshes; i++){
+                aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
+                BlModel *currentModel = loadMesh(mesh,
+                                name,
+                                children,
+                                position,
+                                mapIndexBody, mapIndexOffset, image);
+                res->push_back(currentModel);
+        }
+        if(node->mNumMeshes == 0) {
+                for (std::vector< std::vector<BlModel*>*>::iterator
+                                it = children->begin();
+                                it != children->end(); ++it) {
+                        for (std::vector<BlModel*>::iterator
+                                        it2 = (*it)->begin();
+                                        it2 != (*it)->end(); ++it2) {
+                                res->push_back(*it2);
+                        }
+                }
+        }
+        return res;
+}
+
+std::vector<BlModel*> *BlMeshLoader::loadModelFile(const char *modelPath,
+                btVector3 position,
+                std::map<std::string, btRigidBody*> mapIndexBody,
+                std::map<std::string, btVector3> mapIndexOffset,
                 const char *image)
 {
         INFO("Loading asset from file %s, image %s, position %f %f %f\n",
                         modelPath, image,
                         position[0], position[1], position[2]);
-        std::vector<BlModel*> res = std::vector<BlModel*>();
         const aiScene *scene = loadAssimpScene(modelPath);
-
-        for (unsigned int i = 0; i < scene->mNumMeshes; i++){
-                aiMesh * mesh = scene->mMeshes[i];
-                btVector3 offset;
-                btRigidBody *rigidBody = NULL;
-                if(mapIndexBody.count(i) > 0) {
-                        rigidBody = mapIndexBody[i];
-                }
-                if(mapIndexOffset.count(i) > 0) {
-                        offset = mapIndexOffset[i];
-                        INFO("Found offset %f %f %f\n",
-                                        offset[0], offset[1], offset[2]);
-                }
-                std::vector <btVector3> vertices = loadVertices(mesh, offset);
-                std::vector <btVector3> normals = loadVerticesInformation(
-                                mesh, mesh->mNormals);
-
-                std::vector <btVector3> tangents = loadVerticesInformation(
-                                mesh, mesh->mTangents);
-                std::vector <btVector3> bitangents = loadVerticesInformation(
-                                mesh, mesh->mBitangents);
-                std::vector <unsigned int> indices = loadIndices(mesh);
-                std::vector <BlUvs> uvs = loadUvs(mesh);
-                INFO("Got %i vertices, %i indices, %i uvs, %i normals, %i tangents, %i bitangents\n",
-                                vertices.size(), indices.size(), uvs.size(),
-                                normals.size(), tangents.size(),
-                                bitangents.size());
-                if(rigidBody && rigidBody->getCollisionShape()->getShapeType()
-                                == CONVEX_HULL_SHAPE_PROXYTYPE) {
-                        btConvexHullShape *colShape = (btConvexHullShape*) rigidBody->getCollisionShape();
-                        fillConvexShapePoints(&vertices, colShape);
-                }
-                BlModel *blModel = new BlModel(blTexture,
-                                vertices, indices, normals,
-                                tangents, bitangents,
-                                uvs, position, rigidBody,
-                                strduplicate(modelPath), image);
-                res.push_back(blModel);
-        }
+        aiNode *rootNode = scene->mRootNode;
+        std::vector<BlModel*> *res = loadNode(scene, rootNode,
+                        position, mapIndexBody, mapIndexOffset, image);
         return res;
 }

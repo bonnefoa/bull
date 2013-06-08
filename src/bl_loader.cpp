@@ -153,11 +153,11 @@ btConvexShape *BlLoader::readCollisionShape(YAML::Node node)
         return collisionShape;
 }
 
-std::map<int, btRigidBody*> BlLoader::readShapeNode(YAML::Node shapeNode, btVector3 position)
+std::map<std::string, btRigidBody*> BlLoader::readShapeNode(YAML::Node shapeNode, btVector3 position)
 {
-        std::map<int, btRigidBody*> mapIndexBody;
+        std::map<std::string, btRigidBody*> mapIndexBody;
 
-        int index = shapeNode["index"].as<int>();
+        std::string name = shapeNode["name"].as<std::string>();
         float mass = shapeNode["mass"].as<float>();
         btConvexShape *collisionShape = readCollisionShape(shapeNode);
         INFO("Shape of mass %f and type %s\n", mass,
@@ -166,16 +166,16 @@ std::map<int, btRigidBody*> BlLoader::readShapeNode(YAML::Node shapeNode, btVect
 
         btRigidBody *body = buildRigidBody(mass, collisionShape,
                         transform);
-        mapIndexBody[index] = body;
+        mapIndexBody[name] = body;
         return mapIndexBody;
 }
 
-std::map<int, btVector3> BlLoader::readShapeOffset(YAML::Node node)
+std::map<std::string, btVector3> BlLoader::readShapeOffset(YAML::Node node)
 {
-        std::map<int, btVector3> mapIndexOffset;
-        int index = node["index"].as<int>();
+        std::map<std::string, btVector3> mapIndexOffset;
+        std::string name = node["name"].as<std::string>();
         btVector3 origin = node["origin"].as<btVector3>();
-        mapIndexOffset[index] = origin;
+        mapIndexOffset[name] = origin;
         return mapIndexOffset;
 }
 
@@ -208,7 +208,7 @@ BlTerrain* BlLoader::loadTerrain(YAML::Node node)
         return blTerrain;
 }
 
-std::vector<BlModel*> BlLoader::loadModel(YAML::Node node)
+std::vector<BlModel*> *BlLoader::loadModel(YAML::Node node)
 {
         std::string modelPath = node["filename"].as<std::string>();
         const char *image = NULL;
@@ -217,8 +217,8 @@ std::vector<BlModel*> BlLoader::loadModel(YAML::Node node)
         }
         btVector3 position = readVector3(node["position"]);
 
-        std::map<int, btRigidBody*> mapIndexBody;
-        std::map<int, btVector3> mapIndexOffset;
+        std::map<std::string, btRigidBody*> mapIndexBody;
+        std::map<std::string, btVector3> mapIndexOffset;
         if(node["shape"]) {
                 const char *shapeFile = (node["shape"].as<std::string>()).c_str();
                 YAML::Node shapeNode = YAML::LoadFile(shapeFile);
@@ -226,14 +226,16 @@ std::vector<BlModel*> BlLoader::loadModel(YAML::Node node)
                 mapIndexOffset = readShapeOffset(shapeNode);
         }
 
-        return blMeshLoader.loadModelFile(modelPath.c_str(), position,
+        std::vector<BlModel*> * models =
+                blMeshLoader.loadModelFile(modelPath.c_str(), position,
                         mapIndexBody, mapIndexOffset, image);
+        INFO("GOT models %i \n", models->size());
+        return models;
 }
 
 BlCharacter *BlLoader::loadCharacter(YAML::Node node)
 {
-        std::vector<BlModel*> *blModels =
-                new std::vector<BlModel*>(loadModel(node));
+        std::vector<BlModel*> *blModels = loadModel(node);
         const char *shapeFile = (node["shape"].as<std::string>()).c_str();
         YAML::Node shapeNode = YAML::LoadFile(shapeFile);
         float mass = shapeNode["mass"].as<float>();
@@ -263,10 +265,10 @@ void BlLoader::loadTextureSet(YAML::Node node)
 std::vector<BlLightPoint*> BlLoader::loadLightNode(YAML::Node node)
 {
         std::string modelPath = node["filename"].as<std::string>();
-        std::vector<BlModel*> nodeModels = loadModel(node);
+        std::vector<BlModel*> *nodeModels = loadModel(node);
         btVector3 position = readVector3(node["position"]);
         return blMeshLoader.loadLightFile(modelPath.c_str(),
-                        position, new std::vector<BlModel*>(nodeModels));
+                        position, nodeModels);
 }
 
 BlScene *BlLoader::loadScene(const char *filename)
@@ -290,9 +292,10 @@ BlScene *BlLoader::loadScene(const char *filename)
         YAML::Node configModel = config["models"];
         for(YAML::const_iterator it=configModel.begin();
                         it!=configModel.end();++it) {
-                std::vector<BlModel*> nodeModels = loadModel(*it);
-                for (unsigned int i = 0; i < nodeModels.size(); i++) {
-                        models->push_back(nodeModels[i]);
+                std::vector<BlModel*> *nodeModels = loadModel(*it);
+                for (std::vector<BlModel*>::iterator it = nodeModels->begin();
+                                it != nodeModels->end(); ++it) {
+                        models->push_back(*it);
                 }
         }
         YAML::Node configTextureSet = (config["textureSet"]);
@@ -308,5 +311,7 @@ BlScene *BlLoader::loadScene(const char *filename)
         }
         YAML::Node characterNode = config["character"];
         BlCharacter *blCharacter = loadCharacter(characterNode);
+        INFO("Scene has %i models, %i lights\n", models->size(),
+                        lights->size());
         return new BlScene(models, lights, ambient, terrains, blCharacter);
 }

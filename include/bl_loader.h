@@ -30,13 +30,15 @@ class BlLoader
                 BlState *blState;
                 std::vector<BlLightPoint*> loadLightNode(YAML::Node node);
                 BlLightAmbient *loadAmbientNode(YAML::Node node);
-                std::vector<BlModel*> loadModel(YAML::Node node);
+                std::vector<BlModel*> *loadModel(YAML::Node node);
                 BlTerrain* loadTerrain(YAML::Node node);
-                std::map<int, btRigidBody*> readShapeNode(YAML::Node node,
+                std::map<std::string, btRigidBody*> readShapeNode(
+                                YAML::Node node,
                                 btVector3 position);
                 btConvexShape *readCollisionShape(YAML::Node node);
-                btTransform readShapeTransform(YAML::Node node, btVector3 position);
-                std::map<int, btVector3> readShapeOffset(YAML::Node node);
+                btTransform readShapeTransform(
+                                YAML::Node node, btVector3 position);
+                std::map<std::string, btVector3> readShapeOffset(YAML::Node node);
                 BlCharacter *loadCharacter(YAML::Node node);
 
                 btVector3 readVector3(YAML::Node node);

@@ -25,10 +25,10 @@ class BlMeshLoader
                 ~BlMeshLoader();
 
                 BlLightAmbient *loadAmbientFile(const char *path);
-                std::vector<BlModel*> loadModelFile(const char *modelPath,
+                std::vector<BlModel*> *loadModelFile(const char *modelPath,
                                 btVector3 position,
-                                std::map<int, btRigidBody*> mapIndexBody,
-                                std::map<int, btVector3> mapIndexOffset,
+                                std::map<std::string, btRigidBody*> mapIndexBody,
+                                std::map<std::string, btVector3> mapIndexOffset,
                                 const char *image);
                 std::vector<BlLightPoint*> loadLightFile(const char *path,
                                 btVector3 position,
@@ -48,6 +48,22 @@ class BlMeshLoader
                 const aiScene *loadAssimpScene(const char *path);
                 void fillConvexShapePoints(std::vector <btVector3> *vertices,
                                 btConvexHullShape *colShape);
+
+                std::vector<BlModel*> *loadNode(const aiScene *scene,
+                                aiNode *node,
+                                btVector3 position,
+                                std::map<std::string, btRigidBody*> mapIndexBody,
+                                std::map<std::string, btVector3> mapIndexOffset,
+                                const char *image );
+
+                BlModel *loadMesh(
+                                aiMesh *mesh,
+                                const char* name,
+                                std::vector< std::vector<BlModel*>* > *children,
+                                btVector3 position,
+                                std::map<std::string, btRigidBody*> mapIndexBody,
+                                std::map<std::string, btVector3> mapIndexOffset,
+                                const char *image);
 };
 
 #endif
