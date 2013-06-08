@@ -65,7 +65,8 @@ void BlProgramModel::displayCharacter(BlCharacter *blCharacter)
                         it = blCharacter->blModels->begin();
                         it != blCharacter->blModels->end(); ++it) {
                 BlModel *blModel = *it;
-                blModel->drawElement(locModel, locVertices,
+                blCharacter->bindModelMatrix(locModel);
+                blModel->drawElement(0, locVertices,
                                 locNormals, locUVs);
         }
 }

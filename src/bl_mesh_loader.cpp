@@ -15,11 +15,10 @@ std::vector <btVector3> BlMeshLoader::loadVertices(aiMesh *mesh,
                 btVector3 offset)
 {
         std::vector <btVector3> vertices;
-        (void) offset;
         for(unsigned int j=0; j < mesh->mNumVertices; j++){
                 vertices.push_back(
                                 convertAiVectorToBtVector(mesh->mVertices[j])
-                                );
+                                - offset);
         }
         return vertices;
 }

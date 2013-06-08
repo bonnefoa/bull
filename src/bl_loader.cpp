@@ -110,8 +110,7 @@ btVector3 BlLoader::readVector3(YAML::Node node)
 btTransform BlLoader::readShapeTransform(YAML::Node node, btVector3 position)
 {
         btQuaternion rotation = node["rotation"].as<btQuaternion>();
-        btVector3 origin = node["origin"].as<btVector3>();
-        return btTransform(rotation, position - origin);
+        return btTransform(rotation, position);
 }
 
 btConvexShape *BlLoader::readCollisionShape(YAML::Node node)
