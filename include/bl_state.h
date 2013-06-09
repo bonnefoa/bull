@@ -29,6 +29,7 @@ class BlState {
                         position(_position),
                         direction(btVector3(0,0,0)),
                         view(btTransform()),
+                        rotation(btQuaternion()),
 
                         lightState(0),
                         debugState(0),
@@ -57,6 +58,7 @@ class BlState {
                 btVector3 position;
                 btVector3 direction;
                 btTransform view;
+                btQuaternion rotation;
                 btVector3 rightDirection;
                 btVector3 upDirection;
 
