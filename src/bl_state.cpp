@@ -107,27 +107,32 @@ void BlState::logState()
         printBtTransform(view);
 }
 
+void BlState::computeDirectionFromDelta(float &deltaUp, float &deltaRight)
+{
+        btQuaternion upRot = btQuaternion(rightDirection, deltaUp);
+        btQuaternion rightRot = btQuaternion(upDirection, deltaRight);
+
+        deltaRotation = upRot * rightRot;
+
+        rotation = deltaRotation * rotation;
+        btTransform trans = btTransform(rotation);
+
+        rightDirection = trans(btVector3(1, 0, 0));
+        direction = trans(btVector3(0,0,-1));
+        upDirection = trans(btVector3(0, 1, 0));
+}
+
 void BlState::computeNewAngles()
 {
         int deltaX, deltaY;
         SDL_GetRelativeMouseState(&deltaX, &deltaY);
-        phi -= blConfig->mouseSpeed * deltaTime *
-                float(deltaX + sAxisRight - sAxisLeft);
-        theta += blConfig->mouseSpeed * deltaTime
-                * float(-deltaY + sAxisUp - sAxisDown);
-        rightDirection = btVector3(sin(phi + M_PI_2),
-                        0,
-                        cos(phi + M_PI_2));
-        upDirection = rightDirection.cross(direction);
-}
 
-void BlState::computeDirection()
-{
-        computeNewAngles();
-        direction = -1.0f * btVector3(sin(theta)
-                        * sin(phi),
-                        cos(theta),
-                        sin(theta) * cos(phi));
+        float deltaUp = blConfig->mouseSpeed * deltaTime *
+                float(-deltaY + sAxisUp - sAxisDown);
+        float deltaRight = -1.0f * blConfig->mouseSpeed * deltaTime *
+                float(deltaX + sAxisRight - sAxisLeft);
+
+        computeDirectionFromDelta(deltaUp, deltaRight);
 }
 
 btVector3 BlState::getDeltaPosition()
