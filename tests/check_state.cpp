@@ -59,20 +59,28 @@ START_TEST (test_direction)
         float deltaUp = 0.0f;
         float deltaRight = 0.0f;
         blState.computeDirectionFromDelta(deltaUp, deltaRight);
-        printBtVector(blState.direction);
+        assert_quaternion_equals(blState.rotation, btQuaternion(0,0,0,1));
         assert_vector_equals(blState.direction, btVector3(0,0,-1));
+        assert_vector_equals(blState.rightDirection, btVector3(1,0,0));
+        assert_vector_equals(blState.upDirection, btVector3(0,1,0));
 
         deltaUp = M_PI_2;
         deltaRight = 0.0f;
         blState.computeDirectionFromDelta(deltaUp, deltaRight);
-        printBtVector(blState.direction);
+        assert_quaternion_equals(blState.rotation,
+                        btQuaternion(M_SQRT2/2,0,0,M_SQRT2/2));
         assert_vector_equals(blState.direction, btVector3(0,1,0));
+        assert_vector_equals(blState.rightDirection, btVector3(1,0,0));
+        assert_vector_equals(blState.upDirection, btVector3(0,0,1));
 
         deltaUp = -M_PI_2;
         deltaRight = M_PI_2;
         blState.computeDirectionFromDelta(deltaUp, deltaRight);
-        printBtVector(blState.direction);
-        assert_vector_equals(blState.direction, btVector3(1,0,0));
+        assert_quaternion_equals(blState.rotation,
+                        btQuaternion(0,M_SQRT2/2,0,M_SQRT2/2));
+        assert_vector_equals(blState.direction, btVector3(-1,0,0));
+        assert_vector_equals(blState.rightDirection, btVector3(0,0,-1));
+        assert_vector_equals(blState.upDirection, btVector3(0,1,0));
 }
 END_TEST
 
