@@ -9,10 +9,10 @@ void sendTransform(btTransform trans, GLuint uniform)
         glUniformMatrix4fv(uniform, 1, GL_FALSE, mat);
 }
 
-void printBtTransform(btTransform *mat)
+void printBtTransform(btTransform &mat)
 {
-       btMatrix3x3 bas = mat->getBasis();
-       btVector3 ori = mat->getOrigin();
+       btMatrix3x3 bas = mat.getBasis();
+       btVector3 ori = mat.getOrigin();
        for (int n = 0; n < 3; n++) {
                 for (int m = 0; m < 3; m++) {
                         printf("%f ", bas[n][m]);

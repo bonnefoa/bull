@@ -104,7 +104,7 @@ void BlState::logState()
 {
         INFO("position %f %f %f\n", position[0], position[1], position[2]);
         INFO("V\n");
-        printBtTransform(&view);
+        printBtTransform(view);
 }
 
 void BlState::computeNewAngles()
