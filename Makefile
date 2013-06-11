@@ -49,6 +49,9 @@ check_input: $(ODIR)/check_input.o $(OBJ)
 check_heightmap: $(ODIR)/check_heightmap.o $(OBJ) 
 	$(CC) -o $@ $^ $(TEST_CCFLAGS) $(TEST_LIBS)
 
+check_state: $(ODIR)/check_state.o $(OBJ) 
+	$(CC) -o $@ $^ $(TEST_CCFLAGS) $(TEST_LIBS)
+
 main: $(MAIN)
 	$(CC) -o $@ $^ $(CCFLAGS) $(LIBS)
 
