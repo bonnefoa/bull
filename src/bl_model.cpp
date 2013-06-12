@@ -158,4 +158,8 @@ void BlModel::drawElement(GLint locModel, GLint locVertices,
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indiceBuffer);
         glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (void *)0);
+
+        if(locNormals >= 0) glDisableVertexAttribArray(locNormals);
+        if(locUVs >= 0) glDisableVertexAttribArray(locUVs);
+        glDisableVertexAttribArray(locVertices);
 }
