@@ -64,6 +64,12 @@ void BlProgramShadow::init(void)
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+BlProgramShadow::~BlProgramShadow()
+{
+        glDeleteFramebuffers(1, &shadowFramebuffer);
+        glDeleteTextures(1, &depthTexture);
+}
+
 void BlProgramShadow::moveLight(btVector3 newPosition)
 {
         lightPosition = newPosition;
@@ -77,10 +83,7 @@ void BlProgramShadow::displaySceneForRender(BlScene *blScene)
         glUseProgram(programId);
         glBindFramebuffer(GL_FRAMEBUFFER, shadowFramebuffer);
 
-        glViewport(0, 0, 1024, 1024);
-        glEnable(GL_CULL_FACE);
-        glCullFace(GL_BACK);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClear(GL_DEPTH_BUFFER_BIT);
 
         for (std::vector<BlModel*>::iterator it = blScene->blModels->begin();
                         it != blScene->blModels->end(); ++it) {

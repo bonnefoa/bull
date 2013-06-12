@@ -18,6 +18,7 @@ class BlProgramShadow : public BlProgram {
 
                 btVector3 lightPosition;
                 GLuint depthTexture;
+                virtual ~BlProgramShadow();
 
         private:
                 GLuint shadowFramebuffer;
