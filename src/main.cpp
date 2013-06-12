@@ -108,6 +108,12 @@ void debugScene()
                 blDebugDrawer->drawXYZAxis(buildModelMatrix(btVector3(1,1,1),
                                         terrain->position));
         }
+
+        btTransform center = buildModelMatrix(btVector3(1,1,1),
+                                blState->position + blState->direction + btVector3(0.5, 0.5,0.5));
+        blDebugDrawer->drawAxis(center, blState->direction, btVector3(1,1,1));
+        blDebugDrawer->drawAxis(center, blState->rightDirection, btVector3(1,0,0));
+        blDebugDrawer->drawAxis(center, blState->upDirection, btVector3(0,1,0));
 }
 
 void renderDebug()
