@@ -55,8 +55,9 @@ check_state: $(ODIR)/check_state.o $(OBJ)
 main: $(MAIN)
 	$(CC) -o $@ $^ $(CCFLAGS) $(LIBS)
 
-.PHONY: clean check_input check_model check_shape
+.PHONY: clean debug
 
 clean:
-	rm -rf $(ODIR)/*.o 
-	rm check_*
+	rm -f $(ODIR)/*.o 
+	rm -f $(ODIR)/*.d
+	rm -f check_*
