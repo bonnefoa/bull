@@ -42,13 +42,16 @@ void BlProgramModel::init()
                         , "shadowSampler");
         glUniform1i(samplerTexture, 0);
         glUniform1i(samplerShadow, 2);
+        INFO("model location %i\n", locModel);
         INFO("vertex location %i\n", locVertices);
         INFO("normal location %i\n", locNormals);
         INFO("uv location %i\n", locUVs);
         INFO("shadow vp %i\n", locShadowVP);
         INFO("texture sampler %i\n", samplerTexture);
         INFO("shadow sampler %i\n", samplerShadow);
-        if(locNormals < 0 || locUVs < 0 || locVertices < 0 || locShadowVP < 0
+        if(locModel < 0 || locNormals < 0
+                        || locUVs < 0 || locVertices < 0
+                        || locShadowVP < 0
                         || samplerTexture < 0 || samplerShadow < 0 ){
                 ERROR("A location is unused");
         }
