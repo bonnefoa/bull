@@ -23,7 +23,7 @@ void BlCharacter::handleMovement()
                 return;
         }
         rigidBody->forceActivationState(ACTIVE_TAG);
-        rigidBody->setLinearVelocity(deltaPosition);
+        rigidBody->applyCentralForce(deltaPosition);
         rigidBody->getMotionState()->getWorldTransform(tr);
         blState->position = tr.getOrigin() - blState->direction * 2;
 }
