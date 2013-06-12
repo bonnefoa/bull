@@ -154,10 +154,11 @@ void BlDebugDrawer::finalizeDraw()
 }
 
 void BlDebugDrawer::drawAxis(const btTransform& center,
-                const btVector3& direction)
+                const btVector3& direction,
+                const btVector3& color)
 {
-        colors.push_back(direction);
-        colors.push_back(direction);
+        colors.push_back(color);
+        colors.push_back(color);
 
         lines.push_back(center.getOrigin());
         lines.push_back(center.getOrigin() + direction);
@@ -165,9 +166,9 @@ void BlDebugDrawer::drawAxis(const btTransform& center,
 
 void BlDebugDrawer::drawXYZAxis(const btTransform& center)
 {
-        drawAxis(center, btVector3(1, 0, 0));
-        drawAxis(center, btVector3(0, 1, 0));
-        drawAxis(center, btVector3(0, 0, 1));
+        drawAxis(center, btVector3(1, 0, 0), btVector3(1, 0, 0));
+        drawAxis(center, btVector3(0, 1, 0), btVector3(0, 1, 0));
+        drawAxis(center, btVector3(0, 0, 1), btVector3(0, 0, 1));
 }
 
 void BlDebugDrawer::drawLine(const btVector3& from,const btVector3& to,const btVector3& color)
