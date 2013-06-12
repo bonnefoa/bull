@@ -86,7 +86,7 @@ void BlProgramShadow::displaySceneForRender(BlScene *blScene)
                         it != blScene->blModels->end(); ++it) {
                 BlModel *model = (*it);
                 model->drawElement(locDepthM, locVertices,
-                                0, 0);
+                                -1, -1);
         }
 
         glDisableVertexAttribArray(locVertices);
