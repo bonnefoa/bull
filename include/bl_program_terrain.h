@@ -23,7 +23,6 @@ class BlProgramTerrain : public BlProgram
 
                 void init(void);
                 void displayScene(BlScene *scene);
-                void displayTerrain(BlTerrain *terrain);
 
                 void bindProjection();
 

@@ -39,7 +39,8 @@ class BlTerrain
 
                 void init();
                 void loadInBuffer();
-                void drawElement();
+                void drawElement(GLint locModel, GLint locVertices, GLint locUVTexture,
+                        GLint locGridLenght, GLint locGridWidth);
 
                 void bindVertices(GLint locVertices);
                 void bindUVTexture(GLint locUVTexture);

@@ -51,16 +51,6 @@ void BlProgramTerrain::init(void)
         }
 }
 
-void BlProgramTerrain::displayTerrain(BlTerrain *blTerrain)
-{
-        blTerrain->bindModelMatrix(locModel);
-        blTerrain->bindVertices(locVertices);
-        blTerrain->bindUVTexture(locUVTexture);
-        blTerrain->bindTextures();
-        blTerrain->bindGridSize(locGridLenght, locGridWidth);
-        blTerrain->drawElement();
-}
-
 void BlProgramTerrain::bindProjection()
 {
         bindProjectionMatrix(programId, locProjection, blConfig->projection);
@@ -73,6 +63,7 @@ void BlProgramTerrain::displayScene(BlScene *blScene)
         for (std::vector<BlTerrain*>::iterator
                         it = blScene->blTerrains->begin();
                         it != blScene->blTerrains->end(); ++it) {
-                displayTerrain(*it);
+                (*it)->drawElement(locModel, locVertices, locUVTexture,
+                locGridLenght, locGridWidth);
         }
 }
