@@ -62,18 +62,6 @@ void BlProgramModel::bindProjection()
         bindProjectionMatrix(programId, locProjection, blConfig->projection);
 }
 
-void BlProgramModel::displayCharacter(BlCharacter *blCharacter)
-{
-        for (std::vector<BlModel*>::iterator
-                        it = blCharacter->blModels->begin();
-                        it != blCharacter->blModels->end(); ++it) {
-                BlModel *blModel = *it;
-                blCharacter->bindModelMatrix(locModel);
-                blModel->drawElement(0, locVertices,
-                                locNormals, locUVs);
-        }
-}
-
 void BlProgramModel::moveLight(btVector3 position)
 {
         glUseProgram(programId);
@@ -105,7 +93,7 @@ void BlProgramModel::displayScene(BlScene *blScene, GLuint depthTexture)
                 (*it)->drawElement(locModel, locVertices,
                                 locNormals, locUVs);
         }
-        displayCharacter(blScene->blCharacter);
+        blScene->blCharacter->drawCharacter(locModel, locVertices, locNormals, locUVs);
 
         glDisableVertexAttribArray(locVertices);
         glDisableVertexAttribArray(locNormals);

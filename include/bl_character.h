@@ -20,6 +20,8 @@ class BlCharacter
                 void handleMovement();
                 void loadInBuffer();
                 void bindModelMatrix(GLint uniformM);
+                void drawCharacter(GLint locModel, GLint locVertices,
+                                GLint locNormals, GLint locUVs);
 
                 std::vector<BlModel*> *blModels;
                 btRigidBody *rigidBody;
