@@ -109,16 +109,15 @@ void BlState::logState()
 
 void BlState::computeDirectionFromDelta(float &deltaUp, float &deltaRight)
 {
+        btQuaternion rightRot = btQuaternion(btVector3(0,1,0), deltaRight);
         btQuaternion upRot = btQuaternion(rightDirection, deltaUp);
-        btQuaternion rightRot = btQuaternion(upDirection, deltaRight);
 
-        deltaRotation = upRot * rightRot;
-
+        deltaRotation = rightRot * upRot;
         rotation = deltaRotation * rotation;
         btTransform trans = btTransform(rotation);
 
         rightDirection = trans(btVector3(1, 0, 0));
-        direction = trans(btVector3(0,0,-1));
+        direction = trans(btVector3(0,0,-1)).normalize();
         upDirection = trans(btVector3(0, 1, 0));
 }
 
