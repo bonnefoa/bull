@@ -3,6 +3,9 @@ lights:
           filename: /home/sora/blender/light.dae
           position: [0.0, 5.0, 0.0]
 
+ambient:
+        filename: /home/sora/blender/ambientLight.dae
+
 textureSet:
         - name: firstTextureSet
           files: [/home/sora/blender/soil/ground_grass_gen_05.png,
@@ -11,15 +14,22 @@ textureSet:
 terrains:
         - name: floor
           image: /home/sora/blender/heightmap.png
-          scale: [1.0, 0.05, 1.0]
+          scale: [4.0, 1.0, 4.0]
           position: [0.0, 0.0, 0.0]
           gridWidth: 64
           gridLenght: 64
-          heightScale: 2
+          heightScale: 0.05
           minHeight: -10
           maxHeight: 10
           textureSetName: firstTextureSet
           textureSetHeights: [0.0, 10.0]
+
+character:
+        name: knight
+        filename: /home/sora/blender/mini_knight_fem.dae
+        image: /home/sora/blender/mini_knight_fem.png
+        shape: /home/sora/blender/mini_knight_fem.yaml
+        position: [0.0, 4.0, 4.0]
 
 models:
 
