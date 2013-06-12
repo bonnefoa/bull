@@ -138,7 +138,7 @@ void mainLoop()
         blState->refreshDeltaTime();
         blInput->handleInput();
 
-        blState->computeDirection();
+        blState->computeNewAngles();
         blScene->blCharacter->handleMovement();
         blState->computeView();
 
