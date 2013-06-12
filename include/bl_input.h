@@ -3,42 +3,29 @@
 
 #include <bullet.h>
 #include <SDL.h>
+#include <bl_state.h>
+#include <bl_config.h>
+
+btVector3 convertCoordinate(btScalar theta, btScalar phi);
 
 class BlInput
 {
-        float phi;
-        float theta;
-        float mouseSpeed;
-        float speed;
-        btScalar fov;
-        btScalar aspect;
-        btScalar zNear;
-        btScalar zFar;
-        double lastTicks;
-        btVector3 position;
-        int axisX;
-        int axisY;
 
         public:
-                BlInput();
+                BlInput(BlState *blState, BlConfig *config);
                 void handleInput();
 
-                int gameState;
-
-                btTransform view;
-                btTransform projection;
         private:
-                btVector3 computeCurrentDirection();
-                void handleMovement();
-                float getDeltaTime();
-                void computeNewAngles(float deltaTime);
-                void computeView(const btVector3 &lookAt
-                                , const btVector3 &right
-                                , const btVector3 &up
-                                , const btVector3 &position);
-                void computeProjection();
-                void handleDown(SDL_Event *event);
-                void handleUp(SDL_Event *event);
+                void handleKeyDown(SDL_Event *event);
+                void handleKeyUp(SDL_Event *event);
+                void handleMouseDown(SDL_Event *event);
+                void handleMouseUp(SDL_Event *event);
+
+                btVector3 right;
+                btVector3 up;
+
+                BlState *blState;
+                BlConfig *blConfig;
 };
 
 #endif

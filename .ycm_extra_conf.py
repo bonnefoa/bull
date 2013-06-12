@@ -7,10 +7,16 @@ flags = [
 , '-std=c++11'
 , '-I', '.'
 , '-I', './include'
+, '-I', '/usr/include/yaml-cpp'
 , '-I', '/usr/include/GL'
 , '-I', '/usr/include/libdrm'
 , '-I', '/usr/include/SDL2'
 , '-I', '/usr/include/bullet'
+, '-I', '/usr/include/libxml2'
+, '-I', '/usr/include/opencollada/COLLADABaseUtils/'
+, '-I', '/usr/include/opencollada/COLLADAFramework/'
+, '-I', '/usr/include/opencollada/COLLADASaxFrameworkLoader/'
+, '-I', '/usr/include/opencollada/COLLADAStreamWriter/'
 ]
 
 def DirectoryOfThisScript():

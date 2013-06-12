@@ -1,16 +1,24 @@
 #include "bl_simulation.h"
+#include <bl_log.h>
+#include <bl_shape.h>
+#include <bl_debug_drawer.h>
+#include <bl_program_debug.h>
+#include <bl_matrix.h>
+#include <BulletCollision/BroadphaseCollision/btBroadphaseProxy.h>
 
-BlSimulation::BlSimulation()
+BlSimulation::BlSimulation(BlDebugDrawer *_blDebugDrawer
+                , BlState *_blState)
+: blDebugDrawer(_blDebugDrawer), blState(_blState)
 {
         collisionConfiguration = new btDefaultCollisionConfiguration();
-	dispatcher = new btCollisionDispatcher(collisionConfiguration);
-	overlappingPairCache = new btDbvtBroadphase();
-	solver = new btSequentialImpulseConstraintSolver;
-	dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher,overlappingPairCache,solver,collisionConfiguration);
+        dispatcher = new btCollisionDispatcher(collisionConfiguration);
+        overlappingPairCache = new btDbvtBroadphase();
+        solver = new btSequentialImpulseConstraintSolver;
+        dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher,overlappingPairCache,
+                        solver,collisionConfiguration);
         dynamicsWorld->setGravity(btVector3(0, -10, 0));
-
-        initGround();
-        initBox();
+        dynamicsWorld->setDebugDrawer(_blDebugDrawer);
+        pickedBody = NULL;
 }
 
 BlSimulation::~BlSimulation()
@@ -22,66 +30,117 @@ BlSimulation::~BlSimulation()
         delete collisionConfiguration;
 }
 
-void BlSimulation::addBody(btCollisionShape *colShape
-                , btTransform transform, btScalar mass)
+btCollisionWorld::ClosestRayResultCallback BlSimulation::getCenterObject()
 {
-        bool isDynamic = (mass != 0.f);
-        btVector3 localInertia(0,0,0);
-        if(isDynamic)
-                colShape->calculateLocalInertia(mass, localInertia);
-        btDefaultMotionState *motionState = new btDefaultMotionState(transform);
-        btRigidBody::btRigidBodyConstructionInfo rbInfo(mass
-                        , motionState, colShape, localInertia);
-        btRigidBody *body = new btRigidBody(rbInfo);
-        dynamicsWorld->addRigidBody(body);
+        btCollisionWorld::ClosestRayResultCallback rayCallback(
+                        blState->position, blState->direction);
+        dynamicsWorld->rayTest(blState->position,
+                        blState->direction * 100,
+                        rayCallback);
+        return rayCallback;
 }
 
-void BlSimulation::initBox()
+void BlSimulation::endPickObject()
 {
-        btCollisionShape *colShape = new btSphereShape(btScalar(1.));
-        collisionShapes.push_back(colShape);
-
-        btTransform startTransform;
-        startTransform.setIdentity();
-        startTransform.setOrigin(btVector3(2,10,0));
-        btScalar mass(1.f);
-
-        addBody(colShape, startTransform, mass);
+        if(!pickedBody) {
+                return;
+        }
+        pickedBody->forceActivationState(ACTIVE_TAG);
+        pickedBody->setDeactivationTime(0.f);
+        pickedBody->setGravity(btVector3(0,-10,0));
+        pickedBody = NULL;
 }
 
-void BlSimulation::initGround()
+void BlSimulation::movePickedObject()
 {
-        btCollisionShape *colShape = new btBoxShape(btVector3(btScalar(50.)
-                                , btScalar(50.), btScalar(50.)));
-        collisionShapes.push_back(colShape);
-        btTransform groundTransform;
-        groundTransform.setIdentity();
-        groundTransform.setOrigin(btVector3(0, -56, 0));
-
-        btScalar mass(0.);
-
-        addBody(colShape, groundTransform, mass);
+        btVector3 position = blState->position + blState->direction * 3;
+        btTransform tr = buildModelMatrix(btVector3(1,1,1), position);
+        pickedBody->setCenterOfMassTransform(tr);
 }
 
-void BlSimulation::doSimulation()
+void BlSimulation::initializePickedObject(
+                btCollisionWorld::ClosestRayResultCallback rayCallback)
 {
-        for(int i = 0; i < 100; i++)
-        {
-                dynamicsWorld->stepSimulation(1.f/60.f, 10);
-                for(int j = dynamicsWorld->getNumCollisionObjects()-1; j>=0; j--) {
-                        btCollisionObject *obj = dynamicsWorld->getCollisionObjectArray()[j];
-                        btRigidBody *body = btRigidBody::upcast(obj);
-                        if(body && body->getMotionState()) {
-                                btTransform trans;
-                                body->getMotionState()->getWorldTransform(trans);
-                                printf("word pos = %f,%f,%f\n"
-                                        , float(trans.getOrigin().getX())
-                                        , float(trans.getOrigin().getY())
-                                        , float(trans.getOrigin().getZ()));
-                        }
-                }
+        pickedBody = btRigidBody::upcast(
+                        rayCallback.m_collisionObject);
+        if(pickedBody->isStaticObject()) {
+                pickedBody = NULL;
+                return;
         }
 
+        btVector3 position = blState->position + blState->direction * 3;
+        btTransform tr = buildModelMatrix(btVector3(1,1,1), position);
+
+        pickedBody->setGravity(btVector3(0,0,0));
+        pickedBody->setCenterOfMassTransform(tr);
+        pickedBody->activate(true);
+        pickedBody->setActivationState(DISABLE_DEACTIVATION);
+}
+
+void BlSimulation::pickObject()
+{
+        if(pickedBody) {
+                movePickedObject();
+                return;
+        }
+        btCollisionWorld::ClosestRayResultCallback rayCallback =
+                getCenterObject();
+        if(!rayCallback.hasHit()) {
+                return;
+        }
+        initializePickedObject(rayCallback);
+}
+
+void BlSimulation::pushObject()
+{
+        btCollisionWorld::ClosestRayResultCallback rayCallback =
+                getCenterObject();
+        if(rayCallback.hasHit()) {
+                btRigidBody *body = btRigidBody::upcast(
+                                rayCallback.m_collisionObject);
+                if(!body->isStaticObject()) {
+                        btVector3 str = blState->direction;
+                        body->activate(true);
+                        body->setLinearVelocity(body->getLinearVelocity() + str);
+                }
+        }
+}
+
+void BlSimulation::addRigidBody(btRigidBody *rigidBody)
+{
+        if(rigidBody) {
+                dynamicsWorld->addRigidBody(rigidBody);
+        }
+}
+
+void BlSimulation::addCharacter(BlCharacter *blCharacter)
+{
+        dynamicsWorld->addRigidBody(blCharacter->rigidBody);
+}
+
+
+void BlSimulation::toggleDebug(int debugState)
+{
+        if (debugState==0) {
+                dynamicsWorld->getDebugDrawer()->setDebugMode(btIDebugDraw::DBG_NoDebug);
+        } else {
+                INFO("Toggle debug on");
+                dynamicsWorld->getDebugDrawer()->setDebugMode(btIDebugDraw::DBG_MAX_DEBUG_DRAW_MODE);
+        }
+}
+
+void BlSimulation::step(void)
+{
+        dynamicsWorld->stepSimulation(1.f/60.f);
+}
+
+void BlSimulation::debugDraw()
+{
+        dynamicsWorld->debugDrawWorld();
+}
+
+void BlSimulation::clearWorld()
+{
         for(int i = dynamicsWorld->getNumCollisionObjects()-1; i>=0; i--) {
                 btCollisionObject *obj = dynamicsWorld->getCollisionObjectArray()[i];
                 btRigidBody *body = btRigidBody::upcast(obj);
@@ -91,7 +150,6 @@ void BlSimulation::doSimulation()
                 dynamicsWorld->removeCollisionObject(obj);
                 delete obj;
         }
-
         for(int i=0; i<collisionShapes.size();i++) {
                 btCollisionShape *shape = collisionShapes[i];
                 collisionShapes[i] = 0;

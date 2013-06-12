@@ -1,7 +1,8 @@
 #include <GL/glew.h>
-#include <bl_window.h>
+#include <bl_sdl.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <bl_log.h>
 
 void errorCallback( GLenum source,
                 GLenum type, GLuint id, GLenum severity,
@@ -9,46 +10,55 @@ void errorCallback( GLenum source,
                 void* userParam)
 {
         (void) userParam;
-        printf("%s\t",message);
-        printf("%d, %d, %d, %d, %d\n", source, type
-                        , id, length, severity);
+        (void) source;
+        (void) type;
+        (void) id;
+        (void) length;
+        (void) severity;
+        INFO("Source %x, type %x, id %i\n", source, type, id);
+        INFO("%s\n",message);
 }
 
-BlWindow::BlWindow()
+void BlSdl::die(const char *msg)
 {
-}
-
-void BlWindow::die(const char *msg)
-{
-        printf("%s: %s\n", msg, SDL_GetError());
+        INFO("%s: %s\n", msg, SDL_GetError());
         SDL_Quit();
         exit(1);
 }
 
-void BlWindow::checkError(int line)
+void BlSdl::checkError(int line)
 {
-#ifndef NDEBUG
         const char *error = SDL_GetError();
         if (*error != '\0')
         {
-                printf("SDL Error: %s\n", error);
-                if (line != -1)
-                        printf(" + line: %i\n", line);
+                INFO("SDL Error: %s, line %i\n", error, line);
                 SDL_ClearError();
         }
-#endif
 }
 
-void BlWindow::shutdown()
+void BlSdl::shutdown()
 {
         SDL_GL_DeleteContext(context);
         SDL_DestroyWindow(window);
+        TTF_Quit();
         SDL_Quit();
 }
 
-void BlWindow::launch()
+void BlSdl::initFont()
 {
+        if(TTF_Init() < 0) {
+                ERROR("TTF_Init: %s\n", TTF_GetError());
+        }
+        font = TTF_OpenFont(blConfig->fontPath, blConfig->fontSize);
+        if(!font) {
+                ERROR("TTF_OpenFont: font '%s' %s\n",
+                                blConfig->fontPath,
+                                TTF_GetError());
+        }
+}
 
+void BlSdl::launch()
+{
         if (SDL_Init(SDL_INIT_VIDEO) < 0)
                 die("Unable to initialize SDL");
         SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
@@ -59,13 +69,22 @@ void BlWindow::launch()
 
         window = SDL_CreateWindow("bullora"
                         , SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                        512, 512, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+                        1024, 1024
+                        , SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_INPUT_GRABBED);
         if (!window)
                 die("Unable to create window");
         checkError(__LINE__);
 
         context = SDL_GL_CreateContext(window);
         checkError(__LINE__);
+        initFont();
+
+        glEnable(GL_CULL_FACE);
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         if (glewInit() != GLEW_OK)
                 die("Failed to initialize GLEW\n");

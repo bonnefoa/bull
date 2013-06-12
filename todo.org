@@ -1,0 +1,55 @@
+* DONE Generate one model by mesh from asset import
+
+* DONE Input handle
+  
+** DONE Check theta and phi
+
+** DONE Left / right not working
+
+** DONE Check Position + direction
+
+* DONE Display asset
+
+** DONE Check vertices and indices from asset loaded
+
+** DONE Check view and projection
+
+** DONE Create one blmodel by mesh
+** DONE Allow position in xml configuration
+** DONE Handle reload
+
+* DONE Bullet integration
+** DONE Add mass to asset loading
+** DONE Update world with new state
+** DONE Create simple plan / cube object
+*** DONE Create shape from vertices
+**** DONE Simple box shape
+** DONE Add bullet debut
+** DONE Allow to draw more complex shape
+*** DONE Add Sphere
+*** DONE Add Cone
+*** DONE Add cylinder
+*** DONE Handle exported shapes from blender
+**** DONE Read yaml file
+**** DONE Map model name to meshes in dae file
+* DONE Beautify
+** DONE Add texture
+** DONE Add shadow
+** DONE Add light 
+*** DONE Parse light from asset
+*** DONE Push light position + color in attribute
+*** DONE Use diffuse light in glsl
+**** DONE Add distance
+**** DONE Add color light
+*** DONE Add specular light
+*** DONE Add ambient lighting
+* DONE Clean
+** DONE Check memory leak
+* IN PROGRESS Heighmap
+** DONE Build simple grid
+** DONE Load heightmap texture
+** DONE Move vertices following heightmap
+** IN PROGRESS Allow height and width configuration for terrain proportion
+** TODO Use bullet for heighmap collision
+* DONE Configuration
+** DONE Allow configurable binding

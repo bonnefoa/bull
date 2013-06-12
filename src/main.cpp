@@ -1,71 +1,218 @@
+#include <bl_state.h>
 #include <bl_input.h>
-#include <bl_render.h>
-#include <bl_window.h>
-#include <bl_simulation.h>
+#include <bl_loader.h>
+#include <bl_log.h>
 #include <bl_program_model.h>
+#include <bl_program_shadow.h>
+#include <bl_program_texture.h>
+#include <bl_program_terrain.h>
+#include <bl_scene.h>
+#include <bl_simulation.h>
+#include <bl_sdl.h>
+#include <bl_matrix.h>
+
+#define TICK_INTERVAL 1000
 
 BlInput *blInput;
-BlWindow *blWindow;
-BlRender *blRender;
+BlSdl *blSdl;
+
 BlSimulation *blSimulation;
 BlProgramModel *blProgramModel;
-BlModel *blModel;
+BlProgramTerrain *blProgramTerrain;
+BlProgramShadow *blProgramShadow;
+BlProgramTexture *blProgramTexture;
+BlTexture *blTexture;
+BlLoader *blLoader;
 
-void main_loop()
+BlProgramDebug *blProgramDebug;
+BlDebugDrawer *blDebugDrawer;
+
+BlScene *blScene;
+BlState *blState;
+BlConfig *blConfig;
+Uint32 nextTime = 0;
+
+void initWindow()
 {
-        blInput->handleInput();
-        blRender->render();
-        blProgramModel->displayModel(blModel);
+        blSdl = new BlSdl(blConfig);
+        blSdl->launch();
+        blTexture = new BlTexture();
 }
 
-void init_test_model() {
-        std::vector<btVector3> vertices;
-        std::vector<unsigned int> indices;
-        vertices.push_back(btVector3(-0.8f, -0.8f, 0.0f));
-        vertices.push_back(btVector3(0.8f, -0.8f, 0.0f));
-        vertices.push_back(btVector3(0.0f, 0.8f, 0.0f));
-        indices.push_back(0);
-        indices.push_back(1);
-        indices.push_back(2);
-        blModel = new BlModel(vertices, indices);
-        blModel->init();
+void initComponents()
+{
+        blState = new BlState(btVector3(0,0,8), blSdl->font,
+                        blConfig);
+        blInput = new BlInput(blState, blConfig);
+
+        blProgramModel = getProgramModel(blInput, blConfig, blState);
+        blProgramTerrain = getProgramTerrain(blConfig, blState);
+        blProgramTexture = getProgramTexture();
+        blProgramShadow = getProgramShadow(btVector3());
+        blLoader = new BlLoader(blTexture, blState);
+
+        blProgramDebug = getProgramDebug(blConfig);
+        blDebugDrawer = new BlDebugDrawer(blProgramDebug, blState);
+        blDebugDrawer->init();
+        blSimulation = new BlSimulation(blDebugDrawer, blState);
 }
 
-void init()
+void clean()
 {
-        blWindow = new BlWindow();
-        blWindow->launch();
-        blRender = new BlRender();
-        blRender->init();
-        blInput = new BlInput();
-        blSimulation = new BlSimulation();
-
-        std::vector<BlShader*> shaders;
-        BlShader *modelVertexShader = new BlShader("glsl/model_vertex.glsl"
-                        , GL_VERTEX_SHADER);
-        BlShader *modelFragmentShader = new BlShader("glsl/model_fragment.glsl"
-                        , GL_FRAGMENT_SHADER);
-        shaders.push_back(modelVertexShader);
-        shaders.push_back(modelFragmentShader);
-
-        blProgramModel = new BlProgramModel(shaders, blInput);
-        blProgramModel->loadProgram();
-        blProgramModel->init();
-
-        init_test_model();
-        blProgramModel->loadModelInBuffer(blModel);
+        delete blProgramModel;
+        delete blProgramShadow;
+        delete blProgramTexture;
+        delete blProgramTerrain;
+        delete blScene;
+        delete blSimulation;
+        delete blInput;
 }
 
-int main()
+void shutdown()
 {
-        init();
-        while(true) {
-                main_loop();
-                if(blInput->gameState == 1) {
-                        blWindow->shutdown();
-                        return 0;
-                }
-                SDL_GL_SwapWindow(blWindow->window);
+        clean();
+        blSdl->shutdown();
+        delete blSdl;
+        delete blConfig;
+        delete blTexture;
+}
+
+void initScene(const char *filename)
+{
+        blScene = blLoader->loadScene(filename);
+        blProgramModel->bindProjection();
+        blProgramTerrain->bindProjection();
+        blScene->init(blSimulation, blProgramModel->programId);
+}
+
+void setLight() {
+        BlLightPoint *light = blScene->blLightPoints->at(0);
+        blProgramShadow->moveLight(blState->position);
+        blProgramModel->moveLight(blState->position);
+        light->moveLight(blState->position,
+                        blProgramModel->programId);
+}
+
+void moveLight() {
+        if(blState->lightState > 0) {
+                setLight();
         }
-        return 1;
+}
+
+void debugScene()
+{
+        for (std::vector<BlTerrain*>::iterator
+                        it = blScene->blTerrains->begin();
+                        it != blScene->blTerrains->end(); ++it) {
+                BlTerrain *terrain = *it;
+                blDebugDrawer->drawXYZAxis(buildModelMatrix(btVector3(1,1,1),
+                                        terrain->position));
+        }
+
+        btTransform center = buildModelMatrix(btVector3(1,1,1),
+                                blState->position + blState->direction + btVector3(0.5, 0.5,0.5));
+        blDebugDrawer->drawAxis(center, blState->direction, btVector3(1,1,1));
+        blDebugDrawer->drawAxis(center, blState->rightDirection, btVector3(1,0,0));
+        blDebugDrawer->drawAxis(center, blState->upDirection, btVector3(0,1,0));
+}
+
+void renderDebug()
+{
+        if(blState->debugState) {
+                blDebugDrawer->initDebugRender();
+                blSimulation->debugDraw();
+                debugScene();
+                blDebugDrawer->finalizeDraw();
+        }
+}
+
+void render()
+{
+        glViewport(0, 0, 1024, 1024);
+        blProgramShadow->displaySceneForRender(blScene);
+        blProgramModel->displayScene(blScene, blProgramShadow->depthTexture);
+        blProgramTerrain->displayScene(blScene);
+        renderDebug();
+        SDL_GL_SwapWindow(blSdl->window);
+}
+
+void mainLoop()
+{
+        glClearColor( 0.0, 0.0, 0.2, 1.0 );
+        glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        blState->refreshDeltaTime();
+        blInput->handleInput();
+
+        blState->computeNewAngles();
+        blScene->blCharacter->handleMovement();
+        blState->computeView();
+
+        if(blState->leftMouse == 1) {
+                blSimulation->pushObject();
+        }
+        if(blState->rightMouse == 1) {
+                blSimulation->pickObject();
+        } else {
+                blSimulation->endPickObject();
+        }
+
+        moveLight();
+        render();
+}
+
+void reload(const char *configFile)
+{
+        clean();
+        initComponents();
+        initScene(configFile);
+        blState->gamestate = NORMAL;
+}
+
+void reloadKeepPosition(const char *configFile)
+{
+        btVector3 oldPosition = blState->position;
+        float oldPhi = blState->phi;
+        float oldTheta = blState->theta;
+        reload(configFile);
+        blState->phi = oldPhi;
+        blState->theta = oldTheta;
+        blState->position = oldPosition;
+        blSimulation->toggleDebug(blState->debugState);
+}
+
+int main(int argc, char **argv)
+{
+        (void) argc;
+        (void) argv;
+
+        const char *configFile = argv[1];
+        blConfig = loadBlConfig("conf.yaml");
+
+        initWindow();
+        initComponents();
+        initScene(configFile);
+        setLight();
+
+        while(true) {
+                mainLoop();
+                switch (blState->gamestate) {
+                        case QUIT:
+                                blSdl->shutdown();
+                                return 0;
+                        case RELOAD_KEEP_STATE:
+                                reloadKeepPosition(configFile);
+                                break;
+                        case RELOAD:
+                                reload(configFile);
+                                break;
+                        case NORMAL:
+                                blSimulation->step();
+                                break;
+                        case STOP:
+                                break;
+                }
+        }
+        shutdown();
+        return 0;
 }

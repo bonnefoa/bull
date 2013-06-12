@@ -1,19 +1,13 @@
 #include <stdlib.h>
 #include <check.h>
 #include <bl_model.h>
-
-void setup (void)
-{
-}
-
-void teardown (void)
-{
-}
+#include <bl_loader.h>
 
 START_TEST (test_model)
 {
-        BlModel bl_model = BlModel("tests/simple.dae");
-        bl_model.loadAsset();
+        BlModel *blModel = loadModelFile("tests/cubeTextured.dae")[0];
+        printf("Uvs size is %zu\n", blModel->uvs.size());
+        fail_unless(blModel->uvs.size() == 1);
 }
 END_TEST
 
@@ -21,7 +15,6 @@ Suite *model_suite (void)
 {
   Suite *s = suite_create ("Model suite");
   TCase *tc_core = tcase_create ("Model case");
-  tcase_add_checked_fixture (tc_core, setup, teardown);
   tcase_add_test (tc_core, test_model);
   suite_add_tcase (s, tc_core);
   return s;
