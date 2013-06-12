@@ -11,7 +11,8 @@ BlCharacter::BlCharacter(std::vector<BlModel*> *_blModels,
 : blModels(_blModels), shape(_shape), blState(_blState)
 {
         rigidBody = buildRigidBody(mass, shape, transform);
-        rigidBody->setAngularFactor(btVector3(0,0,0));
+        rigidBody->setAngularFactor(btVector3(0,1,0));
+        rigidBody->setDamping(0.5f, 0.5f);
 }
 
 void BlCharacter::handleMovement()
