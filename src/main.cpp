@@ -10,6 +10,7 @@
 #include <bl_simulation.h>
 #include <bl_sdl.h>
 #include <bl_matrix.h>
+#include <bl_network.h>
 
 #define TICK_INTERVAL 1000
 
@@ -23,6 +24,7 @@ BlProgramShadow *blProgramShadow;
 BlProgramTexture *blProgramTexture;
 BlTexture *blTexture;
 BlLoader *blLoader;
+BlNetwork *blNetwork;
 
 BlProgramDebug *blProgramDebug;
 BlDebugDrawer *blDebugDrawer;
@@ -55,6 +57,8 @@ void initComponents()
         blDebugDrawer = new BlDebugDrawer(blProgramDebug, blState);
         blDebugDrawer->init();
         blSimulation = new BlSimulation(blDebugDrawer, blState);
+        blNetwork = new BlNetwork(blConfig);
+        blNetwork->init();
 }
 
 void clean()

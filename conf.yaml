@@ -22,3 +22,7 @@ keys:
 text:
         font: /usr/share/fonts/dejavu/DejaVuSerif.ttf
         size: 10
+
+network:
+        host: localhost
+        port: 6666

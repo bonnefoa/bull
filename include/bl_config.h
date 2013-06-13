@@ -23,7 +23,9 @@ class BlConfig {
                                 int _key_back,
                                 int _key_left,
                                 int _key_right,
-                                int _key_debug
+                                int _key_debug,
+                                const char *_host,
+                                int _port
                                 ) :
 
                                 fontPath(_fontPath),
@@ -40,7 +42,9 @@ class BlConfig {
                                 key_back(_key_back),
                                 key_left(_key_left),
                                 key_right(_key_right),
-                                key_debug(_key_debug)
+                                key_debug(_key_debug),
+                                host(_host),
+                                port(_port)
                 {} ;
 
                 const char* fontPath;
@@ -61,6 +65,8 @@ class BlConfig {
                 int key_right;
 
                 int key_debug;
+                const char* host;
+                int port;
 };
 
 BlConfig *loadBlConfig(const char *configurationFile);

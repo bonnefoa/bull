@@ -58,6 +58,10 @@ BlConfig *loadBlConfig(const char *configurationFile)
         int key_pause = getKeyFromName(keyNode["pause"], "space");
         int key_debug = getKeyFromName(keyNode["debug"], "?");
 
+        YAML::Node networkNode = config["network"];
+        const char *host = strduplicate(networkNode["host"].as<std::string>().c_str());
+        int port = networkNode["port"].as<int>();
+
         btTransform projection = computeProjection(fov, aspect, zNear, zFar);
 
         BlConfig *blConfig = new BlConfig(
@@ -77,7 +81,9 @@ BlConfig *loadBlConfig(const char *configurationFile)
                      key_back,
                      key_left,
                      key_right,
-                     key_debug
+                     key_debug,
+                     host,
+                     port
                      );
 
         return blConfig;
