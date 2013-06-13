@@ -13,6 +13,8 @@ class BlCharacter
         public:
                 BlCharacter(std::vector<BlModel*> *_blModels,
                                 float mass,
+                                float linearDamping,
+                                float angularDamping,
                                 btConvexShape *_shape,
                                 BlState* _blState,
                                 btTransform transform);

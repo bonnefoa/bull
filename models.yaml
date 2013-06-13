@@ -30,6 +30,8 @@ character:
         image: /home/sora/blender/mini_knight_fem.png
         shape: /home/sora/blender/mini_knight_fem.yaml
         position: [0.0, 4.0, 4.0]
+        angularDamping: 0.5
+        linearDamping: 0.5
 
 models:
 

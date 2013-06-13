@@ -237,11 +237,14 @@ BlCharacter *BlLoader::loadCharacter(YAML::Node node)
         const char *shapeFile = (node["shape"].as<std::string>()).c_str();
         YAML::Node shapeNode = YAML::LoadFile(shapeFile);
         float mass = shapeNode["mass"].as<float>();
+        float linearDamping = node["linearDamping"].as<float>();
+        float angularDamping = node["angularDamping"].as<float>();
         btVector3 position = readVector3(node["position"]);
         btTransform transform = readShapeTransform(shapeNode, position);
         btConvexShape *collisionShape = readCollisionShape(shapeNode);
         BlCharacter *blCharacter = new BlCharacter(blModels,
-                        mass, collisionShape,
+                        mass, linearDamping, angularDamping,
+                        collisionShape,
                         blState, transform);
         return blCharacter;
 }

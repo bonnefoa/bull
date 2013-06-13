@@ -6,6 +6,8 @@
 
 BlCharacter::BlCharacter(std::vector<BlModel*> *_blModels,
                 float mass,
+                float linearDamping,
+                float angularDamping,
                 btConvexShape *_shape,
                 BlState* _blState,
                 btTransform transform
@@ -14,7 +16,7 @@ BlCharacter::BlCharacter(std::vector<BlModel*> *_blModels,
 {
         rigidBody = buildRigidBody(mass, shape, transform);
         rigidBody->setAngularFactor(btVector3(0,1,0));
-        rigidBody->setDamping(0.5f, 0.5f);
+        rigidBody->setDamping(linearDamping, angularDamping);
 }
 
 void BlCharacter::handleRotation()
