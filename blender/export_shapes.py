@@ -63,7 +63,7 @@ def convert_properties(properties, y_up):
 def get_bound_box_center(bound_box):
         centre = sum((Vector(b) for b in bound_box), Vector())
         centre /= 8
-        print('GRA %s' % type(centre))
+        print('Center %f %f %f' % (centre[0], centre[1], centre[2]))
         return centre
 
 def get_shape(obj, y_up, index):
@@ -83,7 +83,7 @@ def get_shape(obj, y_up, index):
                 properties['half-extents'].z = bound_box_data.dimensions.z
         elif shape == SHAPE_CAPSULE:
                 properties['radius'] = bound_box_data.dimensions.x / 2
-                properties['height'] = bound_box_data.dimensions.y
+                properties['height'] = bound_box_data.dimensions.y / 2
         elif shape == SHAPE_CONE:
                 properties['radius'] = bound_box_data.dimensions.x / 2
                 properties['height'] = bound_box_data.dimensions.z
