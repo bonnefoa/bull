@@ -10,6 +10,7 @@ btTransform computeProjection(btScalar fov, btScalar aspect,
 
 void sendTransform(btTransform trans, GLuint uniform);
 void printBtTransform(btTransform &mat);
+void printMatrix(btMatrix3x3 &mat);
 
 btTransform computeOrthogonal(btScalar left, btScalar right,
                 btScalar bottom, btScalar top,
