@@ -18,6 +18,7 @@ class BlCharacter
                                 btTransform transform);
                 ~BlCharacter();
                 void handleMovement();
+                void handleRotation();
                 void loadInBuffer();
                 void bindModelMatrix(GLint uniformM);
                 void drawCharacter(GLint locModel, GLint locVertices,
