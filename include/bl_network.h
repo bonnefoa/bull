@@ -6,16 +6,24 @@
 
 class BlNetwork {
         public:
-                BlNetwork(BlConfig *_blConfig) :
-                        blConfig(_blConfig) {};
+                BlNetwork(BlConfig *blConfig) :
+                        host(blConfig->host),
+                        port(blConfig->port) {};
+                BlNetwork(const char *_host,
+                                int _port) :
+                        host(_host),
+                        port(_port) {};
                 virtual ~BlNetwork ();
 
                 void init();
                 void connect();
                 void disconnect();
+                void sendText(unsigned char *txt, size_t textLenght);
         private:
-                BlConfig *blConfig;
                 UDPsocket udpSock;
+                const char *host;
+                int port;
+                int channel;
 };
 
 #endif
