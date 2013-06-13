@@ -15,6 +15,7 @@ class BlCharacter
                                 float mass,
                                 float linearDamping,
                                 float angularDamping,
+                                float angularThreshold,
                                 btConvexShape *_shape,
                                 BlState* _blState,
                                 btTransform transform);
@@ -31,6 +32,7 @@ class BlCharacter
         private:
                 btConvexShape* shape;
                 BlState* blState;
+                float angularThreshold;
 };
 
 #endif

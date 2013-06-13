@@ -8,11 +8,15 @@ BlCharacter::BlCharacter(std::vector<BlModel*> *_blModels,
                 float mass,
                 float linearDamping,
                 float angularDamping,
+                float angularThreshold,
                 btConvexShape *_shape,
                 BlState* _blState,
                 btTransform transform
                 )
-: blModels(_blModels), shape(_shape), blState(_blState)
+: blModels(_blModels),
+        shape(_shape),
+        blState(_blState),
+        angularThreshold(angularThreshold)
 {
         rigidBody = buildRigidBody(mass, shape, transform);
         rigidBody->setAngularFactor(btVector3(0,1,0));
@@ -35,8 +39,7 @@ void BlCharacter::handleRotation()
         }
 
         float diff = delta.getAngle();
-        if(fabs(diff) < 0.04f) {
-                rigidBody->setAngularVelocity(btVector3(0,0,0));
+        if(fabs(diff) < angularThreshold) {
                 return;
         }
         rigidBody->applyTorqueImpulse(delta.getAxis() / 2.0f * btVector3(0,1,0));
