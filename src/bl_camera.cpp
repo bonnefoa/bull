@@ -15,19 +15,24 @@ void BlCamera::computeDirectionFromDelta(float &deltaUp, float &deltaRight)
         btTransform trans = btTransform(rotation);
 
         rightDirection = trans(btVector3(1, 0, 0));
-        direction = trans(btVector3(0,0,-1)).normalize();
+        direction = trans(btVector3(0,0,-1));
         upDirection = trans(btVector3(0, 1, 0));
 }
 
 void BlCamera::moveCamera(btVector3 newPosition)
 {
-        position = newPosition - direction * 4.0f;
+        switch(cameraState) {
+                case FIRST_PERSON:
+                        position = newPosition + direction;
+                        break;
+                case THIRD_PERSON:
+                        position = newPosition - direction * 4.0f;
+                        break;
+        }
 }
 
 void BlCamera::computeNewCamera()
 {
-        if(blState->cameraChange) {
-        }
         float deltaUp = blConfig->mouseSpeed * blState->deltaTime *
                 blState->getDeltaRotY();
         float deltaRight = -1.0f * blConfig->mouseSpeed * blState->deltaTime *
