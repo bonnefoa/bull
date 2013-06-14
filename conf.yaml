@@ -6,6 +6,7 @@ camera:
         aspect: 1.33
         zNear: 0.1
         zFar: 100.0
+        lookThreshold: 80.0
 
 keys:
         forward: w

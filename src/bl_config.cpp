@@ -46,6 +46,9 @@ BlConfig *loadBlConfig(const char *configurationFile)
         float zNear = getNodeFloat(cameraNode["zNear"], 0.1f);
         float zFar = getNodeFloat(cameraNode["zFar"], 100.0f);
 
+        float degLookThreshold = getNodeFloat(cameraNode["lookThreshold"], 180.0f);
+        float lookThreshold = M_PI * degLookThreshold / 90.0f;
+
         YAML::Node keyNode = config["keys"];
         int key_forward = getKeyFromName(keyNode["forward"], "w");
         int key_back = getKeyFromName(keyNode["back"], "s");
@@ -71,6 +74,8 @@ BlConfig *loadBlConfig(const char *configurationFile)
                      speed,
                      fontPath,
                      fontSize,
+
+                     lookThreshold,
 
                      projection,
 

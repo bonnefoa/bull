@@ -1,5 +1,7 @@
 #include "bl_camera.h"
 #include <bl_matrix.h>
+#include <bl_log.h>
+#include <bl_util.h>
 
 BlCamera::~BlCamera()
 {
@@ -10,8 +12,16 @@ void BlCamera::computeDirectionFromDelta(float &deltaUp, float &deltaRight)
         btQuaternion rightRot = btQuaternion(btVector3(0,1,0), deltaRight);
         btQuaternion upRot = btQuaternion(rightDirection, deltaUp);
 
-        btQuaternion deltaRotation = rightRot * upRot;
-        rotation = deltaRotation * rotation;
+        btQuaternion center = btQuaternion(btVector3(0, 1, 0), rotation.getAxis()[1] * rotation.getAngle());
+        float angle = center.angle(center.nearest(upRot * rotation));
+        float maxAngle = blConfig->lookThreshold / 4.0f;
+
+        if(angle < maxAngle) {
+                rotation = upRot * rotation;
+        }
+
+        rotation = rightRot * rotation ;
+
         btTransform trans = btTransform(rotation);
 
         rightDirection = trans(btVector3(1, 0, 0));
