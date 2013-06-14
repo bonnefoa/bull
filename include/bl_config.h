@@ -24,6 +24,8 @@ class BlConfig {
                                 int _key_left,
                                 int _key_right,
                                 int _key_debug,
+                                int _key_cameraFirstPerson,
+                                int _key_cameraThirdPerson,
                                 const char *_host,
                                 int _port
                                 ) :
@@ -43,6 +45,8 @@ class BlConfig {
                                 key_left(_key_left),
                                 key_right(_key_right),
                                 key_debug(_key_debug),
+                                key_cameraFirstPerson(_key_cameraFirstPerson),
+                                key_cameraThirdPerson(_key_cameraThirdPerson),
                                 host(_host),
                                 port(_port)
                 {} ;
@@ -65,6 +69,8 @@ class BlConfig {
                 int key_right;
 
                 int key_debug;
+                int key_cameraFirstPerson;
+                int key_cameraThirdPerson;
                 const char* host;
                 int port;
 };

@@ -55,8 +55,10 @@ BlConfig *loadBlConfig(const char *configurationFile)
         int key_alt_escape = getKeyFromName(keyNode["alt_escape"], "q");
         int key_reload = getKeyFromName(keyNode["reload"], "r");
         int key_light = getKeyFromName(keyNode["light"], "l");
-        int key_pause = getKeyFromName(keyNode["pause"], "space");
+        int key_pause = getKeyFromName(keyNode["pause"], "p");
         int key_debug = getKeyFromName(keyNode["debug"], "?");
+        int key_cameraFirstPerson = getKeyFromName(keyNode["cameraFirstPerson"], "f1");
+        int key_cameraThirdPerson = getKeyFromName(keyNode["cameraThirdPerson"], "f2");
 
         YAML::Node networkNode = config["network"];
         const char *host = strduplicate(networkNode["host"].as<std::string>().c_str());
@@ -82,6 +84,8 @@ BlConfig *loadBlConfig(const char *configurationFile)
                      key_left,
                      key_right,
                      key_debug,
+                     key_cameraFirstPerson,
+                     key_cameraThirdPerson,
                      host,
                      port
                      );

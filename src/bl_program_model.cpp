@@ -5,8 +5,7 @@
 #include <bl_log.h>
 #include <bl_matrix.h>
 
-BlProgramModel *getProgramModel(BlInput *blInput,
-                BlConfig *blConfig,
+BlProgramModel *getProgramModel(BlConfig *blConfig,
                 BlState *blState,
                 BlCamera *blCamera)
 {
@@ -19,7 +18,6 @@ BlProgramModel *getProgramModel(BlInput *blInput,
         shaders.push_back(fragmentShader);
 
         BlProgramModel *blProgramModel = new BlProgramModel(shaders,
-                        blInput,
                         blConfig,
                         blState,
                         blCamera);

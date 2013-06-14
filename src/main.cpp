@@ -46,10 +46,10 @@ void initWindow()
 void initComponents()
 {
         blState = new BlState(blSdl->font, blConfig);
-        blInput = new BlInput(blState, blConfig);
         blCamera = new BlCamera(blConfig, blState);
+        blInput = new BlInput(blState, blConfig, blCamera);
 
-        blProgramModel = getProgramModel(blInput, blConfig, blState, blCamera);
+        blProgramModel = getProgramModel(blConfig, blState, blCamera);
         blProgramTerrain = getProgramTerrain(blConfig, blCamera);
         blProgramTexture = getProgramTexture();
         blProgramShadow = getProgramShadow(btVector3());

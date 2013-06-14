@@ -5,14 +5,14 @@
 #include <SDL.h>
 #include <bl_state.h>
 #include <bl_config.h>
-
-btVector3 convertCoordinate(btScalar theta, btScalar phi);
+#include <bl_camera.h>
 
 class BlInput
 {
 
         public:
-                BlInput(BlState *blState, BlConfig *config);
+                BlInput(BlState *blState, BlConfig *config,
+                                BlCamera *blCamera);
                 void handleInput();
 
         private:
@@ -26,6 +26,7 @@ class BlInput
 
                 BlState *blState;
                 BlConfig *blConfig;
+                BlCamera *blCamera;
 };
 
 #endif

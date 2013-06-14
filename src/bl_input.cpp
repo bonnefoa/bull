@@ -4,11 +4,11 @@
 #include <bl_log.h>
 #include <bl_matrix.h>
 
-BlInput::BlInput(BlState *state, BlConfig *config)
+BlInput::BlInput(BlState *_blState, BlConfig *_blConfig, BlCamera *_blCamera) :
+        blState(_blState),
+        blConfig(_blConfig),
+        blCamera(_blCamera)
 {
-        blState = state;
-        blConfig = config;
-
         SDL_SetRelativeMouseMode(SDL_TRUE);
 }
 
@@ -76,7 +76,12 @@ void BlInput::handleKeyDown(SDL_Event *event)
                 blState->pause();
         } else if(sym == blConfig->key_debug) {
                 blState->debug();
+        } else if(sym == blConfig->key_cameraFirstPerson) {
+                blCamera->cameraState = FIRST_PERSON;
+        } else if(sym == blConfig->key_cameraThirdPerson) {
+                blCamera->cameraState = THIRD_PERSON;
         }
+
 }
 
 void BlInput::handleInput()

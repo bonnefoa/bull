@@ -17,7 +17,9 @@ keys:
         reload: r
         light: l
         debug: v
-        pause: space
+        pause: p
+        cameraFirstPerson: f1
+        cameraThirdPerson: f2
 
 text:
         font: /usr/share/fonts/dejavu/DejaVuSerif.ttf

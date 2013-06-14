@@ -15,13 +15,11 @@ class  BlProgramModel : public BlProgram
 {
         public:
                 BlProgramModel(std::vector<BlShader *> shaders
-                                , BlInput *_blInput
                                 , BlConfig *_blConfig
                                 , BlState *_blState
                                 , BlCamera *_blCamera
                                 ) :
                         BlProgram(shaders),
-                        blInput(_blInput),
                         blConfig(_blConfig),
                         blState(_blState),
                         blCamera(_blCamera) {};
@@ -34,7 +32,6 @@ class  BlProgramModel : public BlProgram
                 void bindProjection();
 
         private:
-                BlInput *blInput;
                 BlConfig *blConfig;
                 BlState *blState;
                 BlCamera *blCamera;
@@ -52,8 +49,7 @@ class  BlProgramModel : public BlProgram
                 GLint samplerShadow;
 };
 
-BlProgramModel *getProgramModel(BlInput *blInput,
-                BlConfig *blConfig,
+BlProgramModel *getProgramModel(BlConfig *blConfig,
                 BlState *blState,
                 BlCamera *blCamera);
 

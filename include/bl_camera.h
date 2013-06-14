@@ -5,11 +5,17 @@
 #include <bl_config.h>
 #include <bl_state.h>
 
+enum cameraState_enum {
+        THIRD_PERSON,
+        FIRST_PERSON
+};
+
 class BlCamera
 {
         public:
                 BlCamera(BlConfig *_blConfig,
                                 BlState *_blState) :
+                        cameraState(THIRD_PERSON),
                         direction(btVector3(0,0,-1)),
                         rightDirection(btVector3(1,0,0)),
                         upDirection(btVector3(0,1,0)),
@@ -19,22 +25,23 @@ class BlCamera
                         position(btVector3(0,0,0))
                                 {};
                 ~BlCamera();
-
                 void moveCamera(btVector3 position);
                 void computeNewCamera();
 
+                cameraState_enum cameraState;
                 btVector3 direction;
                 btVector3 rightDirection;
                 btVector3 upDirection;
                 btTransform view;
                 btQuaternion rotation;
+
         private:
+                void computeDirectionFromDelta(float &deltaUp,
+                                float &deltaRight);
+
                 BlConfig    *blConfig;
                 BlState     *blState;
                 btVector3 position;
-
-                void computeDirectionFromDelta(float &deltaUp,
-                                float &deltaRight);
 };
 
 #endif

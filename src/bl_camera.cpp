@@ -26,6 +26,8 @@ void BlCamera::moveCamera(btVector3 newPosition)
 
 void BlCamera::computeNewCamera()
 {
+        if(blState->cameraChange) {
+        }
         float deltaUp = blConfig->mouseSpeed * blState->deltaTime *
                 blState->getDeltaRotY();
         float deltaRight = -1.0f * blConfig->mouseSpeed * blState->deltaTime *

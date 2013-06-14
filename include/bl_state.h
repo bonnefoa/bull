@@ -47,6 +47,7 @@ class BlState {
 
                 int lightState;
                 int debugState;
+                int cameraChange;
 
                 int mouseDeltaX;
                 int mouseDeltaY;
