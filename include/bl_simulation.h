@@ -21,9 +21,9 @@ class BlSimulation {
                 void toggleDebug(int debugState);
                 void debugDraw();
 
-                void pushObject();
-                void pickObject();
-                void endPickObject();
+                void pushObject(BlCharacter *blCharacter);
+                void pickObject(BlCharacter *blCharacter);
+                void endPickObject(BlCharacter *blCharacter);
 
         private:
                 BlDebugDrawer *blDebugDrawer;
@@ -37,9 +37,10 @@ class BlSimulation {
                 btBroadphaseInterface *overlappingPairCache;
                 btSequentialImpulseConstraintSolver *solver;
 
-                btCollisionWorld::ClosestRayResultCallback getCenterObject();
-                void movePickedObject();
-                void initializePickedObject(btCollisionWorld::ClosestRayResultCallback rayCallback);
+                btCollisionWorld::ClosestRayResultCallback getCenterObject(BlCharacter *blCharacter);
+                void movePickedObject(BlCharacter *blCharacter);
+                void initializePickedObject(btCollisionWorld::ClosestRayResultCallback rayCallback,
+                                BlCharacter *blCharacter);
 };
 
 #endif

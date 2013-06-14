@@ -11,6 +11,7 @@
 #include <bl_sdl.h>
 #include <bl_matrix.h>
 #include <bl_network.h>
+#include <bl_camera.h>
 
 #define TICK_INTERVAL 1000
 
@@ -32,6 +33,7 @@ BlDebugDrawer *blDebugDrawer;
 BlScene *blScene;
 BlState *blState;
 BlConfig *blConfig;
+BlCamera *blCamera;
 Uint32 nextTime = 0;
 
 void initWindow()
@@ -43,18 +45,19 @@ void initWindow()
 
 void initComponents()
 {
-        blState = new BlState(btVector3(0,0,8), blSdl->font,
-                        blConfig);
+        blState = new BlState(blSdl->font, blConfig);
         blInput = new BlInput(blState, blConfig);
+        blCamera = new BlCamera(blConfig, blState);
 
-        blProgramModel = getProgramModel(blInput, blConfig, blState);
-        blProgramTerrain = getProgramTerrain(blConfig, blState);
+        blProgramModel = getProgramModel(blInput, blConfig, blState, blCamera);
+        blProgramTerrain = getProgramTerrain(blConfig, blCamera);
         blProgramTexture = getProgramTexture();
         blProgramShadow = getProgramShadow(btVector3());
         blLoader = new BlLoader(blTexture, blState);
 
         blProgramDebug = getProgramDebug(blConfig);
-        blDebugDrawer = new BlDebugDrawer(blProgramDebug, blState);
+        blDebugDrawer = new BlDebugDrawer(blProgramDebug, blState,
+                        blCamera);
         blDebugDrawer->init();
         blSimulation = new BlSimulation(blDebugDrawer, blState);
         blNetwork = new BlNetwork(blConfig);
@@ -91,9 +94,9 @@ void initScene(const char *filename)
 
 void setLight() {
         BlLightPoint *light = blScene->blLightPoints->at(0);
-        blProgramShadow->moveLight(blState->position);
-        blProgramModel->moveLight(blState->position);
-        light->moveLight(blState->position,
+        blProgramShadow->moveLight(blScene->blCharacter->getPosition());
+        blProgramModel->moveLight(blScene->blCharacter->getPosition());
+        light->moveLight(blScene->blCharacter->getPosition(),
                         blProgramModel->programId);
 }
 
@@ -112,12 +115,6 @@ void debugScene()
                 blDebugDrawer->drawXYZAxis(buildModelMatrix(btVector3(1,1,1),
                                         terrain->position));
         }
-
-        btTransform center = buildModelMatrix(btVector3(1,1,1),
-                                blState->position + blState->direction + btVector3(0.5, 0.5,0.5));
-        blDebugDrawer->drawAxis(center, blState->direction, btVector3(1,1,1));
-        blDebugDrawer->drawAxis(center, blState->rightDirection, btVector3(1,0,0));
-        blDebugDrawer->drawAxis(center, blState->upDirection, btVector3(0,1,0));
 }
 
 void renderDebug()
@@ -145,20 +142,21 @@ void mainLoop()
         glClearColor( 0.0, 0.0, 0.2, 1.0 );
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        blState->refreshDeltaTime();
+        blState->refreshState();
         blInput->handleInput();
 
-        blState->computeNewAngles();
+        blCamera->moveCamera(blScene->blCharacter->getPosition());
+        blCamera->computeNewCamera();
         blScene->blCharacter->handleMovement();
-        blState->computeView();
+        blScene->blCharacter->handleTurn(blCamera->rotation);
 
         if(blState->leftMouse == 1) {
-                blSimulation->pushObject();
+                blSimulation->pushObject(blScene->blCharacter);
         }
         if(blState->rightMouse == 1) {
-                blSimulation->pickObject();
+                blSimulation->pickObject(blScene->blCharacter);
         } else {
-                blSimulation->endPickObject();
+                blSimulation->endPickObject(blScene->blCharacter);
         }
 
         moveLight();
@@ -175,13 +173,9 @@ void reload(const char *configFile)
 
 void reloadKeepPosition(const char *configFile)
 {
-        btVector3 oldPosition = blState->position;
-        float oldPhi = blState->phi;
-        float oldTheta = blState->theta;
+        btVector3 oldPosition = blScene->blCharacter->getPosition();
         reload(configFile);
-        blState->phi = oldPhi;
-        blState->theta = oldTheta;
-        blState->position = oldPosition;
+        blScene->blCharacter->getPosition() = oldPosition;
         blSimulation->toggleDebug(blState->debugState);
 }
 

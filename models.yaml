@@ -33,6 +33,7 @@ character:
         angularDamping: 0.5
         linearDamping: 0.5
         angularThreshold: 0.5
+        speed: 0.1
 
 models:
 

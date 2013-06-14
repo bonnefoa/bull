@@ -6,20 +6,20 @@
 #include <bl_program.h>
 #include <bl_shader.h>
 #include <bl_config.h>
-#include <bl_state.h>
 #include <bl_terrain.h>
 #include <bl_scene.h>
+#include <bl_camera.h>
 
 class BlProgramTerrain : public BlProgram
 {
         public:
                 BlProgramTerrain(std::vector<BlShader *> shaders,
                                 BlConfig *_blConfig,
-                                BlState *_blState
+                                BlCamera *_blCamera
                                 )
                         : BlProgram(shaders),
                         blConfig(_blConfig),
-                        blState(_blState) {};
+                        blCamera(_blCamera) {};
 
                 void init(void);
                 void displayScene(BlScene *scene);
@@ -28,7 +28,7 @@ class BlProgramTerrain : public BlProgram
 
         private:
                 BlConfig *blConfig;
-                BlState *blState;
+                BlCamera *blCamera;
 
                 GLint locModel;
                 GLint locView;
@@ -42,6 +42,6 @@ class BlProgramTerrain : public BlProgram
                 GLint locVertices;
 };
 
-BlProgramTerrain *getProgramTerrain(BlConfig *blConfig, BlState *blState);
+BlProgramTerrain *getProgramTerrain(BlConfig *blConfig, BlCamera *blCamera);
 
 #endif

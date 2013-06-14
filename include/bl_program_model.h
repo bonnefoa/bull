@@ -9,6 +9,7 @@
 #include <vector>
 #include <bl_scene.h>
 #include <bl_config.h>
+#include <bl_camera.h>
 
 class  BlProgramModel : public BlProgram
 {
@@ -17,9 +18,13 @@ class  BlProgramModel : public BlProgram
                                 , BlInput *_blInput
                                 , BlConfig *_blConfig
                                 , BlState *_blState
+                                , BlCamera *_blCamera
                                 ) :
-                        BlProgram(shaders), blInput(_blInput), blConfig(_blConfig),
-                        blState(_blState) {};
+                        BlProgram(shaders),
+                        blInput(_blInput),
+                        blConfig(_blConfig),
+                        blState(_blState),
+                        blCamera(_blCamera) {};
                 void init(void);
                 void bindModelMatrix(BlModel *blModel);
                 void displayModel(BlModel *model);
@@ -32,6 +37,7 @@ class  BlProgramModel : public BlProgram
                 BlInput *blInput;
                 BlConfig *blConfig;
                 BlState *blState;
+                BlCamera *blCamera;
 
                 GLint locModel;
                 GLint locView;
@@ -46,6 +52,9 @@ class  BlProgramModel : public BlProgram
                 GLint samplerShadow;
 };
 
-BlProgramModel *getProgramModel(BlInput *blInput, BlConfig *blConfig, BlState *blState);
+BlProgramModel *getProgramModel(BlInput *blInput,
+                BlConfig *blConfig,
+                BlState *blState,
+                BlCamera *blCamera);
 
 #endif

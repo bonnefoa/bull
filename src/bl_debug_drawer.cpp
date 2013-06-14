@@ -123,7 +123,7 @@ void BlDebugDrawer::reportErrorWarning(const char* warningString)
 void BlDebugDrawer::initDebugRender()
 {
         glUseProgram(blProgramDebug->programId);
-        sendTransform(blState->view, blProgramDebug->locView);
+        sendTransform(blCamera->view, blProgramDebug->locView);
         colors.clear();
         lines.clear();
         vertices.clear();

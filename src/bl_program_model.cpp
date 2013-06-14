@@ -5,7 +5,10 @@
 #include <bl_log.h>
 #include <bl_matrix.h>
 
-BlProgramModel *getProgramModel(BlInput *blInput, BlConfig *blConfig, BlState *blState)
+BlProgramModel *getProgramModel(BlInput *blInput,
+                BlConfig *blConfig,
+                BlState *blState,
+                BlCamera *blCamera)
 {
         std::vector<BlShader*> shaders;
         BlShader *vertexShader = new BlShader("glsl/model_vertex.glsl"
@@ -15,8 +18,11 @@ BlProgramModel *getProgramModel(BlInput *blInput, BlConfig *blConfig, BlState *b
         shaders.push_back(vertexShader);
         shaders.push_back(fragmentShader);
 
-        BlProgramModel *blProgramModel = new BlProgramModel(shaders, blInput, blConfig,
-                        blState);
+        BlProgramModel *blProgramModel = new BlProgramModel(shaders,
+                        blInput,
+                        blConfig,
+                        blState,
+                        blCamera);
         blProgramModel->loadProgram();
         blProgramModel->init();
         return blProgramModel;
@@ -76,7 +82,7 @@ void BlProgramModel::displayScene(BlScene *blScene, GLuint depthTexture)
         glActiveTexture(GL_TEXTURE2);
         glBindTexture(GL_TEXTURE_2D, depthTexture);
 
-        sendTransform(blState->view, locView);
+        sendTransform(blCamera->view, locView);
 
         for (std::vector<BlLightPoint*>::iterator
                         it = blScene->blLightPoints->begin();

@@ -240,12 +240,14 @@ BlCharacter *BlLoader::loadCharacter(YAML::Node node)
         float linearDamping = node["linearDamping"].as<float>();
         float angularDamping = node["angularDamping"].as<float>();
         float angularThreshold = node["angularThreshold"].as<float>();
+        float speed = node["speed"].as<float>();
         btVector3 position = readVector3(node["position"]);
         btTransform transform = readShapeTransform(shapeNode, position);
         btConvexShape *collisionShape = readCollisionShape(shapeNode);
         BlCharacter *blCharacter = new BlCharacter(blModels,
                         mass, linearDamping, angularDamping,
                         angularThreshold,
+                        speed,
                         collisionShape,
                         blState, transform);
         return blCharacter;

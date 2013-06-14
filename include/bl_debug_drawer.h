@@ -7,11 +7,16 @@
 #include <vector>
 #include <bl_program_debug.h>
 #include <bl_state.h>
+#include <bl_camera.h>
 
 class BlDebugDrawer : public btIDebugDraw {
         public:
-                BlDebugDrawer(BlProgramDebug *_blProgramDebug, BlState *_blState)
-                        : blProgramDebug(_blProgramDebug), blState(_blState) {} ;
+                BlDebugDrawer(BlProgramDebug *_blProgramDebug,
+                                BlState *_blState,
+                                BlCamera *_blCamera)
+                        : blProgramDebug(_blProgramDebug),
+                        blState(_blState),
+                        blCamera(_blCamera) {} ;
                 void init();
                 virtual void drawLine(const btVector3& from,
                                 const btVector3& to,const btVector3& color);
@@ -35,6 +40,7 @@ class BlDebugDrawer : public btIDebugDraw {
         private:
                 BlProgramDebug *blProgramDebug;
                 BlState *blState;
+                BlCamera *blCamera;
 
                 GLuint lineBuffer;
                 GLuint colorBuffer;
