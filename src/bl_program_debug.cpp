@@ -24,16 +24,14 @@ void BlProgramDebug::init()
 
         locView = glGetUniformLocation(programId, "V");
         locProjection = glGetUniformLocation(programId, "P");
-        locHasTexture = glGetUniformLocation(programId, "hasTexture");
 
         locVertices = glGetAttribLocation(programId, "vertexPosition_modelspace");
         locColor = glGetAttribLocation(programId, "vertexColor");
-	locUV = glGetAttribLocation(programId, "vertexUV");
         samplerTexture = glGetUniformLocation(programId
                         , "textureSampler");
-        INFO("Loc vertices %i, loc Color %i, loc UV %i\n",
-                        locVertices, locColor, locUV);
-        if(locVertices < 0 || locColor < 0 || locUV < 0) {
+        INFO("Loc vertices %i, loc Color %i\n",
+                        locVertices, locColor);
+        if(locVertices < 0 || locColor < 0) {
                 ERROR("A location is unused");
         }
 

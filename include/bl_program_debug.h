@@ -14,11 +14,9 @@ class BlProgramDebug : public BlProgram
 
                 GLint locView;
                 GLint locProjection;
-                GLint locHasTexture;
 
                 GLint locVertices;
                 GLint locColor;
-                GLint locUV;
                 GLint samplerTexture;
         private:
                 BlConfig *blConfig;
