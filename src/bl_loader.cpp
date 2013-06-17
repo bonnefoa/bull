@@ -181,6 +181,8 @@ std::map<std::string, btVector3> BlLoader::readShapeOffset(YAML::Node node)
 BlTerrain* BlLoader::loadTerrain(YAML::Node node)
 {
         std::string name = node["name"].as<std::string>();
+        const char *normalmap = strduplicate(
+                        (node["normalmap"].as<std::string>()).c_str());
         const char *image = strduplicate(
                         (node["image"].as<std::string>()).c_str());
         btVector3 position = readVector3(node["position"]);
@@ -201,9 +203,9 @@ BlTerrain* BlLoader::loadTerrain(YAML::Node node)
                         gridWidth, gridLenght,
                         heightScale,
                         minHeight, maxHeight,
-                        position, scale, image,
-                        textureSetName,
-                        textureSetHeights);
+                        position, scale,
+                        image, normalmap,
+                        textureSetName, textureSetHeights);
         return blTerrain;
 }
 

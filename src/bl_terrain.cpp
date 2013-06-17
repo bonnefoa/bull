@@ -2,6 +2,7 @@
 #include <bl_matrix.h>
 #include <bl_log.h>
 #include <bl_heightmap.h>
+#include <sys/stat.h>
 #include <map>
 
 void BlTerrain::initVertices()
@@ -90,10 +91,22 @@ char *BlTerrain::extractHeightmapData(BlImage *blImage)
         return height;
 }
 
+void BlTerrain::createNormalHeightmap(BlImage *blImage)
+{
+        struct stat st;
+        if(stat(normalmapImage, &st) != 0) {
+                BlImage *normalImage = generateNormalMapFromHeightmap(blImage);
+                normalImage->writeImage(normalmapImage);
+                delete blImage;
+                delete normalImage;
+        }
+}
+
 void BlTerrain::initTextures()
 {
         textureBuffer = blTexture->fetchTexture(textureSetName);
         heightmapBuffer = blTexture->fetchTexture(heightmapImage);
+        normalBuffer = blTexture->fetchTexture(normalmapImage);
 }
 
 void BlTerrain::init()
@@ -104,6 +117,7 @@ void BlTerrain::init()
 
         BlImage *blImage = readPngImage(heightmapImage);
         heightMapData = extractHeightmapData(blImage);
+        createNormalHeightmap(blImage);
 
         createRigidBody();
         initVertices();
@@ -122,6 +136,8 @@ BlTerrain::~BlTerrain()
         glDeleteBuffers(1, &uvBuffer);
         if(heightmapBuffer > 0)
                 glDeleteTextures(1, &heightmapBuffer);
+        if(normalBuffer > 0)
+                glDeleteTextures(1, &normalBuffer);
         free(heightMapData);
 }
 
@@ -173,6 +189,8 @@ void BlTerrain::bindTextures()
         glBindTexture(GL_TEXTURE_2D, heightmapBuffer);
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, textureBuffer);
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_2D, normalBuffer);
 }
 
 void BlTerrain::bindModelMatrix(GLint uniformModel)

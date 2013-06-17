@@ -42,20 +42,20 @@ float getAttenuation()
         return attenuation;
 }
 
-vec4 processColor(vec3 texColor)
+vec4 processColor(vec4 texColor)
 {
-        vec3 ambientPart = ambientColor * texColor;
+        vec4 ambientPart = vec4(ambientColor, 1) * texColor;
 
         float diffuseCoef = getDiffuseCoefficient();
         float specularCoef = getSpecularCoefficient();
         float attenuation = getAttenuation();
 
-        vec3 diffusePart = texColor * lightColor * diffuseCoef * attenuation;
-        vec3 specularPart = texColor * lightColor * pow(specularCoef, 5) * attenuation;
+        vec4 diffusePart = texColor * vec4(lightColor, 1) * diffuseCoef * attenuation;
+        vec4 specularPart = texColor * vec4(lightColor, 1) * pow(specularCoef, 5) * attenuation;
 
         float visibility = texture(shadowSampler,
                 vec3(shadowCoord.xy, (shadowCoord.z-biais) / shadowCoord.w));
 
-        vec4 color = vec4(ambientPart + (diffusePart + specularPart) * visibility, 1);
+        vec4 color = ambientPart + (diffusePart + specularPart) * visibility;
         return color;
 }

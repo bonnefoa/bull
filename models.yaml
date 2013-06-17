@@ -14,6 +14,7 @@ textureSet:
 terrains:
         - name: floor
           image: /home/sora/blender/heightmap.png
+          normalmap: /home/sora/blender/heightmap_normal.png
           scale: [4.0, 1.0, 4.0]
           position: [0.0, 0.0, 0.0]
           gridWidth: 64

@@ -6,10 +6,10 @@ out vec4 color;
 
 in vec2 UV;
 
-vec4 processColor(vec3 texColor);
+vec4 processColor(vec4 texColor);
 
 void main()
 {
-        vec3 texColor = texture(textureSampler, UV).xyz;
+        vec4 texColor = texture(textureSampler, UV);
         color = processColor(texColor);
 }

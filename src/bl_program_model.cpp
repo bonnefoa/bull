@@ -19,8 +19,8 @@ BlProgramModel *getProgramModel(BlConfig *blConfig,
         BlShader *fragmentShader = new BlShader("glsl/model_fragment.glsl"
                         , GL_FRAGMENT_SHADER);
         shaders.push_back(vertexShader);
-        shaders.push_back(commonVertex);
         shaders.push_back(fragmentShader);
+        shaders.push_back(commonVertex);
         shaders.push_back(commonFragment);
 
         BlProgramModel *blProgramModel = new BlProgramModel(shaders,

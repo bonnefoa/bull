@@ -9,8 +9,14 @@ BlProgramTerrain *getProgramTerrain(BlConfig *blConfig, BlCamera *blCamera)
                         , GL_VERTEX_SHADER);
         BlShader *fragmentShader = new BlShader("glsl/terrain_fragment.glsl"
                         , GL_FRAGMENT_SHADER);
+        BlShader *commonVertex = new BlShader("glsl/common_light_vertex.glsl"
+                        , GL_VERTEX_SHADER);
+        BlShader *commonFragment = new BlShader("glsl/common_light_fragment.glsl"
+                        , GL_FRAGMENT_SHADER);
         shaders.push_back(vertexShader);
         shaders.push_back(fragmentShader);
+        shaders.push_back(commonVertex);
+        shaders.push_back(commonFragment);
 
         BlProgramTerrain *blProgramTerrain = new BlProgramTerrain(shaders,
                         blConfig, blCamera);
@@ -33,10 +39,13 @@ void BlProgramTerrain::init(void)
                         , "vertexPosition_modelspace");
         textureSampler = glGetUniformLocation(programId
                         , "textureSampler");
+        normalmapSampler = glGetUniformLocation(programId
+                        , "normalmapSampler");
         heightmapSampler = glGetUniformLocation(programId
                         , "heightmapSampler");
         glUniform1i(heightmapSampler, 0);
         glUniform1i(textureSampler, 1);
+        glUniform1i(normalmapSampler, 2);
 
         INFO("Model location %i\n", locModel);
         INFO("View location %i\n", locView);

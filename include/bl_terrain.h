@@ -21,6 +21,7 @@ class BlTerrain
                                 btVector3 _position,
                                 btVector3 _scale,
                                 const char *_heightmapImage,
+                                const char *_normalmapImage,
                                 const char *_textureSetName,
                                 std::vector<float> _textureSetHeights
                          ) :
@@ -33,6 +34,7 @@ class BlTerrain
                         minHeight(_minHeight),
                         maxHeight(_maxHeight),
                         heightmapImage(_heightmapImage),
+                        normalmapImage(_normalmapImage),
                         textureSetName(_textureSetName),
                         textureSetHeights(_textureSetHeights) {};
                 ~BlTerrain();
@@ -65,6 +67,7 @@ class BlTerrain
                 float maxHeight;
 
                 const char *heightmapImage;
+                const char *normalmapImage;
                 char *heightMapData;
                 const char *textureSetName;
                 std::vector<float> textureSetHeights;
@@ -75,8 +78,10 @@ class BlTerrain
                 void initVertices();
                 void initIndices();
                 void initUVs();
+                void createNormalHeightmap(BlImage *blImage);
 
                 GLuint heightmapBuffer;
+                GLuint normalBuffer;
                 GLuint textureBuffer;
                 GLuint vertexBuffer;
                 GLuint indiceBuffer;
