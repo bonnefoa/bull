@@ -12,10 +12,13 @@ BlProgramModel *getProgramModel(BlConfig *blConfig,
         std::vector<BlShader*> shaders;
         BlShader *vertexShader = new BlShader("glsl/model_vertex.glsl"
                         , GL_VERTEX_SHADER);
+        BlShader *commonShader = new BlShader("glsl/common_light_fragment.glsl"
+                        , GL_FRAGMENT_SHADER);
         BlShader *fragmentShader = new BlShader("glsl/model_fragment.glsl"
                         , GL_FRAGMENT_SHADER);
         shaders.push_back(vertexShader);
         shaders.push_back(fragmentShader);
+        shaders.push_back(commonShader);
 
         BlProgramModel *blProgramModel = new BlProgramModel(shaders,
                         blConfig,
