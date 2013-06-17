@@ -38,3 +38,27 @@ void addRectangle(std::vector<btVector3> *vertices,
         vertices->push_back(lower + right);
         vertices->push_back(up + right);
 }
+
+void add2dRectangle(std::vector<float> *vertices,
+                const float x, const float y,
+                const float width, const float height)
+{
+        vertices->push_back(x);
+        vertices->push_back(y);
+
+        vertices->push_back(x + width);
+        vertices->push_back(y + height);
+
+        vertices->push_back(x);
+        vertices->push_back(y + height);
+
+
+        vertices->push_back(x);
+        vertices->push_back(y);
+
+        vertices->push_back(x + width);
+        vertices->push_back(y);
+
+        vertices->push_back(x + width);
+        vertices->push_back(y + height);
+}
