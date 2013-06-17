@@ -12,14 +12,15 @@ class BlProgramText2d : public BlProgram
 
                 void init(void);
 
-                GLuint locVertices;
-                GLuint locUV;
+                GLint locVertices;
+                GLint locUV;
+                GLint locSampler;
 
         private:
                 BlConfig *blConfig;
 
-                GLuint locWidth;
-                GLuint locHeight;
+                GLint locWidth;
+                GLint locHeight;
 };
 
 BlProgramText2d *getProgramText2d(BlConfig *blConfig);

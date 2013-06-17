@@ -1,4 +1,5 @@
 #include "bl_program_text2d.h"
+#include <bl_log.h>
 
 BlProgramText2d *getProgramText2d(BlConfig *blConfig)
 {
@@ -22,12 +23,18 @@ void BlProgramText2d::init()
         locVertices = glGetAttribLocation(programId,
                         "vertexPosition_screenspace");
         locUV = glGetAttribLocation(programId, "vertexUV");
-
         locWidth = glGetUniformLocation(programId, "width");
         locHeight = glGetUniformLocation(programId, "height");
+        locSampler = glGetUniformLocation(programId, "textureSampler");
 
-        glUniform1i(locWidth, blConfig->width);
-        glUniform1i(locHeight, blConfig->height);
+        if(locVertices < 0 || locUV < 0 || locWidth < 0 || locSampler < 0) {
+                ERROR("A location is unused");
+        }
+
+        glUniform1i(locSampler, 4);
+
+        glUniform1i(locWidth, blConfig->width / 2);
+        glUniform1i(locHeight, blConfig->height / 2);
 
         glUseProgram(0);
 }
