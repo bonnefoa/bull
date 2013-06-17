@@ -52,15 +52,11 @@ void BlDebugDrawer::drawContactPoint(const btVector3& PointOnB,
 
 void BlDebugDrawer::draw3dText(const btVector3& location,const char* textString)
 {
-        (void)location;
-        (void)textString;
-
         SDL_Color textColor = {255,255,255,1};
         SDL_Color bg = {0,0,0,0};
         SDL_Surface *surface =
                 TTF_RenderText_Shaded(blState->font, textString, textColor, bg);
         GLenum textureFormat = GL_RGBA;
-
         int width = roundUpPowerOfTwo(surface->w);
         int height = roundUpPowerOfTwo(surface->h);
         unsigned char *surfPix = (unsigned char *)surface->pixels;
@@ -77,17 +73,14 @@ void BlDebugDrawer::draw3dText(const btVector3& location,const char* textString)
                         pix[index+3] = val;
                 }
         }
-
         glActiveTexture(GL_TEXTURE5);
         glBindTexture(GL_TEXTURE_2D, textureBuffer);
         glTexImage2D(GL_TEXTURE_2D, 0, textureFormat, width, height,
                         0, textureFormat, GL_UNSIGNED_BYTE, pix);
-
-        addRectangle(&vertices, location, location +
+        addRectangle(&textVertices, location, location +
                         btVector3(20, 5 * float(surface->w) / float(surface->h),
                                 0));
-        addRectangleUV(&uvs);
-
+        addRectangleUV(&textUvs);
         SDL_FreeSurface(surface);
 
         glUniform1i(blProgramDebug->locHasTexture, 1);
@@ -95,24 +88,24 @@ void BlDebugDrawer::draw3dText(const btVector3& location,const char* textString)
         glEnableVertexAttribArray(blProgramDebug->locVertices);
 
         glBindBuffer(GL_ARRAY_BUFFER, uvBuffer);
-        glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(GL_FLOAT),
-                        &uvs[0], GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, textUvs.size() * sizeof(GL_FLOAT),
+                        &textUvs[0], GL_STATIC_DRAW);
         glVertexAttribPointer(blProgramDebug->locUV, 2, GL_FLOAT
                         , GL_FALSE, 0, (void *)0);
 
         glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-        glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(btVector3),
-                        &vertices[0], GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, textVertices.size() * sizeof(btVector3),
+                        &textVertices[0], GL_STATIC_DRAW);
         glVertexAttribPointer(blProgramDebug->locVertices, 4 , GL_FLOAT
                         , GL_FALSE, 0, (void *)0);
 
-        glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+        glDrawArrays(GL_TRIANGLES, 0, textVertices.size());
 
         glDisableVertexAttribArray(blProgramDebug->locUV);
         glDisableVertexAttribArray(blProgramDebug->locVertices);
 
-        vertices.clear();
-        uvs.clear();
+        textVertices.clear();
+        textUvs.clear();
 }
 
 void BlDebugDrawer::reportErrorWarning(const char* warningString)
@@ -126,7 +119,7 @@ void BlDebugDrawer::initDebugRender()
         sendTransform(blCamera->view, blProgramDebug->locView);
         colors.clear();
         lines.clear();
-        vertices.clear();
+        textVertices.clear();
 }
 
 void BlDebugDrawer::finalizeDraw()
