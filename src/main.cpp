@@ -12,8 +12,8 @@
 #include <bl_matrix.h>
 #include <bl_network.h>
 #include <bl_camera.h>
-
-#define TICK_INTERVAL 1000
+#include <bl_text.h>
+#include <bl_debug.h>
 
 BlInput *blInput;
 BlSdl *blSdl;
@@ -28,13 +28,18 @@ BlLoader *blLoader;
 BlNetwork *blNetwork;
 
 BlProgramDebug *blProgramDebug;
-BlDebugDrawer *blDebugDrawer;
+
+BlProgramText2d *blProgramText2d;
+BlProgramText3d *blProgramText3d;
+BlText *blText;
 
 BlScene *blScene;
 BlState *blState;
 BlConfig *blConfig;
 BlCamera *blCamera;
-Uint32 nextTime = 0;
+
+BlDebugDrawer *blDebugDrawer;
+BlDebug *blDebug;
 
 void initWindow()
 {
@@ -55,13 +60,20 @@ void initComponents()
         blProgramShadow = getProgramShadow(btVector3());
         blLoader = new BlLoader(blTexture, blState);
 
+        blProgramText2d = getProgramText2d(blConfig);
+        blProgramText3d = getProgramText3d(blConfig);
+        blText = new BlText(blProgramText2d, blProgramText3d, blConfig, blState);
+        blText->init();
+
         blProgramDebug = getProgramDebug(blConfig);
         blDebugDrawer = new BlDebugDrawer(blProgramDebug, blState,
-                        blCamera);
+                        blCamera, blText);
         blDebugDrawer->init();
         blSimulation = new BlSimulation(blDebugDrawer, blState);
         blNetwork = new BlNetwork(blConfig);
         blNetwork->init();
+        blDebug = new BlDebug(blConfig, blState,
+                        blDebugDrawer, blSimulation, blText);
 }
 
 void clean()
@@ -70,9 +82,12 @@ void clean()
         delete blProgramShadow;
         delete blProgramTexture;
         delete blProgramTerrain;
+        delete blProgramText2d;
+
         delete blScene;
         delete blSimulation;
         delete blInput;
+        delete blText;
 }
 
 void shutdown()
@@ -106,34 +121,13 @@ void moveLight() {
         }
 }
 
-void debugScene()
-{
-        for (std::vector<BlTerrain*>::iterator
-                        it = blScene->blTerrains->begin();
-                        it != blScene->blTerrains->end(); ++it) {
-                BlTerrain *terrain = *it;
-                blDebugDrawer->drawXYZAxis(buildModelMatrix(btVector3(1,1,1),
-                                        terrain->position));
-        }
-}
-
-void renderDebug()
-{
-        if(blState->debugState) {
-                blDebugDrawer->initDebugRender();
-                blSimulation->debugDraw();
-                debugScene();
-                blDebugDrawer->finalizeDraw();
-        }
-}
-
 void render()
 {
         glViewport(0, 0, blConfig->width, blConfig->height);
         blProgramShadow->displaySceneForRender(blScene);
         blProgramModel->displayScene(blScene, blProgramShadow->depthTexture);
         blProgramTerrain->displayScene(blScene);
-        renderDebug();
+        blDebug->renderDebug();
         SDL_GL_SwapWindow(blSdl->window);
 }
 
