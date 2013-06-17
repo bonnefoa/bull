@@ -9,12 +9,15 @@ class BlConfig {
                 BlConfig(
                                 float _mouseSpeed,
                                 float _speed,
+
                                 const char* _fontPath,
                                 int _fontSize,
 
-                                float _lookThreshold,
+                                int _width,
+                                int _height,
 
                                 btTransform _projection,
+                                float _lookThreshold,
 
                                 int _key_pause,
                                 int _key_light,
@@ -34,10 +37,16 @@ class BlConfig {
 
                                 fontPath(_fontPath),
                                 fontSize(_fontSize),
+
+                                width(_width),
+                                height(_height),
+
                                 mouseSpeed(_mouseSpeed),
                                 speed(_speed),
-                                lookThreshold(_lookThreshold),
+
                                 projection(_projection),
+                                lookThreshold(_lookThreshold),
+
                                 key_pause(_key_pause),
                                 key_light(_key_light),
                                 key_reload(_key_reload),
@@ -56,11 +65,15 @@ class BlConfig {
 
                 const char* fontPath;
                 int fontSize;
+
+                int width;
+                int height;
+
                 float mouseSpeed;
                 float speed;
-                float lookThreshold;
 
                 btTransform projection;
+                float lookThreshold;
 
                 int key_pause;
                 int key_light;

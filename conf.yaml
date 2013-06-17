@@ -1,6 +1,11 @@
+screen:
+        height: 768
+        width: 1024
+
 game:
         speed: 0.1
         mouseSpeed: 0.0001
+
 camera:
         fov: 45
         aspect: 1.33

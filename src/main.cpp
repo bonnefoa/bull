@@ -129,7 +129,7 @@ void renderDebug()
 
 void render()
 {
-        glViewport(0, 0, 1024, 1024);
+        glViewport(0, 0, blConfig->width, blConfig->height);
         blProgramShadow->displaySceneForRender(blScene);
         blProgramModel->displayScene(blScene, blProgramShadow->depthTexture);
         blProgramTerrain->displayScene(blScene);

@@ -67,17 +67,24 @@ BlConfig *loadBlConfig(const char *configurationFile)
         const char *host = strduplicate(networkNode["host"].as<std::string>().c_str());
         int port = networkNode["port"].as<int>();
 
+        YAML::Node screenNode = config["screen"];
+        int width =  screenNode["width"].as<int>();
+        int height = screenNode["height"].as<int>();
+
         btTransform projection = computeProjection(fov, aspect, zNear, zFar);
 
         BlConfig *blConfig = new BlConfig(
                      mouseSpeed,
                      speed,
+
                      fontPath,
                      fontSize,
 
-                     lookThreshold,
+                     width,
+                     height,
 
                      projection,
+                     lookThreshold,
 
                      key_pause,
                      key_light,
