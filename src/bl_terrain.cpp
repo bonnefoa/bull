@@ -1,4 +1,5 @@
 #include "bl_terrain.h"
+#include <bl_gl_util.h>
 #include <bl_matrix.h>
 #include <bl_log.h>
 #include <bl_heightmap.h>
@@ -113,6 +114,8 @@ void BlTerrain::init()
 {
         glGenBuffers(1, &indiceBuffer);
         glGenBuffers(1, &vertexBuffer);
+        glGenBuffers(1, &tangentBuffer);
+        glGenBuffers(1, &cotangentBuffer);
         glGenBuffers(1, &uvBuffer);
 
         BlImage *blImage = readPngImage(heightmapImage);
@@ -133,6 +136,8 @@ BlTerrain::~BlTerrain()
 {
         glDeleteBuffers(1, &indiceBuffer);
         glDeleteBuffers(1, &vertexBuffer);
+        glDeleteBuffers(1, &tangentBuffer);
+        glDeleteBuffers(1, &cotangentBuffer);
         glDeleteBuffers(1, &uvBuffer);
         if(heightmapBuffer > 0)
                 glDeleteTextures(1, &heightmapBuffer);
@@ -143,10 +148,9 @@ BlTerrain::~BlTerrain()
 
 void BlTerrain::loadInBuffer()
 {
-        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-        glBufferData(GL_ARRAY_BUFFER,
-                        vertices.size() * sizeof(btVector3),
-                        &vertices[0], GL_STATIC_DRAW);
+        loadVectorsInBuffer(vertexBuffer, vertices);
+        loadVectorsInBuffer(tangentBuffer, tangents);
+        loadVectorsInBuffer(cotangentBuffer, cotangents);
 
         glBindBuffer(GL_ARRAY_BUFFER, uvBuffer);
         glBufferData(GL_ARRAY_BUFFER
@@ -159,14 +163,6 @@ void BlTerrain::loadInBuffer()
                         , indices.size() * sizeof(unsigned int)
                         , &indices[0], GL_STATIC_DRAW);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-}
-
-void BlTerrain::bindVertices(GLint locVertices)
-{
-        glEnableVertexAttribArray(locVertices);
-        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-        glVertexAttribPointer(locVertices, 4 , GL_FLOAT
-                        , GL_FALSE, 0, (void *)0);
 }
 
 void BlTerrain::bindUVTexture(GLint locUVTexture)
@@ -193,9 +189,15 @@ void BlTerrain::bindModelMatrix(GLint uniformModel)
         sendTransform(model, uniformModel);
 }
 
-void BlTerrain::drawElement(GLint locModel, GLint locVertices, GLint locUVTexture) {
+void BlTerrain::drawElement(GLint locModel,
+                GLint locVertices,
+                GLint locTangent,
+                GLint locCotangent,
+                GLint locUVTexture) {
         bindModelMatrix(locModel);
-        bindVertices(locVertices);
+        bindVectors(locVertices, vertexBuffer);
+        bindVectors(locTangent, tangentBuffer);
+        bindVectors(locCotangent, cotangentBuffer);
         bindUVTexture(locUVTexture);
         bindTextures();
 

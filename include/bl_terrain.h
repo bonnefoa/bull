@@ -41,7 +41,10 @@ class BlTerrain
 
                 void init();
                 void loadInBuffer();
-                void drawElement(GLint locModel, GLint locVertices,
+                void drawElement(GLint locModel,
+                                GLint locVertices,
+                                GLint locTangent,
+                                GLint locCotangent,
                                 GLint locUVTexture);
 
                 void bindVertices(GLint locVertices);
@@ -56,6 +59,8 @@ class BlTerrain
         private:
                 BlTexture *blTexture;
                 std::vector <btVector3> vertices;
+                std::vector <btVector3> tangents;
+                std::vector <btVector3> cotangents;
                 std::vector <float> UVs;
                 std::vector <unsigned int> indices;
 
@@ -83,6 +88,9 @@ class BlTerrain
                 GLuint normalBuffer;
                 GLuint textureBuffer;
                 GLuint vertexBuffer;
+                GLuint tangentBuffer;
+                GLuint cotangentBuffer;
+
                 GLuint indiceBuffer;
                 GLuint uvBuffer;
 };
