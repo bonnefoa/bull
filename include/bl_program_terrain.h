@@ -23,6 +23,7 @@ class BlProgramTerrain : public BlProgram
 
                 void init(void);
                 void displayScene(BlScene *scene);
+                void moveLight(btVector3 newPosition);
 
                 void bindProjection();
 
@@ -35,6 +36,7 @@ class BlProgramTerrain : public BlProgram
                 GLint locProjection;
                 GLint locUVTexture;
                 GLint locUVNormal;
+                GLint locLightPosition;
                 GLint heightmapSampler;
                 GLint textureSampler;
                 GLint normalmapSampler;
