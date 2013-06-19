@@ -9,5 +9,8 @@
 void bindVectors(GLint location, GLuint buffer);
 void loadVectorsInBuffer(GLuint buffer, std::vector<btVector3> &vectors);
 
+void bindUVs(GLint location, GLuint buffer);
+void loadUVsInBuffer(GLuint buffer, std::vector<float> &uvs);
+
 
 #endif
