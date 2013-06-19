@@ -5,9 +5,9 @@
 BlProgramDebug *getProgramDebug(BlConfig *blConfig)
 {
         std::vector<BlShader*> shaders;
-        BlShader *vertexShader = new BlShader("glsl/debug_vertex.glsl"
+        BlShader *vertexShader = new BlShader("glsl/debug.vert"
                         , GL_VERTEX_SHADER);
-        BlShader *fragmentShader = new BlShader("glsl/debug_fragment.glsl"
+        BlShader *fragmentShader = new BlShader("glsl/debug.frag"
                         , GL_FRAGMENT_SHADER);
         shaders.push_back(vertexShader);
         shaders.push_back(fragmentShader);

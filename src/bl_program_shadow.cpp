@@ -5,9 +5,9 @@
 BlProgramShadow *getProgramShadow(btVector3 lightPosition)
 {
         std::vector<BlShader*> shaders;
-        BlShader *modelVertexShader = new BlShader("glsl/shadow_vertex.glsl"
+        BlShader *modelVertexShader = new BlShader("glsl/shadow.vert"
                         , GL_VERTEX_SHADER);
-        BlShader *modelFragmentShader = new BlShader("glsl/shadow_fragment.glsl"
+        BlShader *modelFragmentShader = new BlShader("glsl/shadow.frag"
                         , GL_FRAGMENT_SHADER);
         shaders.push_back(modelVertexShader);
         shaders.push_back(modelFragmentShader);

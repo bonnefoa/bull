@@ -4,9 +4,9 @@
 BlProgramText2d *getProgramText2d(BlConfig *blConfig)
 {
         std::vector<BlShader*> shaders;
-        BlShader *vertexShader = new BlShader("glsl/text2d_vertex.glsl"
+        BlShader *vertexShader = new BlShader("glsl/text2d.vert"
                         , GL_VERTEX_SHADER);
-        BlShader *fragmentShader = new BlShader("glsl/text2d_fragment.glsl"
+        BlShader *fragmentShader = new BlShader("glsl/text2d.frag"
                         , GL_FRAGMENT_SHADER);
         shaders.push_back(vertexShader);
         shaders.push_back(fragmentShader);

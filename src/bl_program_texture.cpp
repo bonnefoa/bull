@@ -3,9 +3,9 @@
 BlProgramTexture *getProgramTexture()
 {
         std::vector<BlShader*> shaders;
-        BlShader *vertexShader = new BlShader("glsl/texture_vertex.glsl"
+        BlShader *vertexShader = new BlShader("glsl/texture.vert"
                         , GL_VERTEX_SHADER);
-        BlShader *fragmentShader = new BlShader("glsl/texture_fragment.glsl"
+        BlShader *fragmentShader = new BlShader("glsl/texture.frag"
                         , GL_FRAGMENT_SHADER);
         shaders.push_back(vertexShader);
         shaders.push_back(fragmentShader);

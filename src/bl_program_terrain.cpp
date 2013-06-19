@@ -5,13 +5,13 @@
 BlProgramTerrain *getProgramTerrain(BlConfig *blConfig, BlCamera *blCamera)
 {
         std::vector<BlShader*> shaders;
-        BlShader *vertexShader = new BlShader("glsl/terrain_vertex.glsl"
+        BlShader *vertexShader = new BlShader("glsl/terrain.vert"
                         , GL_VERTEX_SHADER);
-        BlShader *fragmentShader = new BlShader("glsl/terrain_fragment.glsl"
+        BlShader *fragmentShader = new BlShader("glsl/terrain.frag"
                         , GL_FRAGMENT_SHADER);
-        BlShader *commonVertex = new BlShader("glsl/common_light_vertex.glsl"
+        BlShader *commonVertex = new BlShader("glsl/common_light.vert"
                         , GL_VERTEX_SHADER);
-        BlShader *commonFragment = new BlShader("glsl/common_light_fragment.glsl"
+        BlShader *commonFragment = new BlShader("glsl/common_light.frag"
                         , GL_FRAGMENT_SHADER);
         shaders.push_back(vertexShader);
         shaders.push_back(fragmentShader);
