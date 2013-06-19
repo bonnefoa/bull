@@ -39,18 +39,20 @@ out mat3 cameraToTangent;
 
 void computeTangentLightInformations()
 {
-        mat3 MV = mat3(V * M);
-        vertexNormal_cameraspace = MV * vertexNormal_modelspace;
-        vec3 vertexTangent_cameraspace = MV * vertexTangent_modelspace;
-        vec3 vertexCotangent_cameraspace = MV * vertexCotangent_modelspace;
+        mat4 MV = V * M;
+        mat3 MV3x3 = mat3(V * M);
+        vertexNormal_cameraspace = (MV3x3 * vertexNormal_modelspace);
+        vec3 vertexTangent_cameraspace = (MV3x3 * vertexTangent_modelspace);
+        vec3 vertexCotangent_cameraspace = (MV3x3 * vertexCotangent_modelspace);
         cameraToTangent = transpose(
                 mat3(vertexTangent_cameraspace,
                         vertexCotangent_cameraspace,
                         vertexNormal_cameraspace));
 
-        vertexPosition_cameraspace = MV * vertexPosition_modelspace;
+        vertexPosition_cameraspace = (MV * vec4(vertexPosition_modelspace, 1)).xyz;
         vec3 lightPosition_cameraspace = mat3(V) * lightPosition_worldspace;
         vec3 lightDirection_cameraspace = normalize(lightPosition_cameraspace - vertexCotangent_cameraspace);
+
         vec3 eyeDirection_cameraspace = normalize(- vertexPosition_cameraspace);
 
         eyeDirection_tangentspace = cameraToTangent * eyeDirection_cameraspace;
