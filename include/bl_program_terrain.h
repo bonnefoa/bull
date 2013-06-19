@@ -39,6 +39,8 @@ class BlProgramTerrain : public BlProgram
                 GLint normalmapSampler;
 
                 GLint locVertices;
+                GLint locTangent;
+                GLint locCotangent;
 };
 
 BlProgramTerrain *getProgramTerrain(BlConfig *blConfig, BlCamera *blCamera);
