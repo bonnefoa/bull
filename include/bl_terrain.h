@@ -41,14 +41,13 @@ class BlTerrain
 
                 void init();
                 void loadInBuffer();
-                void drawElement(GLint locModel, GLint locVertices, GLint locUVTexture,
-                        GLint locGridLenght, GLint locGridWidth);
+                void drawElement(GLint locModel, GLint locVertices,
+                                GLint locUVTexture);
 
                 void bindVertices(GLint locVertices);
                 void bindUVTexture(GLint locUVTexture);
                 void bindTextures();
                 void bindModelMatrix(GLint uniformModel);
-                void bindGridSize(GLint locGridLenght, GLint locGridWidth);
 
                 btRigidBody *rigidBody;
                 btVector3 position;

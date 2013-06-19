@@ -32,8 +32,6 @@ void BlProgramTerrain::init(void)
         locModel = glGetUniformLocation(programId, "M");
         locView = glGetUniformLocation(programId, "V");
         locProjection = glGetUniformLocation(programId, "P");
-        locGridLenght = glGetUniformLocation(programId, "gridLenght");
-        locGridWidth = glGetUniformLocation(programId, "gridWidth");
         locUVTexture = glGetAttribLocation(programId, "uvTexture");
         locVertices = glGetAttribLocation(programId
                         , "vertexPosition_modelspace");
@@ -50,8 +48,6 @@ void BlProgramTerrain::init(void)
         INFO("Model location %i\n", locModel);
         INFO("View location %i\n", locView);
         INFO("Projection location %i\n", locProjection);
-        INFO("Grid width location %i\n", locGridWidth);
-        INFO("Grid lenght location %i\n", locGridLenght);
         INFO("Vertices location %i\n", locVertices);
         INFO("UV texture location %i\n", locUVTexture);
         if(locModel < 0 || locView < 0 || locProjection < 0 ||
@@ -72,7 +68,6 @@ void BlProgramTerrain::displayScene(BlScene *blScene)
         for (std::vector<BlTerrain*>::iterator
                         it = blScene->blTerrains->begin();
                         it != blScene->blTerrains->end(); ++it) {
-                (*it)->drawElement(locModel, locVertices, locUVTexture,
-                locGridLenght, locGridWidth);
+                (*it)->drawElement(locModel, locVertices, locUVTexture);
         }
 }

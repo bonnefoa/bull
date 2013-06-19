@@ -177,12 +177,6 @@ void BlTerrain::bindUVTexture(GLint locUVTexture)
                         , GL_FALSE, 0, (void *)0);
 }
 
-void BlTerrain::bindGridSize(GLint locGridLenght, GLint locGridWidth)
-{
-        glUniform1i(locGridWidth, gridWidth);
-        glUniform1i(locGridLenght, gridLenght);
-}
-
 void BlTerrain::bindTextures()
 {
         glActiveTexture(GL_TEXTURE0);
@@ -199,13 +193,11 @@ void BlTerrain::bindModelMatrix(GLint uniformModel)
         sendTransform(model, uniformModel);
 }
 
-void BlTerrain::drawElement(GLint locModel, GLint locVertices, GLint locUVTexture,
-                GLint locGridLenght, GLint locGridWidth) {
+void BlTerrain::drawElement(GLint locModel, GLint locVertices, GLint locUVTexture) {
         bindModelMatrix(locModel);
         bindVertices(locVertices);
         bindUVTexture(locUVTexture);
         bindTextures();
-        bindGridSize(locGridLenght, locGridWidth);
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indiceBuffer);
         glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (void *)0);
