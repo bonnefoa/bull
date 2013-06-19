@@ -10,11 +10,11 @@ in vec3 vertexPosition_modelspace;
 in vec2 uvTexture;
 out vec2 uvFragmentTexture;
 
-void computeLightInformations();
+void computeTangentLightInformations();
 
 void main()
 {
-        computeLightInformations();
+        computeTangentLightInformations();
         gl_Position = P * V * M * vec4(vertexPosition_modelspace, 1.0f);
 
         uvFragmentTexture = uvTexture;

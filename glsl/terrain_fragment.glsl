@@ -6,11 +6,11 @@ in vec2 uvNormal;
 uniform sampler2D textureSampler;
 uniform sampler2D normalmapSampler;
 
-vec4 processColorCameraspace(vec4 texColor);
+vec4 processColorTangentspace(vec4 texColor, vec3 normal_tangentspace);
 
 void main()
 {
         vec4 texColor = texture(textureSampler, uvFragmentTexture);
-        vec4 normal = texture(normalmapSampler, uvNormal);
-        color = processColorCameraspace(texColor);
+        vec3 normal_tangentspace = texture(normalmapSampler, uvNormal).xyz;
+        color = processColorTangentspace(texColor, normal_tangentspace);
 }
