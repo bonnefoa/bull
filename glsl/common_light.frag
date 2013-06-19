@@ -79,20 +79,18 @@ float getDiffuseCoefficientTangentspace(vec3 normal_tangentspace)
         return coef;
 }
 
-vec4 processColorTangentspace(vec4 texColor, vec3 normal_tangentspace)
+vec4 processColorTangentspace(vec4 texInput, vec3 normal_tangentspace)
 {
-        vec4 ambientPart = vec4(ambientColor, 1) * texColor;
+        vec3 texColor = texInput.xyz;
+        vec3 ambientPart = ambientColor * texColor;
 
         float diffuseCoef = getDiffuseCoefficientTangentspace(normal_tangentspace);
         float specularCoef = getSpecularCoefficientTangentspace(normal_tangentspace);
         float attenuation = getAttenuation();
 
-        vec4 diffusePart = texColor * vec4(lightColor, 1) * diffuseCoef * attenuation;
-        vec4 specularPart = texColor * vec4(lightColor, 1) * pow(specularCoef, 5) * attenuation;
+        vec3 diffusePart = texColor * lightColor * diffuseCoef * attenuation;
+        vec3 specularPart = texColor * lightColor * pow(specularCoef, 5) * attenuation;
 
-        float visibility = texture(shadowSampler,
-                vec3(shadowCoord.xy, (shadowCoord.z-biais) / shadowCoord.w));
-
-        vec4 color = ambientPart + (diffusePart + specularPart) * visibility;
-        return color;
+        vec3 color = ambientPart + diffusePart + specularPart;
+        return vec4(color, 1);
 }
