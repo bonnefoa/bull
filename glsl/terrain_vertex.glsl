@@ -4,8 +4,6 @@ uniform mat4 M;
 uniform mat4 V;
 uniform mat4 P;
 
-uniform int gridLenght;
-uniform int gridWidth;
 uniform sampler2D heightmapSampler;
 
 in vec3 vertexPosition_modelspace;

@@ -19,7 +19,7 @@ uniform float lightQuadraticAttenuation = 0.0;
 in vec4 shadowCoord;
 float biais = 0.05f;
 
-float getSpecularCoefficient()
+float getSpecularCoefficientCameraspace()
 {
         vec3 eyeDirection_cameraspace = normalize(vec3(0,0,0) - vertexPosition_cameraspace);
         vec3 reflectedLight = reflect(-lightDirection_cameraspace, vertexNormal_cameraspace);
@@ -27,14 +27,14 @@ float getSpecularCoefficient()
         return coef;
 }
 
-float getDiffuseCoefficient()
+float getDiffuseCoefficientCameraspace()
 {
         float coef = dot(lightDirection_cameraspace, vertexNormal_cameraspace);
         coef = clamp(coef, 0.0, 1.0);
         return coef;
 }
 
-float getAttenuation()
+float getAttenuationCameraspace()
 {
         float lightDistance = length(lightPosition_worldspace - vertexPosition_worldspace);
         float attenuation = 1 / (lightConstantAttenuation + lightLinearAttenuation
@@ -42,13 +42,13 @@ float getAttenuation()
         return attenuation;
 }
 
-vec4 processColor(vec4 texColor)
+vec4 processColorCameraspace(vec4 texColor)
 {
         vec4 ambientPart = vec4(ambientColor, 1) * texColor;
 
-        float diffuseCoef = getDiffuseCoefficient();
-        float specularCoef = getSpecularCoefficient();
-        float attenuation = getAttenuation();
+        float diffuseCoef = getDiffuseCoefficientCameraspace();
+        float specularCoef = getSpecularCoefficientCameraspace();
+        float attenuation = getAttenuationCameraspace();
 
         vec4 diffusePart = texColor * vec4(lightColor, 1) * diffuseCoef * attenuation;
         vec4 specularPart = texColor * vec4(lightColor, 1) * pow(specularCoef, 5) * attenuation;
@@ -57,5 +57,13 @@ vec4 processColor(vec4 texColor)
                 vec3(shadowCoord.xy, (shadowCoord.z-biais) / shadowCoord.w));
 
         vec4 color = ambientPart + (diffusePart + specularPart) * visibility;
+        return color;
+}
+
+
+
+vec4 processColorTangentspace(vec4 texColor)
+{
+        vec4 color;
         return color;
 }
