@@ -51,7 +51,7 @@ void computeTangentLightInformations()
 
         vertexPosition_cameraspace = (MV * vec4(vertexPosition_modelspace, 1)).xyz;
         vec3 lightPosition_cameraspace = mat3(V) * lightPosition_worldspace;
-        vec3 lightDirection_cameraspace = normalize(lightPosition_cameraspace - vertexCotangent_cameraspace);
+        lightDirection_cameraspace = normalize(lightPosition_cameraspace - vertexPosition_cameraspace);
 
         vec3 eyeDirection_cameraspace = normalize(- vertexPosition_cameraspace);
 
