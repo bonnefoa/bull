@@ -113,8 +113,10 @@ BlImage *readPngImage(const char *filename)
 
         unsigned char *lines = (unsigned char *) malloc(sizeof(unsigned char)
                                 * width * height * numChannels);
-        for (i = 0;  i < height;  ++i)
+        for (i = 0;  i < height;  ++i) {
+                // Read image flipped for matching texture
                 row_pointers[i] = lines + (height - 1 - i)*rowbytes;
+        }
         png_read_image(pngPtr, row_pointers);
         png_read_end(pngPtr, NULL);
         png_destroy_read_struct(&pngPtr, &infoPtr, NULL);
@@ -177,7 +179,7 @@ void BlImage::writeImage(const char *destination)
         png_write_info(pngPtr, infoPtr);
         for(unsigned int i = 0; i < height; i++) {
                 png_write_row(pngPtr,
-                                &pixels[i * width * numChannels]);
+                                &pixels[(height - 1 - i) * width * numChannels]);
         }
         png_write_end(pngPtr, NULL);
         fclose(outfile);
