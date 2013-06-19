@@ -39,13 +39,18 @@ void BlTerrain::initIndices()
 
 void BlTerrain::initUVs()
 {
-        for (std::vector<btVector3>::iterator
-                        it = vertices.begin();
-                        it != vertices.end(); ++it) {
-                float u = (*it)[0] / 32.0f;
-                float v = (*it)[2] / 32.0f;
-                UVs.push_back(u);
-                UVs.push_back(v);
+        for(int z = 0; z < gridLenght; z++) {
+                for(int x = 0; x < gridWidth; x++) {
+                        float u = float(x) / float(gridWidth);
+                        float v = float(z) / float(gridLenght);
+                        textureUVs.push_back(u);
+                        textureUVs.push_back(v);
+
+                        float normalU = float(x) / float(gridWidth);
+                        float normalV = float(z) / float(gridLenght);
+                        normalUVs.push_back(normalU);
+                        normalUVs.push_back(normalV);
+                }
         }
 }
 
@@ -61,9 +66,9 @@ void BlTerrain::initTangents()
                 btVector3 &vert1 = vertices[ind1];
                 btVector3 &vert2 = vertices[ind2];
 
-                btVector3 uv0 = btVector3(UVs[ind0], UVs[ind0 + 1], 0);
-                btVector3 uv1 = btVector3(UVs[ind1], UVs[ind1 + 1], 0);
-                btVector3 uv2 = btVector3(UVs[ind2], UVs[ind2 + 1], 0);
+                btVector3 uv0 = btVector3(textureUVs[ind0 * 2 ], textureUVs[ind0 * 2 + 1], 0);
+                btVector3 uv1 = btVector3(textureUVs[ind1 * 2 ], textureUVs[ind1 * 2 + 1], 0);
+                btVector3 uv2 = btVector3(textureUVs[ind2 * 2 ], textureUVs[ind2 * 2 + 1], 0);
 
                 btVector3 deltaUV1 = uv1 - uv0;
                 btVector3 deltaUV2 = uv2 - uv0;
@@ -147,7 +152,8 @@ void BlTerrain::init()
         glGenBuffers(1, &vertexBuffer);
         glGenBuffers(1, &tangentBuffer);
         glGenBuffers(1, &cotangentBuffer);
-        glGenBuffers(1, &uvBuffer);
+        glGenBuffers(1, &uvTextureBuffer);
+        glGenBuffers(1, &uvNormalBuffer);
 
         BlImage *blImage = readPngImage(heightmapImage);
         heightMapData = extractHeightmapData(blImage);
@@ -172,7 +178,8 @@ BlTerrain::~BlTerrain()
         glDeleteBuffers(1, &vertexBuffer);
         glDeleteBuffers(1, &tangentBuffer);
         glDeleteBuffers(1, &cotangentBuffer);
-        glDeleteBuffers(1, &uvBuffer);
+        glDeleteBuffers(1, &uvTextureBuffer);
+        glDeleteBuffers(1, &uvNormalBuffer);
         if(heightmapBuffer > 0)
                 glDeleteTextures(1, &heightmapBuffer);
         if(normalBuffer > 0)
@@ -186,25 +193,14 @@ void BlTerrain::loadInBuffer()
         loadVectorsInBuffer(tangentBuffer, tangents);
         loadVectorsInBuffer(cotangentBuffer, cotangents);
 
-        glBindBuffer(GL_ARRAY_BUFFER, uvBuffer);
-        glBufferData(GL_ARRAY_BUFFER
-                        , UVs.size() * sizeof(float)
-                        , &UVs[0], GL_STATIC_DRAW);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        loadUVsInBuffer(uvTextureBuffer, textureUVs);
+        loadUVsInBuffer(uvNormalBuffer, normalUVs);
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indiceBuffer);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER
                         , indices.size() * sizeof(unsigned int)
                         , &indices[0], GL_STATIC_DRAW);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-}
-
-void BlTerrain::bindUVTexture(GLint locUVTexture)
-{
-        glEnableVertexAttribArray(locUVTexture);
-        glBindBuffer(GL_ARRAY_BUFFER, uvBuffer);
-        glVertexAttribPointer(locUVTexture, 2 , GL_FLOAT
-                        , GL_FALSE, 0, (void *)0);
 }
 
 void BlTerrain::bindTextures()
@@ -227,12 +223,15 @@ void BlTerrain::drawElement(GLint locModel,
                 GLint locVertices,
                 GLint locTangent,
                 GLint locCotangent,
-                GLint locUVTexture) {
+                GLint locUVTexture,
+                GLint locUVNormal) {
         bindModelMatrix(locModel);
         bindVectors(locVertices, vertexBuffer);
         bindVectors(locTangent, tangentBuffer);
         bindVectors(locCotangent, cotangentBuffer);
-        bindUVTexture(locUVTexture);
+        bindUVs(locUVTexture, uvTextureBuffer);
+        bindUVs(locUVNormal, uvNormalBuffer);
+
         bindTextures();
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indiceBuffer);

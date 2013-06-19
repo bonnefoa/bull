@@ -45,10 +45,12 @@ class BlTerrain
                                 GLint locVertices,
                                 GLint locTangent,
                                 GLint locCotangent,
-                                GLint locUVTexture);
+                                GLint locUVTexture,
+                                GLint locUVNormal);
 
                 void bindVertices(GLint locVertices);
                 void bindUVTexture(GLint locUVTexture);
+                void bindUVNormal(GLint locUVNormal);
                 void bindTextures();
                 void bindModelMatrix(GLint uniformModel);
 
@@ -61,7 +63,8 @@ class BlTerrain
                 std::vector <btVector3> vertices;
                 std::vector <btVector3> tangents;
                 std::vector <btVector3> cotangents;
-                std::vector <float> UVs;
+                std::vector <float> textureUVs;
+                std::vector <float> normalUVs;
                 std::vector <unsigned int> indices;
 
                 int gridWidth;
@@ -93,7 +96,8 @@ class BlTerrain
                 GLuint cotangentBuffer;
 
                 GLuint indiceBuffer;
-                GLuint uvBuffer;
+                GLuint uvTextureBuffer;
+                GLuint uvNormalBuffer;
 };
 
 #endif
