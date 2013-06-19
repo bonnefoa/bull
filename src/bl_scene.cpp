@@ -21,7 +21,7 @@ void BlScene::init(BlSimulation *blSimulation, GLuint programModelId)
                         it != blLightPoints->end(); ++it) {
                 BlLightPoint *light = *it;
                 light->init();
-                light->loadInBuffer(programModelId);
+                light->loadInBuffer();
         }
         blLightAmbient->loadInBuffer(programModelId);
 

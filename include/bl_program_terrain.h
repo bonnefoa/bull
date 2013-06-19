@@ -36,7 +36,6 @@ class BlProgramTerrain : public BlProgram
                 GLint locProjection;
                 GLint locUVTexture;
                 GLint locUVNormal;
-                GLint locLightPosition;
                 GLint heightmapSampler;
                 GLint textureSampler;
                 GLint normalmapSampler;

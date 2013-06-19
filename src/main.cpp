@@ -111,9 +111,9 @@ void setLight() {
         BlLightPoint *light = blScene->blLightPoints->at(0);
         blProgramShadow->moveLight(blScene->blCharacter->getPosition());
         blProgramModel->moveLight(blScene->blCharacter->getPosition());
-        blProgramTerrain->moveLight(blScene->blCharacter->getPosition());
-        light->moveLight(blScene->blCharacter->getPosition(),
-                        blProgramModel->programId);
+        light->moveLight(blScene->blCharacter->getPosition());
+        light->loadLightInProgram(blProgramModel->programId);
+        light->loadLightInProgram(blProgramTerrain->programId);
 }
 
 void moveLight() {

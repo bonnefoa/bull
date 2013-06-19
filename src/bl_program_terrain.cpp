@@ -46,8 +46,6 @@ void BlProgramTerrain::init(void)
                         , "normalmapSampler");
         heightmapSampler = glGetUniformLocation(programId
                         , "heightmapSampler");
-        locLightPosition = glGetUniformLocation(programId
-                        , "lightPosition_worldspace");
 
         glUniform1i(heightmapSampler, 0);
         glUniform1i(textureSampler, 1);
@@ -70,12 +68,6 @@ void BlProgramTerrain::init(void)
 void BlProgramTerrain::bindProjection()
 {
         bindProjectionMatrix(programId, locProjection, blConfig->projection);
-}
-
-void BlProgramTerrain::moveLight(btVector3 newPosition)
-{
-        glUseProgram(programId);
-        glUniform3fv(locLightPosition, 1, &newPosition[0]);
 }
 
 void BlProgramTerrain::displayScene(BlScene *blScene)
