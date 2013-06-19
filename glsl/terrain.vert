@@ -8,7 +8,10 @@ uniform sampler2D heightmapSampler;
 
 in vec3 vertexPosition_modelspace;
 in vec2 uvTexture;
+in vec2 uvNormal;
+
 out vec2 uvFragmentTexture;
+out vec2 uvFragmentNormal;
 
 void computeTangentLightInformations();
 
@@ -18,4 +21,5 @@ void main()
         gl_Position = P * V * M * vec4(vertexPosition_modelspace, 1.0f);
 
         uvFragmentTexture = uvTexture;
+        uvFragmentNormal = uvNormal;
 }
