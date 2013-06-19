@@ -240,4 +240,6 @@ void BlTerrain::drawElement(GLint locModel,
 
         glDisableVertexAttribArray(locUVTexture);
         glDisableVertexAttribArray(locVertices);
+        glDisableVertexAttribArray(locTangent);
+        glDisableVertexAttribArray(locCotangent);
 }
