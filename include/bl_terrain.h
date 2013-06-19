@@ -81,6 +81,7 @@ class BlTerrain
                 void initTextures();
                 void initVertices();
                 void initIndices();
+                void initTangents();
                 void initUVs();
                 void createNormalHeightmap(BlImage *blImage);
 

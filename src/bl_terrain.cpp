@@ -49,6 +49,37 @@ void BlTerrain::initUVs()
         }
 }
 
+void BlTerrain::initTangents()
+{
+        tangents = std::vector<btVector3>(indices.size());
+        cotangents = std::vector<btVector3>(indices.size());
+        for (unsigned int i = 0; i < indices.size(); i+=3) {
+                unsigned int ind0 = indices[i];
+                unsigned int ind1 = indices[i + 1];
+                unsigned int ind2 = indices[i + 2];
+                btVector3 &vert0 = vertices[ind0];
+                btVector3 &vert1 = vertices[ind1];
+                btVector3 &vert2 = vertices[ind2];
+
+                btVector3 uv0 = btVector3(UVs[ind0], UVs[ind0 + 1], 0);
+                btVector3 uv1 = btVector3(UVs[ind1], UVs[ind1 + 1], 0);
+                btVector3 uv2 = btVector3(UVs[ind2], UVs[ind2 + 1], 0);
+
+                btVector3 deltaUV1 = uv1 - uv0;
+                btVector3 deltaUV2 = uv2 - uv0;
+
+                btVector3 deltaPos1 = vert1 - vert0;
+                btVector3 deltaPos2 = vert2 - vert0;
+
+                float r = 1.0f / (deltaUV1[0] * deltaUV2[1] - deltaUV1[1] * deltaUV2[0]);
+                btVector3 tangent = (deltaPos1 * deltaUV2[1] - deltaPos2 * deltaUV1[1]) * r;
+                btVector3 cotangent = (deltaPos2 * deltaUV1[0] - deltaPos1 * deltaUV2[0]) * r;
+
+                tangents[ind0] = tangent;
+                cotangents[ind0] = cotangent;
+        }
+}
+
 void BlTerrain::createRigidBody()
 {
         int upAxis = 1;
@@ -128,6 +159,9 @@ void BlTerrain::init()
 
         initTextures();
         initUVs();
+
+        initTangents();
+
 
         delete blImage;
 }
