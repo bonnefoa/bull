@@ -50,6 +50,5 @@ main: $(MAIN)
 .PHONY: clean debug
 
 clean:
-	rm -f $(ODIR)/*.o 
-	rm -f $(ODIR)/*.d
+	rm -f $(ODIR)/*
 	rm -f check_*
