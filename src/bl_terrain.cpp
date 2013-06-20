@@ -258,8 +258,10 @@ void BlTerrain::drawElement(GLint locModel,
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indiceBuffer);
         glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (void *)0);
 
+        glDisableVertexAttribArray(locUVNormal);
         glDisableVertexAttribArray(locUVTexture);
         glDisableVertexAttribArray(locVertices);
         glDisableVertexAttribArray(locTangent);
         glDisableVertexAttribArray(locCotangent);
+        glDisableVertexAttribArray(locNormal);
 }
