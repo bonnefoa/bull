@@ -41,6 +41,7 @@ class BlProgramTerrain : public BlProgram
                 GLint normalmapSampler;
 
                 GLint locVertices;
+                GLint locNormal;
                 GLint locTangent;
                 GLint locCotangent;
 };

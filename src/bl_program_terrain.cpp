@@ -36,6 +36,8 @@ void BlProgramTerrain::init(void)
         locUVNormal = glGetAttribLocation(programId, "uvNormal");
         locVertices = glGetAttribLocation(programId
                         , "vertexPosition_modelspace");
+        locNormal = glGetAttribLocation(programId
+                        , "vertexNormal_modelspace");
         locTangent = glGetAttribLocation(programId
                         , "vertexTangent_modelspace");
         locCotangent = glGetAttribLocation(programId
@@ -79,6 +81,7 @@ void BlProgramTerrain::displayScene(BlScene *blScene)
                         it != blScene->blTerrains->end(); ++it) {
                 (*it)->drawElement(locModel,
                                 locVertices,
+                                locNormal,
                                 locTangent,
                                 locCotangent,
                                 locUVTexture,
