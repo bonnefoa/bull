@@ -159,12 +159,11 @@ void BlTerrain::initHeightmapData()
 
         std::vector<btVector3> heightVectors = extractImageData(heightMapImage);
         normals = extractImageData(normalMapImage);
-
         heightMapData = (char *)malloc(gridWidth * gridLenght * sizeof(char));
         for(int x = 0; x < gridWidth; x++) {
                 for(int z = 0; z < gridLenght; z++) {
                         int index = x + z * gridWidth;
-                        heightMapData[index] = heightVectors[index][0];
+                        heightMapData[index] = heightVectors[index][0] * 255.f;
                 }
         }
         delete heightMapImage;

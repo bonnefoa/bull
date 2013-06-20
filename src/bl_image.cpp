@@ -198,9 +198,9 @@ unsigned char BlImage::getPixelAt(int x, int y)
 btVector3 BlImage::getPixelsAt(int x, int y)
 {
         int index = getPixelIndexAt(x, y);
-        int r = pixels[index];
-        int g = pixels[index + 1];
-        int b = pixels[index + 2];
+        float r = pixels[index] / 255.0f;
+        float g = pixels[index + 1] / 255.0f;
+        float b = pixels[index + 2] / 255.0f;
         return btVector3(r, g, b);
 }
 
