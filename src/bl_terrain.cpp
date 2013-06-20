@@ -66,9 +66,12 @@ void BlTerrain::initTangents()
                 btVector3 &vert1 = vertices[ind1];
                 btVector3 &vert2 = vertices[ind2];
 
-                btVector3 uv0 = btVector3(textureUVs[ind0 * 2 ], textureUVs[ind0 * 2 + 1], 0);
-                btVector3 uv1 = btVector3(textureUVs[ind1 * 2 ], textureUVs[ind1 * 2 + 1], 0);
-                btVector3 uv2 = btVector3(textureUVs[ind2 * 2 ], textureUVs[ind2 * 2 + 1], 0);
+                btVector3 uv0 = btVector3(textureUVs[ind0 * 2 ],
+                                textureUVs[ind0 * 2 + 1], 0);
+                btVector3 uv1 = btVector3(textureUVs[ind1 * 2 ],
+                                textureUVs[ind1 * 2 + 1], 0);
+                btVector3 uv2 = btVector3(textureUVs[ind2 * 2 ],
+                                textureUVs[ind2 * 2 + 1], 0);
 
                 btVector3 deltaUV1 = uv1 - uv0;
                 btVector3 deltaUV2 = uv2 - uv0;
@@ -76,10 +79,14 @@ void BlTerrain::initTangents()
                 btVector3 deltaPos1 = vert1 - vert0;
                 btVector3 deltaPos2 = vert2 - vert0;
 
-                float r = 1.0f / (deltaUV1[0] * deltaUV2[1] - deltaUV1[1] * deltaUV2[0]);
-                btVector3 tangent = (deltaPos1 * deltaUV2[1] - deltaPos2 * deltaUV1[1]) * r;
-                btVector3 cotangent = (deltaPos2 * deltaUV1[0] - deltaPos1 * deltaUV2[0]) * r;
-
+                float r = 1.0f / (deltaUV1[0] * deltaUV2[1]
+                                - deltaUV1[1] * deltaUV2[0]);
+                btVector3 tangent = ((deltaPos1 * deltaUV2[1]
+                                        - deltaPos2 * deltaUV1[1])
+                                        * r).normalize();
+                btVector3 cotangent = ((deltaPos2 * deltaUV1[0]
+                                        - deltaPos1 * deltaUV2[0])
+                                        * r).normalize();
                 tangents[ind0] = tangent;
                 cotangents[ind0] = cotangent;
         }
@@ -111,39 +118,57 @@ void BlTerrain::createRigidBody()
         rigidBody->setWorldTransform(model);
 }
 
-char *BlTerrain::extractHeightmapData(BlImage *blImage)
+std::vector<btVector3> BlTerrain::extractImageData(BlImage *blImage)
 {
-        size_t size = gridWidth * gridLenght * sizeof(char);
-        char *height = (char *)malloc(size);
+        std::vector<btVector3> gridData = std::vector<btVector3>(gridWidth * gridLenght);
         int lengthIncrement = blImage->height / gridLenght;
         int widthIncrement = blImage->width / gridWidth;
         for(int x = 0; x < gridWidth; x++) {
                 for(int z = 0; z < gridLenght; z++) {
                         int index = x + z * gridWidth;
-                        height[index] =
-                                blImage->getPixelAt(x * widthIncrement,
-                                                z * lengthIncrement);
+                        gridData[index] = blImage->getPixelsAt(
+                                        x * widthIncrement,
+                                        z * lengthIncrement);
                 }
         }
-        return height;
+        return gridData;
 }
 
-void BlTerrain::createNormalHeightmap(BlImage *blImage)
+BlImage *BlTerrain::createNormalHeightmap(BlImage *blImage)
 {
         struct stat st;
-        if(stat(normalmapImage, &st) != 0) {
+        if(stat(normalMapPath, &st) != 0) {
                 BlImage *normalImage = generateNormalMapFromHeightmap(blImage);
-                normalImage->writeImage(normalmapImage);
-                delete blImage;
-                delete normalImage;
+                normalImage->writeImage(normalMapPath);
+                return normalImage;
         }
+        return readPngImage(normalMapPath);
 }
 
 void BlTerrain::initTextures()
 {
         textureBuffer = blTexture->fetchTexture(textureSetName);
-        heightmapBuffer = blTexture->fetchTexture(heightmapImage);
-        normalBuffer = blTexture->fetchTexture(normalmapImage);
+        heightmapBuffer = blTexture->fetchTexture(heightMapPath);
+        normalBuffer = blTexture->fetchTexture(normalMapPath);
+}
+
+void BlTerrain::initHeightmapData()
+{
+        BlImage *heightMapImage = readPngImage(heightMapPath);
+        BlImage *normalMapImage = createNormalHeightmap(heightMapImage);
+
+        std::vector<btVector3> heightVectors = extractImageData(heightMapImage);
+        normals = extractImageData(normalMapImage);
+
+        heightMapData = (char *)malloc(gridWidth * gridLenght * sizeof(char));
+        for(int x = 0; x < gridWidth; x++) {
+                for(int z = 0; z < gridLenght; z++) {
+                        int index = x + z * gridWidth;
+                        heightMapData[index] = heightVectors[index][0];
+                }
+        }
+        delete heightMapImage;
+        delete normalMapImage;
 }
 
 void BlTerrain::init()
@@ -155,41 +180,36 @@ void BlTerrain::init()
         glGenBuffers(1, &uvTextureBuffer);
         glGenBuffers(1, &uvNormalBuffer);
 
-        BlImage *blImage = readPngImage(heightmapImage);
-        heightMapData = extractHeightmapData(blImage);
-        createNormalHeightmap(blImage);
-
+        initHeightmapData();
         createRigidBody();
         initVertices();
         initIndices();
 
         initTextures();
         initUVs();
-
         initTangents();
-
-
-        delete blImage;
 }
 
 BlTerrain::~BlTerrain()
 {
         glDeleteBuffers(1, &indiceBuffer);
         glDeleteBuffers(1, &vertexBuffer);
+        glDeleteBuffers(1, &normalBuffer);
         glDeleteBuffers(1, &tangentBuffer);
         glDeleteBuffers(1, &cotangentBuffer);
         glDeleteBuffers(1, &uvTextureBuffer);
         glDeleteBuffers(1, &uvNormalBuffer);
         if(heightmapBuffer > 0)
                 glDeleteTextures(1, &heightmapBuffer);
-        if(normalBuffer > 0)
-                glDeleteTextures(1, &normalBuffer);
+        if(normalTextureBuffer > 0)
+                glDeleteTextures(1, &normalTextureBuffer);
         free(heightMapData);
 }
 
 void BlTerrain::loadInBuffer()
 {
         loadVectorsInBuffer(vertexBuffer, vertices);
+        loadVectorsInBuffer(normalBuffer, normals);
         loadVectorsInBuffer(tangentBuffer, tangents);
         loadVectorsInBuffer(cotangentBuffer, cotangents);
 
@@ -210,7 +230,7 @@ void BlTerrain::bindTextures()
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, textureBuffer);
         glActiveTexture(GL_TEXTURE2);
-        glBindTexture(GL_TEXTURE_2D, normalBuffer);
+        glBindTexture(GL_TEXTURE_2D, normalTextureBuffer);
 }
 
 void BlTerrain::bindModelMatrix(GLint uniformModel)
@@ -221,12 +241,14 @@ void BlTerrain::bindModelMatrix(GLint uniformModel)
 
 void BlTerrain::drawElement(GLint locModel,
                 GLint locVertices,
+                GLint locNormal,
                 GLint locTangent,
                 GLint locCotangent,
                 GLint locUVTexture,
                 GLint locUVNormal) {
         bindModelMatrix(locModel);
         bindVectors(locVertices, vertexBuffer);
+        bindVectors(locNormal, normalBuffer);
         bindVectors(locTangent, tangentBuffer);
         bindVectors(locCotangent, cotangentBuffer);
         bindUVs(locUVTexture, uvTextureBuffer);

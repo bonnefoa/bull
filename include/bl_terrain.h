@@ -20,8 +20,8 @@ class BlTerrain
                                 float _minHeight, float _maxHeight,
                                 btVector3 _position,
                                 btVector3 _scale,
-                                const char *_heightmapImage,
-                                const char *_normalmapImage,
+                                const char *_heightMapPath,
+                                const char *_normalMapPath,
                                 const char *_textureSetName,
                                 std::vector<float> _textureSetHeights
                          ) :
@@ -33,8 +33,8 @@ class BlTerrain
                         heightScale(_heightScale),
                         minHeight(_minHeight),
                         maxHeight(_maxHeight),
-                        heightmapImage(_heightmapImage),
-                        normalmapImage(_normalmapImage),
+                        heightMapPath(_heightMapPath),
+                        normalMapPath(_normalMapPath),
                         textureSetName(_textureSetName),
                         textureSetHeights(_textureSetHeights) {};
                 ~BlTerrain();
@@ -43,14 +43,12 @@ class BlTerrain
                 void loadInBuffer();
                 void drawElement(GLint locModel,
                                 GLint locVertices,
+                                GLint locNormal,
                                 GLint locTangent,
                                 GLint locCotangent,
                                 GLint locUVTexture,
                                 GLint locUVNormal);
 
-                void bindVertices(GLint locVertices);
-                void bindUVTexture(GLint locUVTexture);
-                void bindUVNormal(GLint locUVNormal);
                 void bindTextures();
                 void bindModelMatrix(GLint uniformModel);
 
@@ -61,6 +59,7 @@ class BlTerrain
         private:
                 BlTexture *blTexture;
                 std::vector <btVector3> vertices;
+                std::vector <btVector3> normals;
                 std::vector <btVector3> tangents;
                 std::vector <btVector3> cotangents;
                 std::vector <float> textureUVs;
@@ -73,25 +72,28 @@ class BlTerrain
                 float minHeight;
                 float maxHeight;
 
-                const char *heightmapImage;
-                const char *normalmapImage;
+                const char *heightMapPath;
+                const char *normalMapPath;
                 char *heightMapData;
                 const char *textureSetName;
                 std::vector<float> textureSetHeights;
 
                 void createRigidBody();
-                char *extractHeightmapData(BlImage *blImage);
+                std::vector<btVector3> extractImageData(BlImage *blImage);
                 void initTextures();
                 void initVertices();
+                void initHeightmapData();
                 void initIndices();
                 void initTangents();
                 void initUVs();
-                void createNormalHeightmap(BlImage *blImage);
+                BlImage *createNormalHeightmap(BlImage *blImage);
 
                 GLuint heightmapBuffer;
-                GLuint normalBuffer;
                 GLuint textureBuffer;
+                GLuint normalTextureBuffer;
+
                 GLuint vertexBuffer;
+                GLuint normalBuffer;
                 GLuint tangentBuffer;
                 GLuint cotangentBuffer;
 
