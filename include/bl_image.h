@@ -9,6 +9,7 @@
 #include <GL/gl.h>
 #include <string>
 #include <vector>
+#include <bullet.h>
 
 class BlImage {
         public:
@@ -23,6 +24,7 @@ class BlImage {
                         format(_format),
                         numChannels(_numChannels) {};
                 int getPixelIndexAt(int x, int y);
+                btVector3 getPixelsAt(int x, int y);
                 unsigned char getPixelAt(int x, int y);
 
                 unsigned int width;
