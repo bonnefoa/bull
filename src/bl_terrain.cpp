@@ -5,6 +5,7 @@
 #include <bl_heightmap.h>
 #include <sys/stat.h>
 #include <map>
+#include <bl_vertice.h>
 
 void BlTerrain::initVertices()
 {
@@ -56,39 +57,34 @@ void BlTerrain::initUVs()
 
 void BlTerrain::initTangents()
 {
+        normals = std::vector<btVector3>(indices.size());
         tangents = std::vector<btVector3>(indices.size());
-        cotangents = std::vector<btVector3>(indices.size());
+        binormals = std::vector<btVector3>(indices.size());
         for (unsigned int i = 0; i < indices.size(); i+=3) {
-                unsigned int ind0 = indices[i];
-                unsigned int ind1 = indices[i + 1];
-                unsigned int ind2 = indices[i + 2];
-                btVector3 &vert0 = vertices[ind0];
+                unsigned int ind1 = indices[i];
+                unsigned int ind2 = indices[i + 1];
+                unsigned int ind3 = indices[i + 2];
                 btVector3 &vert1 = vertices[ind1];
                 btVector3 &vert2 = vertices[ind2];
-
-                btVector3 uv0 = btVector3(textureUVs[ind0 * 2 ],
-                                textureUVs[ind0 * 2 + 1], 0);
+                btVector3 &vert3 = vertices[ind3];
                 btVector3 uv1 = btVector3(textureUVs[ind1 * 2 ],
                                 textureUVs[ind1 * 2 + 1], 0);
                 btVector3 uv2 = btVector3(textureUVs[ind2 * 2 ],
                                 textureUVs[ind2 * 2 + 1], 0);
+                btVector3 uv3 = btVector3(textureUVs[ind3 * 2 ],
+                                textureUVs[ind3 * 2 + 1], 0);
 
-                btVector3 deltaUV1 = uv1 - uv0;
-                btVector3 deltaUV2 = uv2 - uv0;
+                btVector3 normal;
+                btVector3 tangent;
+                btVector3 binormal;
 
-                btVector3 deltaPos1 = vert1 - vert0;
-                btVector3 deltaPos2 = vert2 - vert0;
+                computeTangentSpace(vert1, vert2, vert3,
+                        uv1, uv2, uv3,
+                        normal, binormal, tangent);
 
-                float r = 1.0f / (deltaUV1[0] * deltaUV2[1]
-                                - deltaUV1[1] * deltaUV2[0]);
-                btVector3 tangent = ((deltaPos1 * deltaUV2[1]
-                                        - deltaPos2 * deltaUV1[1])
-                                        * r).normalize();
-                btVector3 cotangent = ((deltaPos2 * deltaUV1[0]
-                                        - deltaPos1 * deltaUV2[0])
-                                        * r).normalize();
-                tangents[ind0] = tangent;
-                cotangents[ind0] = cotangent;
+                normals[ind1] = normal;
+                tangents[ind1] = tangent;
+                binormals[ind1] = binormal;
         }
 }
 
@@ -155,10 +151,8 @@ void BlTerrain::initTextures()
 void BlTerrain::initHeightmapData()
 {
         BlImage *heightMapImage = readPngImage(heightMapPath);
-        BlImage *normalMapImage = createNormalHeightmap(heightMapImage);
 
         std::vector<btVector3> heightVectors = extractImageData(heightMapImage);
-        normals = extractImageData(normalMapImage);
         heightMapData = (char *)malloc(gridWidth * gridLenght * sizeof(char));
         for(int x = 0; x < gridWidth; x++) {
                 for(int z = 0; z < gridLenght; z++) {
@@ -166,8 +160,8 @@ void BlTerrain::initHeightmapData()
                         heightMapData[index] = heightVectors[index][0] * 255.f;
                 }
         }
+
         delete heightMapImage;
-        delete normalMapImage;
 }
 
 void BlTerrain::init()
@@ -210,7 +204,7 @@ void BlTerrain::loadInBuffer()
         loadVectorsInBuffer(vertexBuffer, vertices);
         loadVectorsInBuffer(normalBuffer, normals);
         loadVectorsInBuffer(tangentBuffer, tangents);
-        loadVectorsInBuffer(cotangentBuffer, cotangents);
+        loadVectorsInBuffer(cotangentBuffer, binormals);
 
         loadUVsInBuffer(uvTextureBuffer, textureUVs);
         loadUVsInBuffer(uvNormalBuffer, normalUVs);

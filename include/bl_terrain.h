@@ -61,7 +61,7 @@ class BlTerrain
                 std::vector <btVector3> vertices;
                 std::vector <btVector3> normals;
                 std::vector <btVector3> tangents;
-                std::vector <btVector3> cotangents;
+                std::vector <btVector3> binormals;
                 std::vector <float> textureUVs;
                 std::vector <float> normalUVs;
                 std::vector <unsigned int> indices;
