@@ -75,12 +75,15 @@ void computeTangentSpace(btVector3 &vert1,
 {
         btVector3 deltaUV1 = uv2 - uv1;
         btVector3 deltaUV2 = uv3 - uv1;
-        (void) deltaUV2;
 
         btVector3 deltaPos1 = vert2 - vert1;
         btVector3 deltaPos2 = vert3 - vert1;
 
         normal = deltaPos1.cross(deltaPos2).normalize();
-        tangent = (deltaPos1 / deltaUV1[0]).normalize();
+        if(deltaUV1[0] != 0) {
+            tangent = (deltaPos1 / deltaUV1[0]).normalize();
+        } else {
+            tangent = (deltaPos1 / deltaUV2[0]).normalize();
+        }
         binormal = tangent.cross(normal);
 }
