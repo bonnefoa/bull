@@ -12,4 +12,14 @@ void add2dRectangle(std::vector<float> *vertices,
                 const float width, const float height);
 void addRectangleUV(std::vector<float> *uvs);
 
+void computeTangentSpace(btVector3 &vert1,
+                btVector3 &vert2,
+                btVector3 &vert3,
+                btVector3 &uv1,
+                btVector3 &uv2,
+                btVector3 &uv3,
+                btVector3 &normal,
+                btVector3 &binormal,
+                btVector3 &tangent);
+
 #endif
