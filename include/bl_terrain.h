@@ -59,7 +59,7 @@ class BlTerrain
                 std::vector <btVector3> vertices;
                 std::vector <btVector3> normals;
                 std::vector <btVector3> tangents;
-                std::vector <btVector3> binormals;
+                std::vector <btVector3> bitangents;
 
         private:
                 BlTexture *blTexture;

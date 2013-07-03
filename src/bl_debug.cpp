@@ -39,9 +39,9 @@ void BlDebug::debugTerrain(BlTerrain *terrain)
                 btTransform center = btTransform(ident, pos);
                 btVector3 normal = terrain->normals.at(i);
                 btVector3 tangent = terrain->tangents.at(i);
-                btVector3 binormal = terrain->binormals.at(i);
+                btVector3 bitangent = terrain->bitangents.at(i);
                 blDebugDrawer->drawAxis(center, normal, btVector3(0,1,0));
                 blDebugDrawer->drawAxis(center, tangent, btVector3(1,0,0));
-                blDebugDrawer->drawAxis(center, binormal, btVector3(0,0,1));
+                blDebugDrawer->drawAxis(center, bitangent, btVector3(0,0,1));
         }
 }

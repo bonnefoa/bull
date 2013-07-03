@@ -63,27 +63,28 @@ void add2dRectangle(std::vector<float> *vertices,
         vertices->push_back(y + height);
 }
 
-void computeTangentSpace(btVector3 &vert1,
+void computeTangentSpace(btVector3 &vert0,
+                btVector3 &vert1,
                 btVector3 &vert2,
-                btVector3 &vert3,
+                btVector3 &uv0,
                 btVector3 &uv1,
                 btVector3 &uv2,
-                btVector3 &uv3,
                 btVector3 &normal,
-                btVector3 &binormal,
+                btVector3 &bitangent,
                 btVector3 &tangent)
 {
-        btVector3 deltaUV1 = uv2 - uv1;
-        btVector3 deltaUV2 = uv3 - uv1;
+        btVector3 deltaPos1 = vert1 - vert0;
+        btVector3 deltaPos2 = vert2 - vert0;
 
-        btVector3 deltaPos1 = vert2 - vert1;
-        btVector3 deltaPos2 = vert3 - vert1;
+        float s1 = uv1[0] - uv0[0];
+        float s2 = uv2[0] - uv0[0];
 
-        normal = deltaPos1.cross(deltaPos2).normalize();
-        if(deltaUV1[0] != 0) {
-            tangent = (deltaPos1 / deltaUV1[0]).normalize();
-        } else {
-            tangent = (deltaPos1 / deltaUV2[0]).normalize();
-        }
-        binormal = tangent.cross(normal);
+        float t1 = uv1[1] - uv0[1];
+        float t2 = uv2[1] - uv0[1];
+
+        float div = 1 / (s1 * t2 - s2 * t1);
+
+        normal = deltaPos1.cross(deltaPos2);
+        tangent = (t2 * deltaPos1 -  t1 * deltaPos2) * div;
+        bitangent = (-s2 * deltaPos1 + s1 * deltaPos2) * div;
 }

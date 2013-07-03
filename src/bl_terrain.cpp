@@ -67,7 +67,7 @@ std::vector<btVector3> BlTerrain::averageVectors(std::vector< std::vector<btVect
                         mean += *it2;
                 }
                 mean /= vectors.size();
-                means.push_back(mean);
+                means.push_back(mean.normalize());
         }
         return means;
 }
@@ -78,7 +78,7 @@ void BlTerrain::initTangents()
                 = std::vector< std::vector<btVector3> >(vertices.size());
         std::vector< std::vector<btVector3> > vertNormals
                 = std::vector< std::vector<btVector3> >(vertices.size());
-        std::vector< std::vector<btVector3> > vertBinormals
+        std::vector< std::vector<btVector3> > vertBitangents
                 = std::vector< std::vector<btVector3> >(vertices.size());
         for (unsigned int i = 0; i < indices.size(); i+=3) {
                 unsigned int ind1 = indices[i];
@@ -96,22 +96,21 @@ void BlTerrain::initTangents()
 
                 btVector3 normal;
                 btVector3 tangent;
-                btVector3 binormal;
+                btVector3 bitangent;
 
                 computeTangentSpace(vert1, vert2, vert3,
                                 uv1, uv2, uv3,
-                                normal, binormal, tangent);
-
+                                normal, bitangent, tangent);
                 for(unsigned int j = i; j < i + 3; j++) {
                         int indice = indices[j];
-                        vertTangents[indice].push_back(tangent);
                         vertNormals[indice].push_back(normal);
-                        vertBinormals[indice].push_back(binormal);
+                        vertTangents[indice].push_back(tangent);
+                        vertBitangents[indice].push_back(bitangent);
                 }
         }
         normals = averageVectors(vertNormals);
         tangents = averageVectors(vertTangents);
-        binormals = averageVectors(vertBinormals);
+        bitangents = averageVectors(vertBitangents);
 }
 
 void BlTerrain::createRigidBody()
@@ -171,7 +170,7 @@ void BlTerrain::initTextures()
 {
         textureBuffer = blTexture->fetchTexture(textureSetName);
         heightmapBuffer = blTexture->fetchTexture(heightMapPath);
-        normalBuffer = blTexture->fetchTexture(normalMapPath);
+        normalTextureBuffer = blTexture->fetchTexture(normalMapPath);
 }
 
 void BlTerrain::initHeightmapData()
@@ -195,7 +194,8 @@ void BlTerrain::init()
         glGenBuffers(1, &indiceBuffer);
         glGenBuffers(1, &vertexBuffer);
         glGenBuffers(1, &tangentBuffer);
-        glGenBuffers(1, &cotangentBuffer);
+        glGenBuffers(1, &normalBuffer);
+        glGenBuffers(1, &bitangentBuffer);
         glGenBuffers(1, &uvTextureBuffer);
         glGenBuffers(1, &uvNormalBuffer);
 
@@ -218,10 +218,10 @@ BlTerrain::~BlTerrain()
         glDeleteBuffers(1, &bitangentBuffer);
         glDeleteBuffers(1, &uvTextureBuffer);
         glDeleteBuffers(1, &uvNormalBuffer);
-        if(heightmapBuffer > 0)
-                glDeleteTextures(1, &heightmapBuffer);
-        if(normalTextureBuffer > 0)
-                glDeleteTextures(1, &normalTextureBuffer);
+
+        glDeleteTextures(1, &textureBuffer);
+        glDeleteTextures(1, &heightmapBuffer);
+        glDeleteTextures(1, &normalTextureBuffer);
         free(heightMapData);
 }
 
@@ -230,7 +230,7 @@ void BlTerrain::loadInBuffer()
         loadVectorsInBuffer(vertexBuffer, vertices);
         loadVectorsInBuffer(normalBuffer, normals);
         loadVectorsInBuffer(tangentBuffer, tangents);
-        loadVectorsInBuffer(bitangentBuffer, binormals);
+        loadVectorsInBuffer(bitangentBuffer, bitangents);
 
         loadUVsInBuffer(uvTextureBuffer, textureUVs);
         loadUVsInBuffer(uvNormalBuffer, normalUVs);

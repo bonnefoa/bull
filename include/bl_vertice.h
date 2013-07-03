@@ -19,7 +19,7 @@ void computeTangentSpace(btVector3 &vert1,
                 btVector3 &uv2,
                 btVector3 &uv3,
                 btVector3 &normal,
-                btVector3 &binormal,
+                btVector3 &bitangent,
                 btVector3 &tangent);
 
 #endif
