@@ -56,12 +56,13 @@ class BlTerrain
                 btVector3 position;
                 btVector3 scale;
 
-        private:
-                BlTexture *blTexture;
                 std::vector <btVector3> vertices;
                 std::vector <btVector3> normals;
                 std::vector <btVector3> tangents;
                 std::vector <btVector3> binormals;
+
+        private:
+                BlTexture *blTexture;
                 std::vector <float> textureUVs;
                 std::vector <float> normalUVs;
                 std::vector <unsigned int> indices;
@@ -78,16 +79,6 @@ class BlTerrain
                 const char *textureSetName;
                 std::vector<float> textureSetHeights;
 
-                void createRigidBody();
-                std::vector<btVector3> extractImageData(BlImage *blImage);
-                void initTextures();
-                void initVertices();
-                void initHeightmapData();
-                void initIndices();
-                void initTangents();
-                void initUVs();
-                BlImage *createNormalHeightmap(BlImage *blImage);
-
                 GLuint heightmapBuffer;
                 GLuint textureBuffer;
                 GLuint normalTextureBuffer;
@@ -100,6 +91,18 @@ class BlTerrain
                 GLuint indiceBuffer;
                 GLuint uvTextureBuffer;
                 GLuint uvNormalBuffer;
+
+        private:
+                void createRigidBody();
+                std::vector<btVector3> extractImageData(BlImage *blImage);
+                void initTextures();
+                void initVertices();
+                void initHeightmapData();
+                void initIndices();
+                void initTangents();
+                void initUVs();
+                BlImage *createNormalHeightmap(BlImage *blImage);
+                std::vector<btVector3> averageVectors(std::vector< std::vector<btVector3> > &source);
 };
 
 #endif

@@ -55,11 +55,31 @@ void BlTerrain::initUVs()
         }
 }
 
+std::vector<btVector3> BlTerrain::averageVectors(std::vector< std::vector<btVector3> > &source)
+{
+        std::vector<btVector3> means;
+        for(std::vector< std::vector<btVector3> >::iterator it = source.begin();
+                        it != source.end(); it++) {
+                std::vector<btVector3> vectors = *it;
+                btVector3 mean;
+                for(std::vector<btVector3>::iterator it2 = vectors.begin();
+                                it2 != vectors.end(); it2++) {
+                        mean += *it2;
+                }
+                mean /= vectors.size();
+                means.push_back(mean);
+        }
+        return means;
+}
+
 void BlTerrain::initTangents()
 {
-        normals = std::vector<btVector3>(indices.size());
-        tangents = std::vector<btVector3>(indices.size());
-        binormals = std::vector<btVector3>(indices.size());
+        std::vector< std::vector<btVector3> > vertTangents
+                = std::vector< std::vector<btVector3> >(vertices.size());
+        std::vector< std::vector<btVector3> > vertNormals
+                = std::vector< std::vector<btVector3> >(vertices.size());
+        std::vector< std::vector<btVector3> > vertBinormals
+                = std::vector< std::vector<btVector3> >(vertices.size());
         for (unsigned int i = 0; i < indices.size(); i+=3) {
                 unsigned int ind1 = indices[i];
                 unsigned int ind2 = indices[i + 1];
@@ -79,13 +99,19 @@ void BlTerrain::initTangents()
                 btVector3 binormal;
 
                 computeTangentSpace(vert1, vert2, vert3,
-                        uv1, uv2, uv3,
-                        normal, binormal, tangent);
+                                uv1, uv2, uv3,
+                                normal, binormal, tangent);
 
-                normals[ind1] = normal;
-                tangents[ind1] = tangent;
-                binormals[ind1] = binormal;
+                for(unsigned int j = i; j < i + 3; j++) {
+                        int indice = indices[j];
+                        vertTangents[indice].push_back(tangent);
+                        vertNormals[indice].push_back(normal);
+                        vertBinormals[indice].push_back(binormal);
+                }
         }
+        normals = averageVectors(vertNormals);
+        tangents = averageVectors(vertTangents);
+        binormals = averageVectors(vertBinormals);
 }
 
 void BlTerrain::createRigidBody()
