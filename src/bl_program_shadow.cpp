@@ -89,6 +89,7 @@ void BlProgramShadow::displaySceneForRender(BlScene *blScene)
                         it != blScene->blModels->end(); ++it) {
                 BlModel *model = (*it);
                 model->drawElement(locDepthM, locVertices,
+                                -1, -1,
                                 -1, -1);
         }
 

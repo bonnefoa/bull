@@ -81,7 +81,8 @@ void BlCharacter::bindModelMatrix(GLint uniformM)
 }
 
 void BlCharacter::drawCharacter(GLint locModel, GLint locVertices,
-                GLint locNormals, GLint locUVs)
+                GLint locNormals, GLint locUVs,
+                GLint locTangent, GLint locBitangent)
 {
         for (std::vector<BlModel*>::iterator
                         it = blModels->begin();
@@ -89,7 +90,8 @@ void BlCharacter::drawCharacter(GLint locModel, GLint locVertices,
                 BlModel *blModel = *it;
                 bindModelMatrix(locModel);
                 blModel->drawElement(-1, locVertices,
-                                locNormals, locUVs);
+                                locNormals, locUVs,
+                                locTangent, locBitangent);
         }
 }
 

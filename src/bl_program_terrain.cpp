@@ -61,10 +61,10 @@ void BlProgramTerrain::init(void)
         INFO("Bitangent location %i\n", locBitangent);
         INFO("UV texture location %i\n", locUVTexture);
         INFO("UV normal location %i\n", locUVNormal);
-        if(locModel < 0 || locView < 0 || locProjection < 0 || locVertices < 0
-                        || locTangent < 0 || locBitangent < 0 || locUVNormal < 0) {
-                ERROR("unused location\n");
-        }
+        //if(locModel < 0 || locView < 0 || locProjection < 0 || locVertices < 0
+                        //|| locTangent < 0 || locBitangent < 0 || locUVNormal < 0) {
+                //ERROR("unused location\n");
+        //}
 }
 
 void BlProgramTerrain::bindProjection()

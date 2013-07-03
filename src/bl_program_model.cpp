@@ -46,23 +46,31 @@ void BlProgramModel::init()
                         , "vertexNormal_modelspace");
         locUVs = glGetAttribLocation(programId
                         , "vertexUV");
-        samplerTexture = glGetUniformLocation(programId
-                        , "textureSampler");
+        locTangent = glGetAttribLocation(programId
+                        , "vertexTangent_modelspace");
+        locBitangent = glGetAttribLocation(programId
+                        , "vertexBitangent_modelspace");
+        diffuseSampler = glGetUniformLocation(programId
+                        , "diffuseSampler");
+        normalSampler = glGetUniformLocation(programId
+                        , "normalSampler");
         samplerShadow = glGetUniformLocation(programId
                         , "shadowSampler");
-        glUniform1i(samplerTexture, 0);
+        glUniform1i(diffuseSampler, 0);
+        glUniform1i(normalSampler, 1);
         glUniform1i(samplerShadow, 2);
         INFO("model location %i\n", locModel);
         INFO("vertex location %i\n", locVertices);
         INFO("normal location %i\n", locNormals);
         INFO("uv location %i\n", locUVs);
         INFO("shadow vp %i\n", locShadowVP);
-        INFO("texture sampler %i\n", samplerTexture);
+        INFO("texture sampler %i\n", diffuseSampler);
         INFO("shadow sampler %i\n", samplerShadow);
+        INFO("normal sampler %i\n", normalSampler);
         if(locModel < 0 || locNormals < 0
                         || locUVs < 0 || locVertices < 0
                         || locShadowVP < 0
-                        || samplerTexture < 0 || samplerShadow < 0 ){
+                        || diffuseSampler < 0 || samplerShadow < 0 ){
                 ERROR("A location is unused");
         }
 }
@@ -95,15 +103,18 @@ void BlProgramModel::displayScene(BlScene *blScene, GLuint depthTexture)
                 for (std::vector<BlModel*>::iterator it2 = models->begin();
                                 it2 != models->end(); ++it2) {
                         (*it2)->drawElement(locModel, locVertices,
-                                        locNormals, locUVs);
+                                        locNormals, locUVs,
+                                        locTangent, locBitangent);
                 }
         }
         for (std::vector<BlModel*>::iterator it = blScene->blModels->begin();
                         it != blScene->blModels->end(); ++it) {
                 (*it)->drawElement(locModel, locVertices,
-                                locNormals, locUVs);
+                                locNormals, locUVs,
+                                locTangent, locBitangent);
         }
-        blScene->blCharacter->drawCharacter(locModel, locVertices, locNormals, locUVs);
+        blScene->blCharacter->drawCharacter(locModel, locVertices, locNormals, locUVs,
+                        locTangent, locBitangent);
 
         glDisableVertexAttribArray(locVertices);
         glDisableVertexAttribArray(locNormals);

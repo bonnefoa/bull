@@ -9,6 +9,7 @@
 
 void BlTerrain::initVertices()
 {
+        vertices = std::vector<btVector3>(gridWidth * gridLenght);
         float deltaX = (gridWidth - 1) / 2.0f;
         float deltaZ = (gridLenght- 1) / 2.0f;
         for(int z = 0; z < gridLenght; z++) {
@@ -18,7 +19,69 @@ void BlTerrain::initVertices()
                         float height = heightData * heightScale;
                         btVector3 vert = btVector3(x - deltaX,
                                         height, z - deltaZ);
-                        vertices.push_back(vert);
+                        vertices[index] = vert;
+                }
+        }
+}
+
+void BlTerrain::initNormals()
+{
+        normals = std::vector<btVector3>(gridWidth * gridLenght);
+        for(int z = 1; z < gridLenght - 1; z++) {
+                for(int x = 1; x < gridWidth - 1; x++) {
+                        int index = x + z * gridWidth;
+                        btVector3 right = vertices[index + 1];
+                        btVector3 left = vertices[index - 1];
+                        btVector3 up = vertices[index + gridWidth];
+                        btVector3 down = vertices[index - gridWidth];
+                        btVector3 normal = (left - right).cross(up - down);
+                        normals[index] = normal.normalize();
+                }
+        }
+}
+
+void BlTerrain::initTangents()
+{
+        std::vector< std::vector<btVector3> >tempTangents(gridWidth * gridLenght);
+        std::vector< std::vector<btVector3> >tempBitangents(gridWidth * gridLenght);
+
+        tangents = std::vector<btVector3>(gridWidth * gridLenght);
+        bitangents = std::vector<btVector3>(gridWidth * gridLenght);
+        for(unsigned int i = 0; i < indices.size(); i+=3) {
+                int ind0 = indices[i];
+                int ind1 = indices[i + 1];
+                int ind2 = indices[i + 2];
+                btVector3 vert0 = vertices[ind0];
+                btVector3 vert1 = vertices[ind1];
+                btVector3 vert2 = vertices[ind2];
+                btVector3 uv0 = btVector3(normalUVs[ind0 * 2 ],
+                                normalUVs[ind0 * 2 + 1], 0);
+                btVector3 uv1 = btVector3(normalUVs[ind1 * 2 ],
+                                normalUVs[ind1 * 2 + 1], 0);
+                btVector3 uv2 = btVector3(normalUVs[ind2 * 2 ],
+                                normalUVs[ind2 * 2 + 1], 0);
+                btVector3 tangent;
+                btVector3 bitangent;
+                computeTangentSpace(vert0, vert1, vert2,
+                                uv0, uv1, uv2,
+                                tangent, bitangent);
+                for(int j = 0; j < 3; j++) {
+                        tempTangents[indices[i + j]].push_back(tangent);
+                        tempBitangents[indices[i + j]].push_back(bitangent);
+                }
+        }
+        tangents = averageVectors(tempTangents);
+        bitangents = averageVectors(tempBitangents);
+
+        for(unsigned int i = 0; i < indices.size(); i++) {
+                btVector3 normal = normals[i];
+                btVector3 tangent = tangents[i];
+                btVector3 bitangent = bitangents[i];
+
+                tangent = (tangent - normal * normal.dot(tangent)).normalize();
+
+                if(normal.cross(tangent).dot(bitangent) < 0.0f) {
+                        tangent = tangent * -1.0f;
                 }
         }
 }
@@ -70,47 +133,6 @@ std::vector<btVector3> BlTerrain::averageVectors(std::vector< std::vector<btVect
                 means.push_back(mean.normalize());
         }
         return means;
-}
-
-void BlTerrain::initTangents()
-{
-        std::vector< std::vector<btVector3> > vertTangents
-                = std::vector< std::vector<btVector3> >(vertices.size());
-        std::vector< std::vector<btVector3> > vertNormals
-                = std::vector< std::vector<btVector3> >(vertices.size());
-        std::vector< std::vector<btVector3> > vertBitangents
-                = std::vector< std::vector<btVector3> >(vertices.size());
-        for (unsigned int i = 0; i < indices.size(); i+=3) {
-                unsigned int ind1 = indices[i];
-                unsigned int ind2 = indices[i + 1];
-                unsigned int ind3 = indices[i + 2];
-                btVector3 &vert1 = vertices[ind1];
-                btVector3 &vert2 = vertices[ind2];
-                btVector3 &vert3 = vertices[ind3];
-                btVector3 uv1 = btVector3(textureUVs[ind1 * 2 ],
-                                textureUVs[ind1 * 2 + 1], 0);
-                btVector3 uv2 = btVector3(textureUVs[ind2 * 2 ],
-                                textureUVs[ind2 * 2 + 1], 0);
-                btVector3 uv3 = btVector3(textureUVs[ind3 * 2 ],
-                                textureUVs[ind3 * 2 + 1], 0);
-
-                btVector3 normal;
-                btVector3 tangent;
-                btVector3 bitangent;
-
-                computeTangentSpace(vert1, vert2, vert3,
-                                uv1, uv2, uv3,
-                                normal, bitangent, tangent);
-                for(unsigned int j = i; j < i + 3; j++) {
-                        int indice = indices[j];
-                        vertNormals[indice].push_back(normal);
-                        vertTangents[indice].push_back(tangent);
-                        vertBitangents[indice].push_back(bitangent);
-                }
-        }
-        normals = averageVectors(vertNormals);
-        tangents = averageVectors(vertTangents);
-        bitangents = averageVectors(vertBitangents);
 }
 
 void BlTerrain::createRigidBody()
@@ -202,6 +224,7 @@ void BlTerrain::init()
         initHeightmapData();
         createRigidBody();
         initVertices();
+        initNormals();
         initIndices();
 
         initTextures();
@@ -278,10 +301,10 @@ void BlTerrain::drawElement(GLint locModel,
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indiceBuffer);
         glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (void *)0);
 
-        glDisableVertexAttribArray(locUVNormal);
-        glDisableVertexAttribArray(locUVTexture);
-        glDisableVertexAttribArray(locVertices);
-        glDisableVertexAttribArray(locTangent);
-        glDisableVertexAttribArray(locBitangent);
-        glDisableVertexAttribArray(locNormal);
+        disableLocation(locUVNormal);
+        disableLocation(locUVTexture);
+        disableLocation(locVertices);
+        disableLocation(locTangent);
+        disableLocation(locBitangent);
+        disableLocation(locNormal);
 }

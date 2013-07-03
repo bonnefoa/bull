@@ -2,6 +2,7 @@
 #include <bl_log.h>
 #include <bl_image.h>
 #include <bl_matrix.h>
+#include <bl_gl_util.h>
 
 void BlModel::init()
 {
@@ -11,24 +12,28 @@ void BlModel::init()
         glGenBuffers(1, &tangentBuffer);
         glGenBuffers(1, &bitangentBuffer);
 
+        uvBuffer = -1;
         if(blUVs.size() > 0){
                 glGenBuffers(1, &uvBuffer);
                 glBindBuffer(GL_ARRAY_BUFFER, uvBuffer);
                 std::vector<float> UV = blUVs[0].uvs;
                 glBufferData(GL_ARRAY_BUFFER, UV.size() * sizeof(float)
                                 , &UV[0], GL_STATIC_DRAW);
-        } else {
-                uvBuffer = 0;
         }
 
-        if(textureFile != NULL) {
-                textureBuffer = blTexture->fetchTexture(textureFile);
-        } else {
-                textureBuffer = 0;
+        diffuseTextureBuffer = -1;
+        normalTextureBuffer = -1;
+        if(diffuseImage != NULL) {
+                diffuseTextureBuffer = blTexture->fetchTexture(diffuseImage);
         }
-        INFO("Generated buffers for %s: indice %i, vertex %i, normal %i, tangent %i, bitangent %i, uv %i, texture %i\n",
+        if(normalImage != NULL) {
+                normalTextureBuffer = blTexture->fetchTexture(normalImage);
+        }
+
+        INFO("Generated buffers for %s: indice %i, vertex %i,\
+normal %i, tangent %i, bitangent %i, uv %i, texture %i\n",
                         name, indiceBuffer, vertexBuffer, normalBuffer,
-                        tangentBuffer, bitangentBuffer, uvBuffer, textureBuffer);
+                        tangentBuffer, bitangentBuffer, uvBuffer, diffuseTextureBuffer);
         for(std::vector< std::vector<BlModel*> *>::iterator
                         it=children->begin();
                         it != children->end(); ++it) {
@@ -62,31 +67,11 @@ BlModel::~BlModel(void)
 
 void BlModel::loadInBuffer()
 {
-        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-        glBufferData(GL_ARRAY_BUFFER,
-                        vertices.size() * sizeof(btVector3),
-                        &vertices[0], GL_STATIC_DRAW);
-
-        glBindBuffer(GL_ARRAY_BUFFER, normalBuffer);
-        glBufferData(GL_ARRAY_BUFFER
-                        , normals.size() * sizeof(btVector3)
-                        , &normals[0], GL_STATIC_DRAW);
-
-        glBindBuffer(GL_ARRAY_BUFFER, tangentBuffer);
-        glBufferData(GL_ARRAY_BUFFER
-                        , tangents.size() * sizeof(btVector3)
-                        , &tangents[0], GL_STATIC_DRAW);
-
-        glBindBuffer(GL_ARRAY_BUFFER, bitangentBuffer);
-        glBufferData(GL_ARRAY_BUFFER
-                        , bitangents.size() * sizeof(btVector3)
-                        , &bitangents[0], GL_STATIC_DRAW);
-
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indiceBuffer);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER
-                        , indices.size() * sizeof(unsigned int)
-                        , &indices[0], GL_STATIC_DRAW);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        loadVectorsInBuffer(vertexBuffer, vertices);
+        loadVectorsInBuffer(normalBuffer, normals);
+        loadVectorsInBuffer(tangentBuffer, tangents);
+        loadVectorsInBuffer(bitangentBuffer, bitangents);
+        loadIndicesInBuffer(indiceBuffer, indices);
 
         for(std::vector< std::vector<BlModel*> *>::iterator
                         it=children->begin();
@@ -97,33 +82,6 @@ void BlModel::loadInBuffer()
                         (*it2)->loadInBuffer();
                 }
         }
-}
-
-void BlModel::bindVertices(GLint locVertices) {
-        glEnableVertexAttribArray(locVertices);
-        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-        glVertexAttribPointer(locVertices, 4 , GL_FLOAT
-                        , GL_FALSE, 0, (void *)0);
-}
-
-void BlModel::bindNormals(GLint locNormals) {
-        glEnableVertexAttribArray(locNormals);
-        glBindBuffer(GL_ARRAY_BUFFER, normalBuffer);
-        glVertexAttribPointer(locNormals, 4 , GL_FLOAT
-                        , GL_FALSE, 0, (void *)0);
-}
-
-void BlModel::bindUVs(GLint locUVs) {
-        if(uvBuffer == 0) {
-                return;
-        }
-        glEnableVertexAttribArray(locUVs);
-        glBindBuffer(GL_ARRAY_BUFFER, uvBuffer);
-        glVertexAttribPointer(locUVs, 2, GL_FLOAT, GL_FALSE,
-                        0, (void*)0);
-
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, textureBuffer);
 }
 
 void BlModel::bindModelMatrix(GLint uniformM)
@@ -139,7 +97,8 @@ void BlModel::bindModelMatrix(GLint uniformM)
 }
 
 void BlModel::drawElement(GLint locModel, GLint locVertices,
-                GLint locNormals, GLint locUVs) {
+                GLint locNormals, GLint locUVs,
+                GLint locTangent, GLint locBitangent) {
         for(std::vector< std::vector<BlModel*> *>::iterator
                         it=children->begin();
                         it != children->end(); ++it) {
@@ -147,19 +106,25 @@ void BlModel::drawElement(GLint locModel, GLint locVertices,
                                 it2=(*it)->begin();
                                 it2 != (*it)->end(); ++it2) {
                         (*it2)->drawElement(locModel, locVertices,
-                                        locNormals, locUVs);
+                                        locNormals, locUVs,
+                                        locTangent, locBitangent);
                 }
         }
 
         if(locModel >= 0) bindModelMatrix(locModel);
-        bindVertices(locVertices);
-        if(locNormals >= 0) bindNormals(locNormals);
-        if(locUVs >= 0) bindUVs(locUVs);
+        bindVectors(locVertices, vertexBuffer);
+        bindVectors(locNormals, normalBuffer);
+        bindUVs(locUVs, uvBuffer);
 
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indiceBuffer);
-        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (void *)0);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, diffuseTextureBuffer);
 
-        if(locNormals >= 0) glDisableVertexAttribArray(locNormals);
-        if(locUVs >= 0) glDisableVertexAttribArray(locUVs);
-        glDisableVertexAttribArray(locVertices);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, normalTextureBuffer);
+
+        drawIndices(indiceBuffer, indices.size());
+
+        disableLocation(locNormals);
+        disableLocation(locUVs);
+        disableLocation(locVertices);
 }

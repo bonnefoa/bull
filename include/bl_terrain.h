@@ -97,6 +97,7 @@ class BlTerrain
                 std::vector<btVector3> extractImageData(BlImage *blImage);
                 void initTextures();
                 void initVertices();
+                void initNormals();
                 void initHeightmapData();
                 void initIndices();
                 void initTangents();

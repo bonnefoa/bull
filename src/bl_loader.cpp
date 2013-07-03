@@ -212,9 +212,13 @@ BlTerrain* BlLoader::loadTerrain(YAML::Node node)
 std::vector<BlModel*> *BlLoader::loadModel(YAML::Node node)
 {
         std::string modelPath = node["filename"].as<std::string>();
-        const char *image = NULL;
-        if(node["image"]) {
-                image = strduplicate((node["image"].as<std::string>()).c_str());
+        const char *normal = NULL;
+        if(node["normal"]) {
+                normal = strduplicate((node["normal"].as<std::string>()).c_str());
+        }
+        const char *diffuse = NULL;
+        if(node["diffuse"]) {
+                diffuse = strduplicate((node["diffuse"].as<std::string>()).c_str());
         }
         btVector3 position = readVector3(node["position"]);
 
@@ -229,7 +233,7 @@ std::vector<BlModel*> *BlLoader::loadModel(YAML::Node node)
 
         std::vector<BlModel*> * models =
                 blMeshLoader.loadModelFile(modelPath.c_str(), position,
-                        mapIndexBody, mapIndexOffset, image);
+                        mapIndexBody, mapIndexOffset, diffuse, normal);
         return models;
 }
 

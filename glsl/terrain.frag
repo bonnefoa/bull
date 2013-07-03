@@ -6,11 +6,18 @@ in vec2 uvFragmentNormal;
 uniform sampler2D textureSampler;
 uniform sampler2D normalmapSampler;
 
-vec4 processColorTangentspace(vec4 texColor, vec3 normal_tangentspace);
+in vec3 vertexPosition_worldspace;
+in vec3 lightDirection_cameraspace;
+in vec3 lightDirection_tangentspace;
 
 void main()
 {
-        vec4 texColor = texture(textureSampler, uvFragmentTexture);
+        vec3 texColor = texture(textureSampler, uvFragmentTexture).xyz;
         vec3 normal_tangentspace = texture(normalmapSampler, uvFragmentNormal).xyz;
-        color = processColorTangentspace(texColor, normal_tangentspace);
+
+        float coef =  dot(normal_tangentspace, lightDirection_tangentspace);
+
+        /*color = vec4(texColor * coef, 1);*/
+        /*color = vec4(lightDirection_tangentspace, 1);*/
+        color = vec4(texColor, 1);
 }

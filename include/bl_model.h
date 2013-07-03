@@ -23,7 +23,8 @@ class BlModel {
                                 btRigidBody *_rigidBody,
 
                                 const char *_name,
-                                const char *_textureFile
+                                const char *_diffuseFile,
+                                const char *_normal
                        ) :
                         blTexture(_blTexture),
                         children(_children),
@@ -36,13 +37,15 @@ class BlModel {
                         position(_position),
                         rigidBody(_rigidBody),
                         name(_name),
-                        textureFile(_textureFile)
+                        diffuseImage(_diffuseFile),
+                        normalImage(_normal)
         { };
                 void init();
                 void loadInBuffer();
 
                 void drawElement(GLint locModel, GLint locVertices,
-                GLint locNormals, GLint locUVS);
+                GLint locNormals, GLint locUVS,
+                GLint locTangent, GLint locBitangent);
 
                 BlTexture *blTexture;
                 std::vector< std::vector<BlModel*>* > *children;
@@ -56,13 +59,15 @@ class BlModel {
                 btVector3 position;
                 btRigidBody *rigidBody;
                 const char *name;
-                const char *textureFile;
+                const char *diffuseImage;
+                const char *normalImage;
 
                 virtual ~BlModel ();
 
                 GLuint vertexBuffer;
                 GLuint indiceBuffer;
-                GLuint textureBuffer;
+                GLuint diffuseTextureBuffer;
+                GLuint normalTextureBuffer;
 
         private:
                 GLuint uvBuffer;
@@ -70,9 +75,6 @@ class BlModel {
                 GLuint tangentBuffer;
                 GLuint bitangentBuffer;
 
-                void bindVertices(GLint locationVertex);
-                void bindNormals(GLint locNormals);
-                void bindUVs(GLint locUVs);
                 void bindModelMatrix(GLint uniformM);
 
 };

@@ -44,8 +44,11 @@ class  BlProgramModel : public BlProgram
                 GLint locVertices;
                 GLint locNormals;
                 GLint locUVs;
+                GLint locTangent;
+                GLint locBitangent;
 
-                GLint samplerTexture;
+                GLint diffuseSampler;
+                GLint normalSampler;
                 GLint samplerShadow;
 };
 

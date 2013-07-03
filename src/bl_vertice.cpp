@@ -69,9 +69,8 @@ void computeTangentSpace(btVector3 &vert0,
                 btVector3 &uv0,
                 btVector3 &uv1,
                 btVector3 &uv2,
-                btVector3 &normal,
-                btVector3 &bitangent,
-                btVector3 &tangent)
+                btVector3 &tangent,
+                btVector3 &bitangent)
 {
         btVector3 deltaPos1 = vert1 - vert0;
         btVector3 deltaPos2 = vert2 - vert0;
@@ -82,9 +81,8 @@ void computeTangentSpace(btVector3 &vert0,
         float t1 = uv1[1] - uv0[1];
         float t2 = uv2[1] - uv0[1];
 
-        float div = 1 / (s1 * t2 - s2 * t1);
+        float div = 1.0f / (s1 * t2 - s2 * t1);
 
-        normal = deltaPos1.cross(deltaPos2);
         tangent = (t2 * deltaPos1 -  t1 * deltaPos2) * div;
         bitangent = (-s2 * deltaPos1 + s1 * deltaPos2) * div;
 }

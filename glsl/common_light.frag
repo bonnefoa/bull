@@ -59,38 +59,3 @@ vec4 processColorCameraspace(vec4 texColor)
         vec4 color = ambientPart + (diffusePart + specularPart) * visibility;
         return color;
 }
-
-
-
-in vec3 lightDirection_tangentspace;
-in vec3 eyeDirection_tangentspace;
-
-float getSpecularCoefficientTangentspace(vec3 normal_tangentspace)
-{
-        vec3 reflectedLight = reflect(-lightDirection_tangentspace, normal_tangentspace);
-        float coef = clamp(dot(reflectedLight, eyeDirection_tangentspace), 0, 1);
-        return coef;
-}
-
-float getDiffuseCoefficientTangentspace(vec3 normal_tangentspace)
-{
-        float coef = dot(lightDirection_tangentspace, normal_tangentspace);
-        coef = clamp(coef, 0.0, 1.0);
-        return coef;
-}
-
-vec4 processColorTangentspace(vec4 texInput, vec3 normal_tangentspace)
-{
-        vec3 texColor = texInput.xyz;
-        vec3 ambientPart = ambientColor * texColor;
-
-        float diffuseCoef = getDiffuseCoefficientTangentspace(normal_tangentspace);
-        float specularCoef = getSpecularCoefficientTangentspace(normal_tangentspace);
-        float attenuation = getAttenuation();
-
-        vec3 diffusePart = texColor * lightColor * diffuseCoef * attenuation;
-        vec3 specularPart = texColor * lightColor * pow(specularCoef, 5) * attenuation;
-
-        vec3 color = ambientPart + diffusePart + specularPart;
-        return vec4(color, 1);
-}
