@@ -40,7 +40,7 @@ class BlDebug
                 float currentDelta;
                 float currentFps;
 
-                void debugTerrain();
+                void debugTerrain(BlTerrain *terrain);
 };
 
 #endif

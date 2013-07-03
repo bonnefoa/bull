@@ -1,4 +1,5 @@
 #include "bl_debug.h"
+#include <bl_matrix.h>
 
 void BlDebug::printFps()
 {
@@ -18,7 +19,29 @@ void BlDebug::renderDebug()
         if(blState->debugState) {
                 blDebugDrawer->initDebugRender();
                 blSimulation->debugDraw();
+                for(std::vector<BlTerrain*>::iterator it = blScene->blTerrains->begin();
+                                it != blScene->blTerrains->end();
+                                it++) {
+                        debugTerrain(*it);
+                }
                 blDebugDrawer->finalizeDraw();
                 printFps();
+        }
+}
+
+void BlDebug::debugTerrain(BlTerrain *terrain)
+{
+        btTransform model = buildModelMatrix(terrain->scale, terrain->position);
+        btMatrix3x3 ident;
+        ident.setIdentity();
+        for(unsigned int i = 0; i < terrain->vertices.size(); i++) {
+                btVector3 pos = model * terrain->vertices.at(i);
+                btTransform center = btTransform(ident, pos);
+                btVector3 normal = terrain->normals.at(i);
+                btVector3 tangent = terrain->tangents.at(i);
+                btVector3 binormal = terrain->binormals.at(i);
+                blDebugDrawer->drawAxis(center, normal, btVector3(0,1,0));
+                blDebugDrawer->drawAxis(center, tangent, btVector3(1,0,0));
+                blDebugDrawer->drawAxis(center, binormal, btVector3(0,0,1));
         }
 }
