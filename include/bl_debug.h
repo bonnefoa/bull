@@ -6,6 +6,7 @@
 #include <bl_text.h>
 #include <bl_state.h>
 #include <bl_simulation.h>
+#include <bl_scene.h>
 
 class BlDebug
 {
@@ -14,12 +15,14 @@ class BlDebug
                                 BlState *_blState,
                                 BlDebugDrawer *_blDebugDrawer,
                                 BlSimulation *_blSimulation,
-                                BlText *_blText) :
+                                BlText *_blText,
+                                BlScene *_blScene) :
                         blConfig(_blConfig),
                         blState(_blState),
                         blDebugDrawer(_blDebugDrawer),
                         blSimulation(_blSimulation),
-                        blText(_blText) {};
+                        blText(_blText),
+                        blScene(_blScene) {};
                 ~BlDebug();
 
                 void printFps();
@@ -31,10 +34,13 @@ class BlDebug
                 BlDebugDrawer *blDebugDrawer;
                 BlSimulation *blSimulation;
                 BlText *blText;
+                BlScene *blScene;
 
                 int countFrame;
                 float currentDelta;
                 float currentFps;
+
+                void debugTerrain();
 };
 
 #endif

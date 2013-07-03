@@ -48,7 +48,7 @@ void initWindow()
         blTexture = new BlTexture();
 }
 
-void initComponents()
+void initComponents(const char *filename)
 {
         blState = new BlState(blSdl->font, blConfig);
         blCamera = new BlCamera(blConfig, blState);
@@ -72,8 +72,14 @@ void initComponents()
         blSimulation = new BlSimulation(blDebugDrawer, blState);
         blNetwork = new BlNetwork(blConfig);
         blNetwork->init();
+
+        blScene = blLoader->loadScene(filename);
+        blProgramModel->bindProjection();
+        blProgramTerrain->bindProjection();
+        blScene->init(blSimulation, blProgramModel->programId);
+
         blDebug = new BlDebug(blConfig, blState,
-                        blDebugDrawer, blSimulation, blText);
+                        blDebugDrawer, blSimulation, blText, blScene);
 }
 
 void clean()
@@ -99,14 +105,6 @@ void shutdown()
         delete blTexture;
 }
 
-void initScene(const char *filename)
-{
-        blScene = blLoader->loadScene(filename);
-        blProgramModel->bindProjection();
-        blProgramTerrain->bindProjection();
-        blScene->init(blSimulation, blProgramModel->programId);
-}
-
 void setLight() {
         BlLightPoint *light = blScene->blLightPoints->at(0);
         blProgramShadow->moveLight(blScene->blCharacter->getPosition());
@@ -129,6 +127,7 @@ void render()
         blProgramModel->displayScene(blScene, blProgramShadow->depthTexture);
         blProgramTerrain->displayScene(blScene);
         blDebug->renderDebug();
+
         SDL_GL_SwapWindow(blSdl->window);
 }
 
@@ -161,8 +160,7 @@ void mainLoop()
 void reload(const char *configFile)
 {
         clean();
-        initComponents();
-        initScene(configFile);
+        initComponents(configFile);
         blState->gamestate = NORMAL;
 }
 
@@ -183,8 +181,7 @@ int main(int argc, char **argv)
         blConfig = loadBlConfig("conf.yaml");
 
         initWindow();
-        initComponents();
-        initScene(configFile);
+        initComponents(configFile);
         setLight();
 
         while(true) {
