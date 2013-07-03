@@ -30,7 +30,7 @@ void computeLightInformations()
 }
 
 in vec3 vertexTangent_modelspace;
-in vec3 vertexCotangent_modelspace;
+in vec3 vertexBitangent_modelspace;
 
 out vec3 lightDirection_tangentspace;
 out vec3 eyeDirection_tangentspace;
@@ -43,10 +43,10 @@ void computeTangentLightInformations()
         mat3 MV3x3 = mat3(V * M);
         vertexNormal_cameraspace = (MV3x3 * vertexNormal_modelspace);
         vec3 vertexTangent_cameraspace = (MV3x3 * vertexTangent_modelspace);
-        vec3 vertexCotangent_cameraspace = (MV3x3 * vertexCotangent_modelspace);
+        vec3 vertexBitangent_cameraspace = (MV3x3 * vertexBitangent_modelspace);
         cameraToTangent = transpose(
                 mat3(vertexTangent_cameraspace,
-                        vertexCotangent_cameraspace,
+                        vertexBitangent_cameraspace,
                         vertexNormal_cameraspace));
 
         vertexPosition_cameraspace = (MV

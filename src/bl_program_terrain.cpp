@@ -40,8 +40,8 @@ void BlProgramTerrain::init(void)
                         , "vertexNormal_modelspace");
         locTangent = glGetAttribLocation(programId
                         , "vertexTangent_modelspace");
-        locCotangent = glGetAttribLocation(programId
-                        , "vertexCotangent_modelspace");
+        locBitangent = glGetAttribLocation(programId
+                        , "vertexBitangent_modelspace");
         textureSampler = glGetUniformLocation(programId
                         , "textureSampler");
         normalmapSampler = glGetUniformLocation(programId
@@ -58,11 +58,11 @@ void BlProgramTerrain::init(void)
         INFO("Projection location %i\n", locProjection);
         INFO("Vertices location %i\n", locVertices);
         INFO("Tangent location %i\n", locTangent);
-        INFO("Cotangent location %i\n", locCotangent);
+        INFO("Bitangent location %i\n", locBitangent);
         INFO("UV texture location %i\n", locUVTexture);
         INFO("UV normal location %i\n", locUVNormal);
         if(locModel < 0 || locView < 0 || locProjection < 0 || locVertices < 0
-                        || locTangent < 0 || locCotangent < 0 || locUVNormal < 0) {
+                        || locTangent < 0 || locBitangent < 0 || locUVNormal < 0) {
                 ERROR("unused location\n");
         }
 }
@@ -83,7 +83,7 @@ void BlProgramTerrain::displayScene(BlScene *blScene)
                                 locVertices,
                                 locNormal,
                                 locTangent,
-                                locCotangent,
+                                locBitangent,
                                 locUVTexture,
                                 locUVNormal);
         }

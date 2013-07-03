@@ -43,7 +43,7 @@ class BlProgramTerrain : public BlProgram
                 GLint locVertices;
                 GLint locNormal;
                 GLint locTangent;
-                GLint locCotangent;
+                GLint locBitangent;
 };
 
 BlProgramTerrain *getProgramTerrain(BlConfig *blConfig, BlCamera *blCamera);
