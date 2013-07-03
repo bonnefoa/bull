@@ -215,7 +215,7 @@ BlTerrain::~BlTerrain()
         glDeleteBuffers(1, &vertexBuffer);
         glDeleteBuffers(1, &normalBuffer);
         glDeleteBuffers(1, &tangentBuffer);
-        glDeleteBuffers(1, &cotangentBuffer);
+        glDeleteBuffers(1, &bitangentBuffer);
         glDeleteBuffers(1, &uvTextureBuffer);
         glDeleteBuffers(1, &uvNormalBuffer);
         if(heightmapBuffer > 0)
@@ -230,7 +230,7 @@ void BlTerrain::loadInBuffer()
         loadVectorsInBuffer(vertexBuffer, vertices);
         loadVectorsInBuffer(normalBuffer, normals);
         loadVectorsInBuffer(tangentBuffer, tangents);
-        loadVectorsInBuffer(cotangentBuffer, binormals);
+        loadVectorsInBuffer(bitangentBuffer, binormals);
 
         loadUVsInBuffer(uvTextureBuffer, textureUVs);
         loadUVsInBuffer(uvNormalBuffer, normalUVs);
@@ -262,14 +262,14 @@ void BlTerrain::drawElement(GLint locModel,
                 GLint locVertices,
                 GLint locNormal,
                 GLint locTangent,
-                GLint locCotangent,
+                GLint locBitangent,
                 GLint locUVTexture,
                 GLint locUVNormal) {
         bindModelMatrix(locModel);
         bindVectors(locVertices, vertexBuffer);
         bindVectors(locNormal, normalBuffer);
         bindVectors(locTangent, tangentBuffer);
-        bindVectors(locCotangent, cotangentBuffer);
+        bindVectors(locBitangent, bitangentBuffer);
         bindUVs(locUVTexture, uvTextureBuffer);
         bindUVs(locUVNormal, uvNormalBuffer);
 
@@ -282,6 +282,6 @@ void BlTerrain::drawElement(GLint locModel,
         glDisableVertexAttribArray(locUVTexture);
         glDisableVertexAttribArray(locVertices);
         glDisableVertexAttribArray(locTangent);
-        glDisableVertexAttribArray(locCotangent);
+        glDisableVertexAttribArray(locBitangent);
         glDisableVertexAttribArray(locNormal);
 }

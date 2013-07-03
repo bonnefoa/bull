@@ -45,7 +45,7 @@ class BlTerrain
                                 GLint locVertices,
                                 GLint locNormal,
                                 GLint locTangent,
-                                GLint locCotangent,
+                                GLint locBitangent,
                                 GLint locUVTexture,
                                 GLint locUVNormal);
 
@@ -86,7 +86,7 @@ class BlTerrain
                 GLuint vertexBuffer;
                 GLuint normalBuffer;
                 GLuint tangentBuffer;
-                GLuint cotangentBuffer;
+                GLuint bitangentBuffer;
 
                 GLuint indiceBuffer;
                 GLuint uvTextureBuffer;
