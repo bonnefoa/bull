@@ -24,8 +24,33 @@ void BlDebug::renderDebug()
                                 it++) {
                         debugTerrain(*it);
                 }
+                for(std::vector<BlModel*>::iterator it = blScene->blModels->begin();
+                                it != blScene->blModels->end();
+                                it++) {
+                        debugModel(*it);
+                }
                 blDebugDrawer->finalizeDraw();
                 printFps();
+        }
+}
+
+void BlDebug::debugModel(BlModel *model)
+{
+        btTransform trans = model->getModelTansform();
+        btMatrix3x3 ident;
+        ident.setIdentity();
+        for(unsigned int i = 0; i < model->vertices.size(); i++) {
+                btVector3 orig = trans * model->vertices.at(i);
+                btTransform center = btTransform(ident, orig);
+                btVector3 normal = trans.getBasis() * model->normals.at(i);
+                btVector3 tangent = trans.getBasis() * model->tangents.at(i);
+                btVector3 bitangent = trans.getBasis() * model->bitangents.at(i);
+                blDebugDrawer->drawAxis(center, normal,
+                        btVector3(0.5, 1, 0.5));
+                blDebugDrawer->drawAxis(center, tangent,
+                        btVector3(1,0.5,0.5));
+                blDebugDrawer->drawAxis(center, bitangent,
+                        btVector3(0.5,0.5,1));
         }
 }
 

@@ -41,6 +41,7 @@ class BlDebug
                 float currentFps;
 
                 void debugTerrain(BlTerrain *terrain);
+                void debugModel(BlModel *model);
 };
 
 #endif

@@ -46,6 +46,7 @@ class BlModel {
                 void drawElement(GLint locModel, GLint locVertices,
                 GLint locNormals, GLint locUVS,
                 GLint locTangent, GLint locBitangent);
+                btTransform getModelTansform();
 
                 BlTexture *blTexture;
                 std::vector< std::vector<BlModel*>* > *children;

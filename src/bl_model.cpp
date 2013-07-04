@@ -84,7 +84,7 @@ void BlModel::loadInBuffer()
         }
 }
 
-void BlModel::bindModelMatrix(GLint uniformM)
+btTransform BlModel::getModelTansform()
 {
         btTransform trans;
         trans.setIdentity();
@@ -93,7 +93,7 @@ void BlModel::bindModelMatrix(GLint uniformM)
         } else {
                 trans.setOrigin(position);
         }
-        sendTransform(trans, uniformM);
+        return trans;
 }
 
 void BlModel::drawElement(GLint locModel, GLint locVertices,
@@ -111,7 +111,7 @@ void BlModel::drawElement(GLint locModel, GLint locVertices,
                 }
         }
 
-        if(locModel >= 0) bindModelMatrix(locModel);
+        if(locModel >= 0) sendTransform(getModelTansform(), locModel);
         bindVectors(locVertices, vertexBuffer);
         bindVectors(locNormals, normalBuffer);
         bindUVs(locUVs, uvBuffer);
