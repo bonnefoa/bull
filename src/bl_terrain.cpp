@@ -7,114 +7,136 @@
 #include <map>
 #include <bl_vertice.h>
 
-void BlTerrain::initVertices()
+void BlTerrain::pushVertice(int x, int z)
 {
-        vertices = std::vector<btVector3>(gridWidth * gridLenght);
         float deltaX = (gridWidth - 1) / 2.0f;
         float deltaZ = (gridLenght- 1) / 2.0f;
-        for(int z = 0; z < gridLenght; z++) {
-                for(int x = 0; x < gridWidth; x++) {
-                        int index = x + z * gridWidth;
-                        unsigned char heightData = heightMapData[index];
-                        float height = heightData * heightScale;
-                        btVector3 vert = btVector3(x - deltaX,
-                                        height, z - deltaZ);
-                        vertices[index] = vert;
+        int index = x + z * gridWidth;
+        unsigned char heightData = heightMapData[index];
+        float height = heightData * heightScale;
+        btVector3 vert = btVector3(x - deltaX,
+                        height, z - deltaZ);
+        vertices.push_back(vert);
+}
+
+void BlTerrain::pushNormal(int x, int z)
+{
+        if(x == 0 || x >= gridWidth - 2 || z == 0 || z >= gridLenght - 2) {
+                normals.push_back(btVector3(0, 1, 0));
+                return;
+        }
+        float heightLeft =  heightMapData[(x - 1) + z * gridWidth] * heightScale;
+        float heightRight = heightMapData[(x + 1) + z * gridWidth] * heightScale;
+        float heightUp =    heightMapData[x + (z + 1) * gridWidth] * heightScale;
+        float heightDown =  heightMapData[x + (z - 1) * gridWidth] * heightScale;
+        btVector3 horizontal(-2, heightLeft - heightRight, 0);
+        btVector3 vertical(0, heightUp - heightDown, 2);
+        btVector3 normal = horizontal.cross(vertical).normalize();
+        normals.push_back(normal);
+}
+
+void BlTerrain::initVertices()
+{
+        vertices = std::vector<btVector3>();
+        for(int z = 0; z < gridLenght - 1; z++) {
+                for(int x = 0; x < gridWidth - 1; x++) {
+                        pushVertice(x, z);
+                        pushVertice(x, z + 1);
+                        pushVertice(x + 1, z + 1);
+
+                        pushVertice(x, z);
+                        pushVertice(x + 1, z + 1);
+                        pushVertice(x + 1, z);
                 }
         }
 }
 
 void BlTerrain::initNormals()
 {
-        normals = std::vector<btVector3>(gridWidth * gridLenght);
-        for(int z = 1; z < gridLenght - 1; z++) {
-                for(int x = 1; x < gridWidth - 1; x++) {
-                        int index = x + z * gridWidth;
-                        btVector3 right = vertices[index + 1];
-                        btVector3 left = vertices[index - 1];
-                        btVector3 up = vertices[index + gridWidth];
-                        btVector3 down = vertices[index - gridWidth];
-                        btVector3 normal = (left - right).cross(up - down);
-                        normals[index] = normal.normalize();
+        normals = std::vector<btVector3>();
+        for(int z = 0; z < gridLenght - 1; z++) {
+                for(int x = 0; x < gridWidth - 1; x++) {
+                        pushNormal(x, z);
+                        pushNormal(x, z + 1);
+                        pushNormal(x + 1, z + 1);
+
+                        pushNormal(x, z);
+                        pushNormal(x + 1, z + 1);
+                        pushNormal(x + 1, z);
                 }
         }
 }
 
 void BlTerrain::initTangents()
 {
-        std::vector< std::vector<btVector3> >tempTangents(gridWidth * gridLenght);
-        std::vector< std::vector<btVector3> >tempBitangents(gridWidth * gridLenght);
+        tangents = std::vector<btVector3>();
+        bitangents = std::vector<btVector3>();
 
-        tangents = std::vector<btVector3>(gridWidth * gridLenght);
-        bitangents = std::vector<btVector3>(gridWidth * gridLenght);
-        for(unsigned int i = 0; i < indices.size(); i+=3) {
-                int ind0 = indices[i];
-                int ind1 = indices[i + 1];
-                int ind2 = indices[i + 2];
-                btVector3 vert0 = vertices[ind0];
-                btVector3 vert1 = vertices[ind1];
-                btVector3 vert2 = vertices[ind2];
-                btVector3 uv0 = btVector3(normalUVs[ind0 * 2 ],
-                                normalUVs[ind0 * 2 + 1], 0);
-                btVector3 uv1 = btVector3(normalUVs[ind1 * 2 ],
-                                normalUVs[ind1 * 2 + 1], 0);
-                btVector3 uv2 = btVector3(normalUVs[ind2 * 2 ],
-                                normalUVs[ind2 * 2 + 1], 0);
-                btVector3 tangent;
-                btVector3 bitangent;
-                computeTangentSpace(vert0, vert1, vert2,
-                                uv0, uv1, uv2,
-                                tangent, bitangent);
-                for(int j = 0; j < 3; j++) {
-                        tempTangents[indices[i + j]].push_back(tangent);
-                        tempBitangents[indices[i + j]].push_back(bitangent);
-                }
+        for(unsigned int i = 0; i < vertices.size(); i++) {
+                tangents.push_back(btVector3(0, 0, 0));
+                bitangents.push_back(btVector3(0, 0, 0));
         }
-        tangents = averageVectors(tempTangents);
-        bitangents = averageVectors(tempBitangents);
 
-        for(unsigned int i = 0; i < indices.size(); i++) {
-                btVector3 normal = normals[i];
-                btVector3 tangent = tangents[i];
-                btVector3 bitangent = bitangents[i];
 
-                tangent = (tangent - normal * normal.dot(tangent)).normalize();
+        //std::vector< std::vector<btVector3> >tempTangents(gridWidth * gridLenght);
+        //std::vector< std::vector<btVector3> >tempBitangents(gridWidth * gridLenght);
 
-                if(normal.cross(tangent).dot(bitangent) < 0.0f) {
-                        tangent = tangent * -1.0f;
-                }
-        }
+        //for(unsigned int i = 0; i < indices.size(); i+=3) {
+                //int ind0 = indices[i];
+                //int ind1 = indices[i + 1];
+                //int ind2 = indices[i + 2];
+                //btVector3 vert0 = vertices[ind0];
+                //btVector3 vert1 = vertices[ind1];
+                //btVector3 vert2 = vertices[ind2];
+                //btVector3 uv0 = btVector3(normalUVs[ind0 * 2 ],
+                                //normalUVs[ind0 * 2 + 1], 0);
+                //btVector3 uv1 = btVector3(normalUVs[ind1 * 2 ],
+                                //normalUVs[ind1 * 2 + 1], 0);
+                //btVector3 uv2 = btVector3(normalUVs[ind2 * 2 ],
+                                //normalUVs[ind2 * 2 + 1], 0);
+                //btVector3 tangent;
+                //btVector3 bitangent;
+                //computeTangentSpace(vert0, vert1, vert2,
+                                //uv0, uv1, uv2,
+                                //tangent, bitangent);
+                //for(int j = 0; j < 3; j++) {
+                        //tempTangents[indices[i + j]].push_back(tangent);
+                        //tempBitangents[indices[i + j]].push_back(bitangent);
+                //}
+        //}
+        //tangents = averageVectors(tempTangents);
+        //bitangents = averageVectors(tempBitangents);
+
+        //for(unsigned int i = 0; i < indices.size(); i++) {
+                //btVector3 normal = normals[i];
+                //btVector3 tangent = tangents[i];
+                //btVector3 bitangent = bitangents[i];
+
+                //tangent = (tangent - normal * normal.dot(tangent)).normalize();
+
+                //if(normal.cross(tangent).dot(bitangent) < 0.0f) {
+                        //tangent = tangent * -1.0f;
+                //}
+        //}
 }
 
 void BlTerrain::initIndices()
 {
-        int maxZ = gridWidth * (gridLenght - 1);
-        for(int z = 0; z < maxZ; z+=gridWidth) {
-                for(int x = z; x < z + gridWidth - 1; x++) {
-                        indices.push_back(x);
-                        indices.push_back(x + gridWidth);
-                        indices.push_back(x + 1);
-                        indices.push_back(x + 1);
-                        indices.push_back(x + gridWidth);
-                        indices.push_back(x + gridWidth + 1);
-                }
+        for(unsigned int i = 0; i < vertices.size(); i++) {
+                indices.push_back(i);
         }
 }
 
 void BlTerrain::initUVs()
 {
-        for(int z = 0; z < gridLenght; z++) {
-                for(int x = 0; x < gridWidth; x++) {
-                        float u = float(x) / float(gridWidth);
-                        float v = float(z) / float(gridLenght);
-                        textureUVs.push_back(u);
-                        textureUVs.push_back(v);
-
-                        float normalU = float(x) / float(gridWidth);
-                        float normalV = float(z) / float(gridLenght);
-                        normalUVs.push_back(normalU);
-                        normalUVs.push_back(normalV);
-                }
+        for(std::vector<btVector3>::iterator it = vertices.begin();
+                        it != vertices.end();
+                        it++) {
+                btVector3 vert = (*it);
+                float u = float(vert.x()) / float(gridWidth);
+                float v = float(vert.z()) / float(gridLenght);
+                textureUVs.push_back(u);
+                textureUVs.push_back(v);
         }
 }
 

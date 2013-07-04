@@ -102,6 +102,8 @@ class BlTerrain
                 void initIndices();
                 void initTangents();
                 void initUVs();
+                void pushVertice(int x, int z);
+                void pushNormal(int x, int z);
                 BlImage *createNormalHeightmap(BlImage *blImage);
                 std::vector<btVector3> averageVectors(std::vector< std::vector<btVector3> > &source);
 };
