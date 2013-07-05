@@ -42,20 +42,38 @@ float getAttenuation()
         return attenuation;
 }
 
-vec4 processColorCameraspace(vec4 texColor)
+vec4 processColor(vec4 texColor, float diffuseCoef, float specularCoef, float attenuation, float visibility)
 {
         vec4 ambientPart = vec4(ambientColor, 1) * texColor;
+        vec4 diffusePart = texColor * vec4(lightColor, 1) * diffuseCoef * attenuation;
+        vec4 specularPart = texColor * vec4(lightColor, 1) * pow(specularCoef, 5) * attenuation;
+        vec4 color = ambientPart + (diffusePart + specularPart) * visibility;
+        return color;
+}
 
+vec4 processColorCameraspace(vec4 texColor)
+{
         float diffuseCoef = getDiffuseCoefficientCameraspace();
         float specularCoef = getSpecularCoefficientCameraspace();
         float attenuation = getAttenuation();
-
-        vec4 diffusePart = texColor * vec4(lightColor, 1) * diffuseCoef * attenuation;
-        vec4 specularPart = texColor * vec4(lightColor, 1) * pow(specularCoef, 5) * attenuation;
-
         float visibility = texture(shadowSampler,
-                vec3(shadowCoord.xy, (shadowCoord.z-biais) / shadowCoord.w));
+                        vec3(shadowCoord.xy, (shadowCoord.z-biais) / shadowCoord.w));
+        return processColor(texColor, diffuseCoef, specularCoef, attenuation, visibility);
+}
 
-        vec4 color = ambientPart + (diffusePart + specularPart) * visibility;
-        return color;
+in vec3 lightDirection_tangentspace;
+
+float getDiffuseCoefficientTangentspace(vec3 normal_tangentspace)
+{
+        float coef = clamp(dot(normal_tangentspace, lightDirection_tangentspace), 0, 1);
+        coef = clamp(coef, 0.0, 1.0);
+        return coef;
+}
+
+vec4 processColorTangentspace(vec4 texColor, vec3 normal_tangentspace)
+{
+        float diffuseCoef = getDiffuseCoefficientTangentspace(normal_tangentspace);
+        float specularCoef = getSpecularCoefficientCameraspace();
+        float attenuation = getAttenuation();
+        return processColor(texColor, diffuseCoef, specularCoef, attenuation, 1);
 }
