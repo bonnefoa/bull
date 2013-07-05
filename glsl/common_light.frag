@@ -19,18 +19,11 @@ uniform float lightQuadraticAttenuation = 0.0;
 in vec4 shadowCoord;
 float biais = 0.05f;
 
-float getSpecularCoefficientCameraspace()
+float getSpecularCoefficient()
 {
         vec3 eyeDirection_cameraspace = normalize(vec3(0,0,0) - vertexPosition_cameraspace);
         vec3 reflectedLight = reflect(-lightDirection_cameraspace, vertexNormal_cameraspace);
         float coef = clamp(dot(reflectedLight, eyeDirection_cameraspace), 0, 1);
-        return coef;
-}
-
-float getDiffuseCoefficientCameraspace()
-{
-        float coef = dot(lightDirection_cameraspace, vertexNormal_cameraspace);
-        coef = clamp(coef, 0.0, 1.0);
         return coef;
 }
 
@@ -51,16 +44,6 @@ vec4 processColor(vec4 texColor, float diffuseCoef, float specularCoef, float at
         return color;
 }
 
-vec4 processColorCameraspace(vec4 texColor)
-{
-        float diffuseCoef = getDiffuseCoefficientCameraspace();
-        float specularCoef = getSpecularCoefficientCameraspace();
-        float attenuation = getAttenuation();
-        float visibility = texture(shadowSampler,
-                        vec3(shadowCoord.xy, (shadowCoord.z-biais) / shadowCoord.w));
-        return processColor(texColor, diffuseCoef, specularCoef, attenuation, visibility);
-}
-
 in vec3 lightDirection_tangentspace;
 
 float getDiffuseCoefficientTangentspace(vec3 normal_tangentspace)
@@ -70,10 +53,16 @@ float getDiffuseCoefficientTangentspace(vec3 normal_tangentspace)
         return coef;
 }
 
-vec4 processColorTangentspace(vec4 texColor, vec3 normal_tangentspace)
+float getShadowVisibility()
+{
+        return texture(shadowSampler,
+                        vec3(shadowCoord.xy, (shadowCoord.z-biais) / shadowCoord.w));
+}
+
+vec4 processColorTangentspace(vec4 texColor, vec3 normal_tangentspace, float visibility)
 {
         float diffuseCoef = getDiffuseCoefficientTangentspace(normal_tangentspace);
-        float specularCoef = getSpecularCoefficientCameraspace();
+        float specularCoef = getSpecularCoefficient();
         float attenuation = getAttenuation();
-        return processColor(texColor, diffuseCoef, specularCoef, attenuation, 1);
+        return processColor(texColor, diffuseCoef, specularCoef, attenuation, visibility);
 }

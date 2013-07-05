@@ -7,15 +7,13 @@ out vec4 color;
 
 in vec2 UV;
 
-vec4 processColorCameraspace(vec4 texColor);
-
-in vec3 lightDirection_tangentspace;
+vec4 processColorTangentspace(vec4 texColor, vec3 normal_tangentspace, float visibility);
+float getShadowVisibility();
 
 void main()
 {
-        vec3 texColor = texture(diffuseSampler, UV).rgb;
+        vec4 texColor = texture(diffuseSampler, UV);
         vec3 normal = (texture(normalSampler, UV).rgb * 2.0 - 1);
-
-        float coef = dot(normal, lightDirection_tangentspace);
-        color = processColorCameraspace(vec4(texColor * coef, 1));
+        float visibility = getShadowVisibility();
+        color = processColorTangentspace(texColor, normal, visibility);
 }
