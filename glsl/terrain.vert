@@ -13,7 +13,6 @@ in vec2 uvTexture;
 in vec2 uvNormal;
 
 out vec2 uvFragmentTexture;
-out vec2 uvFragmentNormal;
 
 in vec3 vertexTangent_modelspace;
 in vec3 vertexBitangent_modelspace;
@@ -34,7 +33,6 @@ void main()
         lightDirection_cameraspace = normalize(lightPosition_cameraspace - vertexPosition_cameraspace);
 
         uvFragmentTexture = uvTexture;
-        uvFragmentNormal = uvNormal;
         mat3 MV3x3 = mat3(V * M);
 
         vec3 vertexTangent_cameraspace = MV3x3 * vertexTangent_modelspace;
@@ -42,8 +40,8 @@ void main()
         vec3 vertexNormal_cameraspace = MV3x3 * vertexNormal_modelspace;
         mat3 TBN = transpose(mat3(
                 vertexTangent_cameraspace,
-                vertexBitangent_modelspace,
-                vertexNormal_modelspace
+              vertexBitangent_cameraspace,
+                 vertexNormal_cameraspace
         ));
 
         lightDirection_tangentspace = TBN * lightDirection_cameraspace;
