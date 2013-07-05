@@ -21,9 +21,8 @@ class BlTerrain
                                 btVector3 _position,
                                 btVector3 _scale,
                                 const char *_heightMapPath,
-                                const char *_normalMapPath,
-                                const char *_textureSetName,
-                                std::vector<float> _textureSetHeights
+                                const char *_diffuseTexture,
+                                const char *_normalTexture
                          ) :
                         position(_position),
                         scale(_scale),
@@ -34,9 +33,8 @@ class BlTerrain
                         minHeight(_minHeight),
                         maxHeight(_maxHeight),
                         heightMapPath(_heightMapPath),
-                        normalMapPath(_normalMapPath),
-                        textureSetName(_textureSetName),
-                        textureSetHeights(_textureSetHeights) {};
+                        diffuseTexturePath(_diffuseTexture),
+                        normalTexturePath(_normalTexture) {};
                 ~BlTerrain();
 
                 void init();
@@ -46,8 +44,7 @@ class BlTerrain
                                 GLint locNormal,
                                 GLint locTangent,
                                 GLint locBitangent,
-                                GLint locUVTexture,
-                                GLint locUVNormal);
+                                GLint locUVTexture);
 
                 void bindTextures();
                 void bindModelMatrix(GLint uniformModel);
@@ -64,7 +61,6 @@ class BlTerrain
         private:
                 BlTexture *blTexture;
                 std::vector <float> textureUVs;
-                std::vector <float> normalUVs;
                 std::vector <unsigned int> indices;
 
                 int gridWidth;
@@ -74,13 +70,12 @@ class BlTerrain
                 float maxHeight;
 
                 const char *heightMapPath;
-                const char *normalMapPath;
                 char *heightMapData;
-                const char *textureSetName;
-                std::vector<float> textureSetHeights;
+                const char *diffuseTexturePath;
+                const char *normalTexturePath;
 
-                GLuint heightmapBuffer;
-                GLuint textureBuffer;
+                GLuint heightmapTextureBuffer;
+                GLuint diffuseTextureBuffer;
                 GLuint normalTextureBuffer;
 
                 GLuint vertexBuffer;
@@ -89,8 +84,7 @@ class BlTerrain
                 GLuint bitangentBuffer;
 
                 GLuint indiceBuffer;
-                GLuint uvTextureBuffer;
-                GLuint uvNormalBuffer;
+                GLuint uvBuffer;
 
         private:
                 void createRigidBody();

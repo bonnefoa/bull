@@ -181,8 +181,6 @@ std::map<std::string, btVector3> BlLoader::readShapeOffset(YAML::Node node)
 BlTerrain* BlLoader::loadTerrain(YAML::Node node)
 {
         std::string name = node["name"].as<std::string>();
-        const char *normalmap = strduplicate(
-                        (node["normalmap"].as<std::string>()).c_str());
         const char *image = strduplicate(
                         (node["image"].as<std::string>()).c_str());
         btVector3 position = readVector3(node["position"]);
@@ -194,18 +192,18 @@ BlTerrain* BlLoader::loadTerrain(YAML::Node node)
         float minHeight = node["minHeight"].as<float>();
         float maxHeight = node["maxHeight"].as<float>();
 
-        const char *textureSetName = strduplicate((node["textureSetName"]
+        const char *diffuseTexture = strduplicate((node["diffuseTexture"]
                                 .as<std::string>()).c_str());
-        std::vector<float> textureSetHeights =
-                node["textureSetHeights"].as<std::vector<float> >();
+        const char *normalTexture = strduplicate((node["normalTexture"]
+                                .as<std::string>()).c_str());
 
         BlTerrain *blTerrain = new BlTerrain(blTexture,
                         gridWidth, gridLenght,
                         heightScale,
                         minHeight, maxHeight,
                         position, scale,
-                        image, normalmap,
-                        textureSetName, textureSetHeights);
+                        image,
+                        diffuseTexture, normalTexture);
         return blTerrain;
 }
 

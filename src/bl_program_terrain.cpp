@@ -33,7 +33,6 @@ void BlProgramTerrain::init(void)
         locView = glGetUniformLocation(programId, "V");
         locProjection = glGetUniformLocation(programId, "P");
         locUVTexture = glGetAttribLocation(programId, "uvTexture");
-        locUVNormal = glGetAttribLocation(programId, "uvNormal");
         locVertices = glGetAttribLocation(programId
                         , "vertexPosition_modelspace");
         locNormal = glGetAttribLocation(programId
@@ -60,9 +59,8 @@ void BlProgramTerrain::init(void)
         INFO("Tangent location %i\n", locTangent);
         INFO("Bitangent location %i\n", locBitangent);
         INFO("UV texture location %i\n", locUVTexture);
-        INFO("UV normal location %i\n", locUVNormal);
         //if(locModel < 0 || locView < 0 || locProjection < 0 || locVertices < 0
-                        //|| locTangent < 0 || locBitangent < 0 || locUVNormal < 0) {
+                        //|| locTangent < 0 || locBitangent < 0 ) {
                 //ERROR("unused location\n");
         //}
 }
@@ -84,7 +82,6 @@ void BlProgramTerrain::displayScene(BlScene *blScene)
                                 locNormal,
                                 locTangent,
                                 locBitangent,
-                                locUVTexture,
-                                locUVNormal);
+                                locUVTexture);
         }
 }

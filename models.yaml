@@ -6,11 +6,6 @@ lights:
 ambient:
         filename: /home/sora/blender/ambientLight.dae
 
-textureSet:
-        - name: firstTextureSet
-          files: [/home/sora/blender/soil/ground_grass_gen_05.png,
-                  /home/sora/blender/soil/ground_grass_gen_02.png]
-
 terrains:
         - name: floor
           image: /home/sora/blender/heightmap.png
@@ -22,8 +17,8 @@ terrains:
           heightScale: 0.05
           minHeight: -10
           maxHeight: 10
-          textureSetName: firstTextureSet
-          textureSetHeights: [0.0, 10.0]
+          diffuseTexture: /home/sora/blender/soil/pattern_164/diffuse.png
+          normalTexture: /home/sora/blender/soil/pattern_164/normal.png
 
 character:
         name: knight
