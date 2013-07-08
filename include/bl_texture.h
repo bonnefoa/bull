@@ -14,8 +14,6 @@ class BlTexture
                 BlTexture() {};
                 ~BlTexture();
                 GLuint fetchTexture(std::string filename);
-                GLuint fillTextureAtlas(std::string setName
-                        , std::vector<std::string> files);
                 void deleteTexture(std::string filename) ;
                 void clear();
 

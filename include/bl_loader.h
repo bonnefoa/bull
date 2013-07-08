@@ -42,7 +42,6 @@ class BlLoader
                 BlCharacter *loadCharacter(YAML::Node node);
 
                 btVector3 readVector3(YAML::Node node);
-                void loadTextureSet(YAML::Node node);
 };
 
 

@@ -38,32 +38,6 @@ GLenum colorTypeToGlFormat(int colorType)
         return 0;
 }
 
-BlImage *readMultipleImages(std::vector<std::string> images)
-{
-        std::vector<BlImage*> parsedImages;
-        for (std::vector<std::string>::iterator it=images.begin();
-                        it!=images.end(); ++it) {
-                parsedImages.push_back(readPngImage((*it).c_str()));
-        }
-
-        unsigned int width = parsedImages[0]->width;
-        unsigned int height = parsedImages[0]->height;
-        GLenum format = parsedImages[0]->format;
-        int numChannels = parsedImages[0]->numChannels;
-
-        size_t imageSize = width * height * numChannels * sizeof(char);
-        unsigned char *pixels = (unsigned char*) malloc(imageSize
-                        * images.size());
-
-        for (unsigned int i = 0; i < images.size(); i++) {
-                memcpy(pixels + i * imageSize,
-                       parsedImages[i]->pixels,
-                       imageSize);
-                delete parsedImages[i];
-        }
-        return new BlImage(width, height, pixels, format, numChannels);
-}
-
 BlImage *readPngImage(const char *filename)
 {
         FILE * infile;

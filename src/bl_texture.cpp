@@ -28,33 +28,6 @@ void BlTexture::deleteTexture(std::string filename)
         mapTextureToBuffer.erase(filename);
 }
 
-GLuint BlTexture::fillTextureAtlas(std::string setName
-                , std::vector<std::string> files)
-{
-        BlImage *blImage = readMultipleImages(files);
-
-        GLuint textureBuffer;
-        glGenTextures(1, &textureBuffer);
-        glBindTexture(GL_TEXTURE_2D, textureBuffer);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-        glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-        INFO("Loading in buffer %i image of size %i / %i\n",
-                        textureBuffer, blImage->width, blImage->height);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
-                        blImage->width, blImage->height,
-                        0, GL_RGB, GL_UNSIGNED_BYTE,
-                        blImage->pixels);
-
-        mapTextureToBuffer[setName] = textureBuffer;
-        return textureBuffer;
-}
-
 void BlTexture::clear()
 {
         std::map<std::string, GLuint>::iterator it;
