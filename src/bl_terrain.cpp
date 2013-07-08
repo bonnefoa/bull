@@ -160,8 +160,8 @@ void BlTerrain::createRigidBody()
 std::vector<btVector3> BlTerrain::extractImageData(BlImage *blImage)
 {
         std::vector<btVector3> gridData = std::vector<btVector3>(gridWidth * gridLenght);
-        int lengthIncrement = blImage->height / gridLenght;
-        int widthIncrement = blImage->width / gridWidth;
+        int lengthIncrement = blImage->surface->h / gridLenght;
+        int widthIncrement = blImage->surface->w / gridWidth;
         for(int x = 0; x < gridWidth; x++) {
                 for(int z = 0; z < gridLenght; z++) {
                         int index = x + z * gridWidth;
@@ -182,7 +182,7 @@ void BlTerrain::initTextures()
 
 void BlTerrain::initHeightmapData()
 {
-        BlImage *heightMapImage = readPngImage(heightMapPath);
+        BlImage *heightMapImage = new BlImage(heightMapPath);
 
         std::vector<btVector3> heightVectors = extractImageData(heightMapImage);
         heightMapData = (char *)malloc(gridWidth * gridLenght * sizeof(char));

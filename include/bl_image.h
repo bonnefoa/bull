@@ -8,36 +8,26 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 #include <string>
-#include <vector>
-#include <bullet.h>
+#include <SDL_image.h>
+#include "bullet.h"
 
 class BlImage {
         public:
-                BlImage (unsigned int _width,
-                                unsigned int _height,
-                                unsigned char * _pixels,
-                                GLenum _format,
-                                int _numChannels) :
-                        width(_width),
-                        height(_height),
-                        pixels(_pixels),
-                        format(_format),
-                        numChannels(_numChannels) {};
+                BlImage (SDL_Surface *_surface) : surface(_surface) {};
+                BlImage (const char *filename);
+
                 int getPixelIndexAt(int x, int y);
                 btVector3 getPixelsAt(int x, int y);
                 unsigned char getPixelAt(int x, int y);
 
-                unsigned int width;
-                unsigned int height;
-                unsigned char *pixels;
-                GLenum format;
-                int numChannels;
-
                 void loadInBuffer(GLuint imageBuffer);
                 void writeImage(const char *destination);
                 virtual ~BlImage(void);
-};
 
-BlImage *readPngImage(const char *filename);
+                SDL_Surface *surface;
+
+        private:
+                GLenum getGlFormat();
+};
 
 #endif

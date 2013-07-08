@@ -14,7 +14,7 @@ GLuint BlTexture::fetchTexture(std::string filename)
         INFO("Loading texture %s\n", filename.c_str());
         GLuint textureBuffer;
         glGenTextures(1, &textureBuffer);
-        BlImage *blImage = readPngImage(filename.c_str());
+        BlImage *blImage = new BlImage(filename.c_str());
         blImage->loadInBuffer(textureBuffer);
         delete blImage;
         mapTextureToBuffer[filename] = textureBuffer;
