@@ -2,7 +2,6 @@
 #include <bl_gl_util.h>
 #include <bl_matrix.h>
 #include <bl_log.h>
-#include <bl_heightmap.h>
 #include <sys/stat.h>
 #include <map>
 #include <bl_vertice.h>
