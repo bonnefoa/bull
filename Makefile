@@ -6,9 +6,9 @@ TESTDIR = tests
 
 CC      = clang++
 CCFLAGS = -I$(IDIR) -Wextra -Wall -Werror
-CCFLAGS += `pkg-config --cflags glew gl sdl2 bullet assimp libpng yaml-cpp SDL2_ttf SDL_net`
+CCFLAGS += `pkg-config --cflags glew gl sdl2 bullet assimp yaml-cpp sdl2 SDL2_ttf SDL2_image`
 
-LIBS = `pkg-config --libs glew gl sdl2 bullet assimp libpng yaml-cpp SDL2_ttf SDL_net`
+LIBS = `pkg-config --libs glew gl bullet assimp libpng yaml-cpp sdl2 SDL2_ttf SDL2_image`
 
 TEST_CCFLAGS = $(CCFLAGS)
 TEST_CCFLAGS += `pkg-config --cflags check`

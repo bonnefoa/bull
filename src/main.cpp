@@ -10,7 +10,6 @@
 #include <bl_simulation.h>
 #include <bl_sdl.h>
 #include <bl_matrix.h>
-#include <bl_network.h>
 #include <bl_camera.h>
 #include <bl_text.h>
 #include <bl_debug.h>
@@ -25,7 +24,6 @@ BlProgramShadow *blProgramShadow;
 BlProgramTexture *blProgramTexture;
 BlTexture *blTexture;
 BlLoader *blLoader;
-BlNetwork *blNetwork;
 
 BlProgramDebug *blProgramDebug;
 
@@ -70,8 +68,6 @@ void initComponents(const char *filename)
                         blCamera, blText);
         blDebugDrawer->init();
         blSimulation = new BlSimulation(blDebugDrawer, blState);
-        blNetwork = new BlNetwork(blConfig);
-        blNetwork->init();
 
         blScene = blLoader->loadScene(filename);
         blProgramModel->bindProjection();
