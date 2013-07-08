@@ -263,14 +263,6 @@ BlLightAmbient *BlLoader::loadAmbientNode(YAML::Node node)
         return blMeshLoader.loadAmbientFile(filename.c_str());
 }
 
-void BlLoader::loadTextureSet(YAML::Node node)
-{
-        const char *setName = (node["name"].as<std::string>()).c_str();
-        std::vector<std::string> files = node["files"]
-                .as<std::vector<std::string> >();
-        blTexture->fillTextureAtlas(setName, files);
-}
-
 std::vector<BlLightPoint*> BlLoader::loadLightNode(YAML::Node node)
 {
         std::string modelPath = node["filename"].as<std::string>();
@@ -306,11 +298,6 @@ BlScene *BlLoader::loadScene(const char *filename)
                                 it != nodeModels->end(); ++it) {
                         models->push_back(*it);
                 }
-        }
-        YAML::Node configTextureSet = (config["textureSet"]);
-        for(YAML::const_iterator it=configTextureSet.begin();
-                        it!=configTextureSet.end();++it) {
-                loadTextureSet(*it);
         }
         YAML::Node configTerrain = config["terrains"];
         for(YAML::const_iterator it=configTerrain.begin();

@@ -107,9 +107,9 @@ void shutdown()
 
 void setLight() {
         BlLightPoint *light = blScene->blLightPoints->at(0);
-        blProgramShadow->moveLight(blScene->blCharacter->getPosition());
-        blProgramModel->moveLight(blScene->blCharacter->getPosition());
-        light->moveLight(blScene->blCharacter->getPosition());
+        blProgramShadow->moveLight(blScene->blCharacter->getPosition() + btVector3(0, 5, 0));
+        blProgramModel->moveLight(blScene->blCharacter->getPosition() + btVector3(0, 5, 0));
+        light->moveLight(blScene->blCharacter->getPosition() + btVector3(0, 5, 0));
         light->loadLightInProgram(blProgramModel->programId);
         light->loadLightInProgram(blProgramTerrain->programId);
 }
@@ -161,6 +161,7 @@ void reload(const char *configFile)
 {
         clean();
         initComponents(configFile);
+        setLight();
         blState->gamestate = NORMAL;
 }
 
