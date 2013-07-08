@@ -226,9 +226,9 @@ BlTerrain::~BlTerrain()
         glDeleteBuffers(1, &bitangentBuffer);
         glDeleteBuffers(1, &uvBuffer);
 
-        glDeleteTextures(1, &heightmapTextureBuffer);
-        glDeleteTextures(1, &diffuseTextureBuffer);
-        glDeleteTextures(1, &normalTextureBuffer);
+        blTexture->deleteTexture(diffuseTexturePath);
+        blTexture->deleteTexture(normalTexturePath);
+        blTexture->deleteTexture(heightMapPath);
         free(heightMapData);
 }
 
