@@ -299,11 +299,6 @@ BlScene *BlLoader::loadScene(const char *filename)
                         models->push_back(*it);
                 }
         }
-        YAML::Node configTextureSet = (config["textureSet"]);
-        for(YAML::const_iterator it=configTextureSet.begin();
-                        it!=configTextureSet.end();++it) {
-                loadTextureSet(*it);
-        }
         YAML::Node configTerrain = config["terrains"];
         for(YAML::const_iterator it=configTerrain.begin();
                         it!=configTerrain.end();++it) {
