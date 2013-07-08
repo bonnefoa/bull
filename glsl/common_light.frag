@@ -19,11 +19,13 @@ uniform float lightQuadraticAttenuation = 0.0;
 in vec4 shadowCoord;
 float biais = 0.05f;
 
-float getSpecularCoefficient()
+in vec3 lightDirection_tangentspace;
+in vec3 eyeDirection_tangentspace;
+
+float getSpecularCoefficient(vec3 normal_tangentspace)
 {
-        vec3 eyeDirection_cameraspace = normalize(vec3(0,0,0) - vertexPosition_cameraspace);
-        vec3 reflectedLight = reflect(-lightDirection_cameraspace, vertexNormal_cameraspace);
-        float coef = clamp(dot(reflectedLight, eyeDirection_cameraspace), 0, 1);
+        vec3 reflectedLight = reflect(-lightDirection_tangentspace, normal_tangentspace);
+        float coef = clamp(dot(reflectedLight, eyeDirection_tangentspace), 0, 1);
         return coef;
 }
 
@@ -37,18 +39,16 @@ float getAttenuation()
 
 vec4 processColor(vec4 texColor, float diffuseCoef, float specularCoef, float attenuation, float visibility)
 {
-        vec4 ambientPart = vec4(ambientColor, 1) * texColor;
-        vec4 diffusePart = texColor * vec4(lightColor, 1) * diffuseCoef * attenuation;
-        vec4 specularPart = texColor * vec4(lightColor, 1) * pow(specularCoef, 5) * attenuation;
-        vec4 color = ambientPart + (diffusePart + specularPart) * visibility;
-        return color;
+        vec3 ambientPart = ambientColor * texColor.xyz;
+        vec3 diffusePart = texColor.xyz * lightColor * diffuseCoef * attenuation;
+        vec3 specularPart = texColor.xyz * lightColor * pow(specularCoef, 5) * attenuation;
+        vec3 color = ambientPart + (diffusePart + specularPart) * visibility;
+        return vec4(color, 1);
 }
-
-in vec3 lightDirection_tangentspace;
 
 float getDiffuseCoefficientTangentspace(vec3 normal_tangentspace)
 {
-        float coef = clamp(dot(normal_tangentspace, lightDirection_tangentspace), 0, 1);
+        float coef = dot(normal_tangentspace, lightDirection_tangentspace);
         coef = clamp(coef, 0.0, 1.0);
         return coef;
 }
@@ -62,7 +62,7 @@ float getShadowVisibility()
 vec4 processColorTangentspace(vec4 texColor, vec3 normal_tangentspace, float visibility)
 {
         float diffuseCoef = getDiffuseCoefficientTangentspace(normal_tangentspace);
-        float specularCoef = getSpecularCoefficient();
+        float specularCoef = getSpecularCoefficient(normal_tangentspace);
         float attenuation = getAttenuation();
         return processColor(texColor, diffuseCoef, specularCoef, attenuation, visibility);
 }

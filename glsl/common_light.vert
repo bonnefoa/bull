@@ -23,6 +23,7 @@ out vec3 vertexNormal_cameraspace;
 out vec3 lightDirection_cameraspace;
 out vec4 shadowCoord;
 out vec3 lightDirection_tangentspace;
+out vec3 eyeDirection_tangentspace;
 
 void computeShadowCoord()
 {
@@ -36,7 +37,9 @@ void computeTangentLightInformations()
         vertexPosition_cameraspace = (V * M * vec4(vertexPosition_modelspace, 1)).xyz;
 
         vec3 lightPosition_cameraspace = (V * vec4(lightPosition_worldspace, 1)).xyz;
-        lightDirection_cameraspace = normalize(lightPosition_cameraspace - vertexPosition_cameraspace);
+        lightDirection_cameraspace = lightPosition_cameraspace - vertexPosition_cameraspace;
+
+        vec3 eyeDirection_cameraspace = normalize(vec3(0,0,0) - vertexPosition_cameraspace);
 
         mat3 MV3x3 = mat3(V * M);
 
@@ -50,4 +53,5 @@ void computeTangentLightInformations()
         ));
 
         lightDirection_tangentspace = TBN * lightDirection_cameraspace;
+        eyeDirection_tangentspace = TBN * eyeDirection_cameraspace;
 }
