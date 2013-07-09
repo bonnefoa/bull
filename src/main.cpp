@@ -13,6 +13,8 @@
 #include <bl_camera.h>
 #include <bl_text.h>
 #include <bl_debug.h>
+#include <bl_program_skybox.h>
+#include <bl_skybox.h>
 
 BlInput *blInput;
 BlSdl *blSdl;
@@ -22,6 +24,8 @@ BlProgramModel *blProgramModel;
 BlProgramTerrain *blProgramTerrain;
 BlProgramShadow *blProgramShadow;
 BlProgramTexture *blProgramTexture;
+BlProgramSkybox *blProgramSkybox;
+
 BlTexture *blTexture;
 BlLoader *blLoader;
 
@@ -55,6 +59,7 @@ void initComponents(const char *filename)
         blProgramModel = getProgramModel(blConfig, blState, blCamera);
         blProgramTerrain = getProgramTerrain(blConfig, blCamera);
         blProgramTexture = getProgramTexture();
+        blProgramSkybox = getProgramSkybox(blConfig, blCamera);
         blProgramShadow = getProgramShadow(btVector3());
         blLoader = new BlLoader(blTexture, blState);
 
@@ -122,6 +127,7 @@ void render()
         blProgramShadow->displaySceneForRender(blScene);
         blProgramModel->displayScene(blScene, blProgramShadow->depthTexture);
         blProgramTerrain->displayScene(blScene);
+        blProgramSkybox->displayScene(blScene);
         blDebug->renderDebug();
 
         SDL_GL_SwapWindow(blSdl->window);

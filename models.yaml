@@ -6,6 +6,14 @@ lights:
 ambient:
         filename: /home/sora/blender/ambientLight.dae
 
+skybox:
+        xpos: /home/sora/blender/sky/miramar_rt.tga
+        xneg: /home/sora/blender/sky/miramar_lf.tga
+        ypos: /home/sora/blender/sky/miramar_up.tga
+        yneg: /home/sora/blender/sky/miramar_dn.tga
+        zpos: /home/sora/blender/sky/miramar_ft.tga
+        zneg: /home/sora/blender/sky/miramar_bk.tga
+
 terrains:
         - name: floor
           image: /home/sora/blender/heightmap.png

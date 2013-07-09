@@ -158,6 +158,17 @@ BlLightAmbient *BlLoader::loadAmbientNode(YAML::Node node)
         return blMeshLoader.loadAmbientFile(filename.c_str());
 }
 
+BlSkybox *BlLoader::loadSkybox(YAML::Node node)
+{
+        const char *xpos = getNodeChar(node, "xpos");
+        const char *xneg = getNodeChar(node, "xneg");
+        const char *ypos = getNodeChar(node, "ypos");
+        const char *yneg = getNodeChar(node, "yneg");
+        const char *zpos = getNodeChar(node, "zpos");
+        const char *zneg = getNodeChar(node, "zneg");
+        return new BlSkybox(xpos, xneg, ypos, yneg, zpos, zneg);
+}
+
 std::vector<BlLightPoint*> BlLoader::loadLightNode(YAML::Node node)
 {
         std::string modelPath = node["filename"].as<std::string>();
@@ -202,7 +213,9 @@ BlScene *BlLoader::loadScene(const char *filename)
         }
         YAML::Node characterNode = config["character"];
         BlCharacter *blCharacter = loadCharacter(characterNode);
+        YAML::Node skyboxNode = config["skybox"];
+        BlSkybox *blSkybox = loadSkybox(skyboxNode);
         INFO("Scene has %i models, %i lights\n", models->size(),
                         lights->size());
-        return new BlScene(models, lights, ambient, terrains, blCharacter);
+        return new BlScene(models, lights, ambient, terrains, blCharacter, blSkybox);
 }
