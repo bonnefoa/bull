@@ -15,12 +15,12 @@ const GLfloat BlSkybox::cubeVertices[24] = {
 };
 
 const GLushort BlSkybox::cubeIndices[24] = {
-        0, 1, 2, 3,
-        3, 2, 6, 7,
-        7, 6, 5, 4,
-        4, 5, 1, 0,
-        0, 3, 7, 4,
-        1, 2, 6, 5,
+        3, 2, 1, 0,
+        7, 6, 2, 3,
+        4, 5, 6, 7,
+        0, 1, 5, 4,
+        4, 7, 3, 0,
+        5, 6, 2, 1,
 };
 
 const GLenum BlSkybox::targetTypes[6] = { GL_TEXTURE_CUBE_MAP_POSITIVE_X,
@@ -53,12 +53,12 @@ void BlSkybox::init()
         glGenTextures(1, &cubeMapTexture);
         glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMapTexture);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
         for (int i = 0; i < 6; i++) {
                 BlImage *image = new BlImage(imagePaths[i]);
@@ -84,9 +84,7 @@ void BlSkybox::loadInBuffer()
 void BlSkybox::drawSkybox(GLint locModel,
                 GLint locVertices)
 {
-        (void) locModel;
-        (void) locVertices;
-        btTransform model = buildModelMatrix(btVector3(1, 1, 1), btVector3(0,0,0));
+        btTransform model = buildModelMatrix(btVector3(200, 200, 200), btVector3(0,0,0));
         sendTransform(model, locModel);
 
         glActiveTexture(GL_TEXTURE10);
@@ -98,7 +96,7 @@ void BlSkybox::drawSkybox(GLint locModel,
                         , GL_FALSE, 0, (void *)0);
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indiceBuffer);
-        glDrawElements(GL_QUADS, 1, GL_UNSIGNED_SHORT, 0);
+        glDrawElements(GL_QUADS, 24, GL_UNSIGNED_SHORT, 0);
 
         glDisableVertexAttribArray(locVertices);
 }
