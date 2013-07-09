@@ -8,9 +8,10 @@
 #include <bl_terrain.h>
 #include <bl_scene.h>
 #include <bl_mesh_loader.h>
-#include <yaml.h>
 #include <bl_character.h>
 #include <bl_state.h>
+#include <bl_skybox.h>
+#include <bl_yaml.h>
 
 class BlLoader
 {
@@ -40,8 +41,7 @@ class BlLoader
                                 YAML::Node node, btVector3 position);
                 std::map<std::string, btVector3> readShapeOffset(YAML::Node node);
                 BlCharacter *loadCharacter(YAML::Node node);
-
-                btVector3 readVector3(YAML::Node node);
+                BlSkybox *loadSkybox(YAML::Node node) ;
 };
 
 

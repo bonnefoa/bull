@@ -1,8 +1,8 @@
 #include "bl_config.h"
 #include <bl_log.h>
 #include <bl_matrix.h>
-#include <yaml.h>
 #include <bl_util.h>
+#include <bl_yaml.h>
 
 int getKeyFromName(YAML::Node node, const char *def)
 {
@@ -17,22 +17,13 @@ int getKeyFromName(YAML::Node node, const char *def)
         return res;
 }
 
-float getNodeFloat(YAML::Node node, float def)
-{
-        if(node) {
-                return node.as<float>();
-        }
-        return def;
-}
-
 BlConfig *loadBlConfig(const char *configurationFile)
 {
         INFO("Loading configuration from file %s\n", configurationFile);
         YAML::Node config = YAML::LoadFile(configurationFile);
 
         YAML::Node textNode = config["text"];
-        const char *fontPath =
-                strduplicate((textNode["font"].as<std::string>()).c_str());
+        const char *fontPath = getNodeChar(textNode, "font");
         int fontSize = textNode["size"].as<int>();
 
         YAML::Node gameNode = config["game"];
@@ -64,7 +55,7 @@ BlConfig *loadBlConfig(const char *configurationFile)
         int key_cameraThirdPerson = getKeyFromName(keyNode["cameraThirdPerson"], "f2");
 
         YAML::Node networkNode = config["network"];
-        const char *host = strduplicate(networkNode["host"].as<std::string>().c_str());
+        const char *host = getNodeChar(networkNode, "host");
         int port = networkNode["port"].as<int>();
 
         YAML::Node screenNode = config["screen"];
