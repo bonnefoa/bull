@@ -3,10 +3,16 @@
 #include <bl_log.h>
 #include <string.h>
 #include <bl_util.h>
-
 #include <png.h>
 #include <zlib.h>
 #include <math.h>
+
+bool BlImage::isTga(const char *filename)
+{
+        const char *extension = filename + strlen(filename) - 4;
+        int res = strncmp(extension, ".tga", 4);
+        return res == 0;
+}
 
 BlImage::BlImage (const char *filename)
 {
@@ -14,8 +20,13 @@ BlImage::BlImage (const char *filename)
         rwop = SDL_RWFromFile(filename, "rb");
         bool isReverted = IMG_isPNG(rwop);
 
-        surface = IMG_Load_RW(rwop, 0);
+        if(isTga(filename)){
+                surface = IMG_LoadTyped_RW(rwop, 0, "TGA");
+        } else {
+                surface = IMG_Load_RW(rwop, 0);
+        }
         if (!surface) {
+                INFO("Error on loading image %s\n", filename);
                 INFO("IMG_Load: %s\n", IMG_GetError());
         }
         if (isReverted) {
@@ -68,6 +79,14 @@ void BlImage::loadInBuffer(GLuint textureBuffer)
                         surface->w, surface->h,
                         0, format, GL_UNSIGNED_BYTE,
                         surface->pixels);
+}
+
+void BlImage::loadInCubeMap(GLenum target)
+{
+        GLenum format = getGlFormat();
+        glTexImage2D(target, 0, format,
+                        surface->w, surface->h, 0, format,
+                        GL_UNSIGNED_BYTE, surface->pixels);
 }
 
 void BlImage::writeImage(const char *destination)

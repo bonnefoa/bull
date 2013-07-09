@@ -26,8 +26,10 @@ class BlImage {
 
                 SDL_Surface *surface;
 
+                void loadInCubeMap(GLenum target);
         private:
                 GLenum getGlFormat();
+                bool isTga(const char *filename);
 };
 
 #endif
