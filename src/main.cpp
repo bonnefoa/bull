@@ -77,6 +77,7 @@ void initComponents(const char *filename)
         blScene = blLoader->loadScene(filename);
         blProgramModel->bindProjection();
         blProgramTerrain->bindProjection();
+        blProgramSkybox->bindProjection();
         blScene->init(blSimulation, blProgramModel->programId);
 
         blDebug = new BlDebug(blConfig, blState,
