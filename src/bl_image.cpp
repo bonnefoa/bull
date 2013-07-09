@@ -21,9 +21,9 @@ BlImage::BlImage (const char *filename)
         bool isReverted = IMG_isPNG(rwop);
 
         if(isTga(filename)){
-                surface = IMG_LoadTyped_RW(rwop, 0, "TGA");
+                surface = IMG_LoadTyped_RW(rwop, 1, "TGA");
         } else {
-                surface = IMG_Load_RW(rwop, 0);
+                surface = IMG_Load_RW(rwop, 1);
         }
         if (!surface) {
                 INFO("Error on loading image %s\n", filename);
@@ -44,7 +44,6 @@ BlImage::BlImage (const char *filename)
                                         lineSize);
                 }
         }
-        SDL_RWclose(rwop);
 };
 
 GLenum BlImage::getGlFormat()
