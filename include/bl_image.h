@@ -29,6 +29,7 @@ class BlImage {
                 void loadInCubeMap(GLenum target);
         private:
                 GLenum getGlFormat();
+                GLenum getSurfaceFormat();
                 bool isTga(const char *filename);
 };
 

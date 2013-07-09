@@ -60,6 +60,29 @@ GLenum BlImage::getGlFormat()
         return 0;
 }
 
+GLenum BlImage::getSurfaceFormat()
+{
+        Uint32 r = surface->format->Rmask;
+        Uint32 g = surface->format->Gmask;
+        Uint32 b = surface->format->Bmask;
+        bool hasAlpha = surface->format->BytesPerPixel == 4;
+        INFO("r %x, g %x, b %x, a %x\n", r, g, b);
+        if(r == 0xff && g == 0xff00 && b == 0xff0000) {
+                if(hasAlpha) {
+                        return GL_RGBA;
+                }
+                return GL_RGB;
+        }
+        if(r == 0xff0000 && g == 0xff00 && b == 0xff) {
+                if(hasAlpha) {
+                        return GL_BGRA;
+                }
+                return GL_BGR;
+        }
+        INFO("Unkown pixel color order\n");
+        return GL_RGB;
+}
+
 void BlImage::loadInBuffer(GLuint textureBuffer)
 {
         glBindTexture(GL_TEXTURE_2D, textureBuffer);
@@ -74,17 +97,19 @@ void BlImage::loadInBuffer(GLuint textureBuffer)
         INFO("Loading in buffer %i image of size %i / %i\n", textureBuffer,
                         surface->w, surface->h);
         GLenum format = getGlFormat();
+        GLenum surfaceFormat = getSurfaceFormat();
         glTexImage2D(GL_TEXTURE_2D, 0, format,
                         surface->w, surface->h,
-                        0, format, GL_UNSIGNED_BYTE,
+                        0, surfaceFormat, GL_UNSIGNED_BYTE,
                         surface->pixels);
 }
 
 void BlImage::loadInCubeMap(GLenum target)
 {
         GLenum format = getGlFormat();
+        GLenum surfaceFormat = getSurfaceFormat();
         glTexImage2D(target, 0, format,
-                        surface->w, surface->h, 0, format,
+                        surface->w, surface->h, 0, surfaceFormat,
                         GL_UNSIGNED_BYTE, surface->pixels);
 }
 
