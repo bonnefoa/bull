@@ -50,6 +50,7 @@ void BlSkybox::init()
 
         glActiveTexture(GL_TEXTURE10);
         glEnable(GL_TEXTURE_CUBE_MAP);
+        glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
         glGenTextures(1, &cubeMapTexture);
         glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMapTexture);
 
