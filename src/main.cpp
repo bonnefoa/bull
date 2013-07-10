@@ -61,7 +61,7 @@ void initComponents(const char *filename)
         blProgramModel = getProgramModel(blConfig, blState);
         blProgramTerrain = getProgramTerrain(blConfig);
         blProgramTexture = getProgramTexture();
-        blProgramSkybox = getProgramSkybox(blConfig);
+        blProgramSkybox = getProgramSkybox();
         blProgramShadow = getProgramShadow(btVector3());
         blLoader = new BlLoader(blTexture, blState);
 
@@ -76,14 +76,12 @@ void initComponents(const char *filename)
         blSimulation = new BlSimulation(blDebugDrawer, blState);
 
         blScene = blLoader->loadScene(filename);
-        blProgramModel->bindProjection();
-        blProgramTerrain->bindProjection();
-        blProgramSkybox->bindProjection();
         blScene->init(blSimulation, blProgramModel->programId);
 
         blDebug = new BlDebug(blConfig, blState,
                         blDebugDrawer, blSimulation, blText, blScene);
-        blProgramOculus = getProgramOculus(blConfig, blCamera, blProgramModel,
+        blProgramOculus = getProgramOculus(blConfig,
+                        blCamera, blProgramModel,
                         blProgramTerrain, blProgramSkybox, blProgramShadow,
                         blDebug, blScene);
 }
