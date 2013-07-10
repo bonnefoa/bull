@@ -73,11 +73,6 @@ void BlProgramModel::init()
         }
 }
 
-void BlProgramModel::bindProjection()
-{
-        bindProjectionMatrix(programId, locProjection, blConfig->projection);
-}
-
 void BlProgramModel::moveLight(btVector3 position)
 {
         glUseProgram(programId);
@@ -85,9 +80,12 @@ void BlProgramModel::moveLight(btVector3 position)
         sendTransform(trans, locShadowVP);
 }
 
-void BlProgramModel::displayScene(BlScene *blScene, GLuint depthTexture, btTransform view)
+void BlProgramModel::displayScene(BlScene *blScene, GLuint depthTexture, btTransform view,
+                btTransform projection)
 {
         glUseProgram(programId);
+
+        bindProjectionMatrix(programId, locProjection, projection);
 
         glActiveTexture(GL_TEXTURE2);
         glBindTexture(GL_TEXTURE_2D, depthTexture);

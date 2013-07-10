@@ -15,6 +15,7 @@ typedef struct viewport {
         int height;
         int x;
         int y;
+        btTransform projection;
 } viewport_t;
 
 class BlProgramOculus : public BlProgram
@@ -70,6 +71,7 @@ class BlProgramOculus : public BlProgram
 
                 viewport_t viewportLeft;
                 viewport_t viewportRight;
+                viewport_t viewportFull;
 };
 
 BlProgramOculus *getProgramOculus(BlConfig *blConfig,

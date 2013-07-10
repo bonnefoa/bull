@@ -25,9 +25,8 @@ class  BlProgramModel : public BlProgram
                 void displayModel(BlModel *model);
                 void displayCharacter(BlCharacter *blCharacter);
                 void displayScene(BlScene *blScene, GLuint depthTexture,
-                                btTransform view);
+                                btTransform view, btTransform projection);
                 void moveLight(btVector3 position);
-                void bindProjection();
 
         private:
                 BlConfig *blConfig;

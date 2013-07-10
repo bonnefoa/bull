@@ -11,19 +11,14 @@
 class BlProgramSkybox : public BlProgram
 {
         public:
-                BlProgramSkybox(std::vector<BlShader *> shaders,
-                                BlConfig *_blConfig
-                               )
-                        : BlProgram(shaders),
-                        blConfig(_blConfig) {};
+                BlProgramSkybox(std::vector<BlShader *> shaders)
+                        : BlProgram(shaders) {};
 
                 void init(void);
-                void displayScene(BlScene *scene, btTransform view);
-                void bindProjection();
+                void displayScene(BlScene *scene, btTransform view,
+                                btTransform projection);
 
         private:
-                BlConfig *blConfig;
-
                 GLint locVertices;
                 GLint locModel;
                 GLint locView;
@@ -31,6 +26,6 @@ class BlProgramSkybox : public BlProgram
                 GLint cubemapSampler;
 };
 
-BlProgramSkybox *getProgramSkybox(BlConfig *blConfig);
+BlProgramSkybox *getProgramSkybox();
 
 #endif /* end of include guard: BL_PROGRAM_SKYBOX_H */

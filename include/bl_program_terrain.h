@@ -18,10 +18,9 @@ class BlProgramTerrain : public BlProgram
                         blConfig(_blConfig) {};
 
                 void init(void);
-                void displayScene(BlScene *scene, btTransform view);
+                void displayScene(BlScene *scene, btTransform view,
+                                btTransform projection);
                 void moveLight(btVector3 newPosition);
-
-                void bindProjection();
 
         private:
                 BlConfig *blConfig;

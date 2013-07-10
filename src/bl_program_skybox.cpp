@@ -1,7 +1,7 @@
 #include "bl_program_skybox.h"
 #include <bl_matrix.h>
 
-BlProgramSkybox *getProgramSkybox(BlConfig *blConfig)
+BlProgramSkybox *getProgramSkybox()
 {
         std::vector<BlShader*> shaders;
         BlShader *vertexShader = new BlShader("glsl/skybox.vert"
@@ -11,8 +11,7 @@ BlProgramSkybox *getProgramSkybox(BlConfig *blConfig)
         shaders.push_back(vertexShader);
         shaders.push_back(fragmentShader);
 
-        BlProgramSkybox *blProgramSkybox = new BlProgramSkybox(shaders,
-                        blConfig);
+        BlProgramSkybox *blProgramSkybox = new BlProgramSkybox(shaders);
         blProgramSkybox->loadProgram();
         blProgramSkybox->init();
         return blProgramSkybox;
@@ -34,14 +33,11 @@ void BlProgramSkybox::init()
         glUniform1i(cubemapSampler, 10);
 }
 
-void BlProgramSkybox::displayScene(BlScene *scene, btTransform view)
+void BlProgramSkybox::displayScene(BlScene *scene, btTransform view,
+                btTransform projection)
 {
         glUseProgram(programId);
+        bindProjectionMatrix(programId, locProjection, projection);
         sendTransform(view, locView);
         scene->blSkybox->drawSkybox(locModel, locVertices);
-}
-
-void BlProgramSkybox::bindProjection()
-{
-        bindProjectionMatrix(programId, locProjection, blConfig->projection);
 }

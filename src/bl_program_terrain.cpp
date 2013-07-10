@@ -65,14 +65,11 @@ void BlProgramTerrain::init(void)
         }
 }
 
-void BlProgramTerrain::bindProjection()
-{
-        bindProjectionMatrix(programId, locProjection, blConfig->projection);
-}
-
-void BlProgramTerrain::displayScene(BlScene *blScene, btTransform view)
+void BlProgramTerrain::displayScene(BlScene *blScene, btTransform view,
+                btTransform projection)
 {
         glUseProgram(programId);
+        bindProjectionMatrix(programId, locProjection, projection);
         sendTransform(view, locView);
         for (std::vector<BlTerrain*>::iterator
                         it = blScene->blTerrains->begin();

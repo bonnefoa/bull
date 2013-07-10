@@ -1,5 +1,6 @@
 #include "bl_program_oculus.h"
 #include <bl_log.h>
+#include <bl_matrix.h>
 
 const GLfloat BlProgramOculus::quadVertices[12] = {
         -1, -1, 0,
@@ -26,8 +27,9 @@ BlProgramOculus *getProgramOculus(BlConfig *blConfig,
         shaders.push_back(modelFragmentShader);
 
         BlProgramOculus *blProgramOculus = new BlProgramOculus(blConfig,
-                        blCamera, shaders, blProgramModel, blProgramTerrain,
-                        blProgramSkybox, blProgramShadow, blDebug, blScene);
+                        blCamera, shaders, blProgramModel,
+                        blProgramTerrain, blProgramSkybox, blProgramShadow,
+                        blDebug, blScene);
         blProgramOculus->loadProgram();
         blProgramOculus->init();
         return blProgramOculus;
@@ -67,15 +69,34 @@ void BlProgramOculus::initFramebuffer()
 void BlProgramOculus::initViewports()
 {
         int eyeWidth = blConfig->width / 2;
-        viewportLeft.width = eyeWidth;
-        viewportLeft.height = blConfig->height;
-        viewportLeft.x = 0;
-        viewportLeft.y = 0;
 
-        viewportRight.width = eyeWidth;
-        viewportRight.height = blConfig->height;
-        viewportRight.x = eyeWidth;
-        viewportRight.y = 0;
+        float lensSeparationDistance = 0.0635f;
+        float viewCenter         = blConfig->width * 0.25f;
+        float eyeProjectionShift = viewCenter - lensSeparationDistance*0.5f;
+        btVector3 projectionCenterOffset = btVector3(
+                        4.0f * eyeProjectionShift / blConfig->height, 0, 0);
+        btTransform leftProjection = translateBtTransform(blConfig->projection,
+                       projectionCenterOffset);
+        btTransform rightProjection = translateBtTransform(blConfig->projection,
+                        -1 *  projectionCenterOffset);
+
+        viewportLeft.projection  = leftProjection;
+        viewportLeft.width       = eyeWidth;
+        viewportLeft.height      = blConfig->height;
+        viewportLeft.x           = 0;
+        viewportLeft.y           = 0;
+
+        viewportRight.projection = rightProjection;
+        viewportRight.width      = eyeWidth;
+        viewportRight.height     = blConfig->height;
+        viewportRight.x          = eyeWidth;
+        viewportRight.y          = 0;
+
+        viewportFull.projection  = blConfig->projection;
+        viewportFull.width       = blConfig->width;
+        viewportFull.height      = blConfig->height;
+        viewportFull.x           = 0;
+        viewportFull.y           = 0;
 }
 
 void BlProgramOculus::init()
@@ -83,6 +104,7 @@ void BlProgramOculus::init()
         glUseProgram(programId);
 
         initFramebuffer();
+        initViewports();
 
         glGenBuffers(1, &vertexBuffer);
         glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
@@ -98,25 +120,32 @@ void BlProgramOculus::init()
 
 void BlProgramOculus::renderSceneToTexture(viewport_t viewport, btTransform view)
 {
-        (void) viewport;
-        glBindFramebuffer(GL_FRAMEBUFFER, oculusFramebuffer);
-
-        glClearColor( 0.0, 0.0, 0.2, 1.0 );
-        glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        blProgramSkybox->displayScene(blScene, view);
-        blProgramTerrain->displayScene(blScene, view);
-        blProgramModel->displayScene(blScene, blProgramShadow->depthTexture, view);
+        glViewport(viewport.x, viewport.y, viewport.width, viewport.height);
+        blProgramSkybox->displayScene(blScene, view, viewport.projection);
+        blProgramTerrain->displayScene(blScene, view, viewport.projection);
+        blProgramModel->displayScene(blScene, blProgramShadow->depthTexture,
+                        view, viewport.projection);
         blDebug->renderDebug(view);
-
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void BlProgramOculus::renderScene()
 {
-        renderSceneToTexture(viewportLeft, blCamera->view);
+        glBindFramebuffer(GL_FRAMEBUFFER, oculusFramebuffer);
+        glClearColor( 0.0, 0.0, 0.2, 1.0 );
+        glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        btVector3 centerOffset = btVector3(blConfig->interpupillaryDistance * 0.5f, 0, 0);
+
+        btTransform leftView = translateBtTransform(blCamera->view, -1 * centerOffset);
+        btTransform rightView = translateBtTransform(blCamera->view, centerOffset);
+
+        renderSceneToTexture(viewportLeft, leftView);
+        renderSceneToTexture(viewportRight, rightView);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         glUseProgram(programId);
+        glViewport(viewportFull.x, viewportFull.y,
+                        viewportFull.width, viewportFull.height);
 
         glClearColor( 0.0, 0.0, 0.2, 1.0 );
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
