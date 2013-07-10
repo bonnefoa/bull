@@ -60,7 +60,9 @@ class BlConfig {
                                 key_cameraFirstPerson(_key_cameraFirstPerson),
                                 key_cameraThirdPerson(_key_cameraThirdPerson),
                                 host(_host),
-                                port(_port)
+                                port(_port),
+
+                                interpupillaryDistance(0.064f)
                 {} ;
 
                 const char* fontPath;
@@ -90,6 +92,8 @@ class BlConfig {
                 int key_cameraThirdPerson;
                 const char* host;
                 int port;
+
+                float interpupillaryDistance;
 };
 
 BlConfig *loadBlConfig(const char *configurationFile);
