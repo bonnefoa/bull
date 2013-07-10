@@ -58,10 +58,10 @@ void initComponents(const char *filename)
         blCamera = new BlCamera(blConfig, blState);
         blInput = new BlInput(blState, blConfig, blCamera);
 
-        blProgramModel = getProgramModel(blConfig, blState, blCamera);
-        blProgramTerrain = getProgramTerrain(blConfig, blCamera);
+        blProgramModel = getProgramModel(blConfig, blState);
+        blProgramTerrain = getProgramTerrain(blConfig);
         blProgramTexture = getProgramTexture();
-        blProgramSkybox = getProgramSkybox(blConfig, blCamera);
+        blProgramSkybox = getProgramSkybox(blConfig);
         blProgramShadow = getProgramShadow(btVector3());
         blLoader = new BlLoader(blTexture, blState);
 
@@ -71,8 +71,7 @@ void initComponents(const char *filename)
         blText->init();
 
         blProgramDebug = getProgramDebug(blConfig);
-        blDebugDrawer = new BlDebugDrawer(blProgramDebug, blState,
-                        blCamera, blText);
+        blDebugDrawer = new BlDebugDrawer(blProgramDebug, blState, blText);
         blDebugDrawer->init();
         blSimulation = new BlSimulation(blDebugDrawer, blState);
 
@@ -84,7 +83,7 @@ void initComponents(const char *filename)
 
         blDebug = new BlDebug(blConfig, blState,
                         blDebugDrawer, blSimulation, blText, blScene);
-        blProgramOculus = getProgramOculus(blConfig, blProgramModel,
+        blProgramOculus = getProgramOculus(blConfig, blCamera, blProgramModel,
                         blProgramTerrain, blProgramSkybox, blProgramShadow,
                         blDebug, blScene);
 }

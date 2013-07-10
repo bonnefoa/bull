@@ -2,7 +2,7 @@
 #include <bl_matrix.h>
 #include <bl_log.h>
 
-BlProgramTerrain *getProgramTerrain(BlConfig *blConfig, BlCamera *blCamera)
+BlProgramTerrain *getProgramTerrain(BlConfig *blConfig)
 {
         std::vector<BlShader*> shaders;
         BlShader *vertexShader = new BlShader("glsl/terrain.vert"
@@ -19,7 +19,7 @@ BlProgramTerrain *getProgramTerrain(BlConfig *blConfig, BlCamera *blCamera)
         shaders.push_back(commonFragment);
 
         BlProgramTerrain *blProgramTerrain = new BlProgramTerrain(shaders,
-                        blConfig, blCamera);
+                        blConfig);
         blProgramTerrain->loadProgram();
         blProgramTerrain->init();
         return blProgramTerrain;
@@ -70,10 +70,10 @@ void BlProgramTerrain::bindProjection()
         bindProjectionMatrix(programId, locProjection, blConfig->projection);
 }
 
-void BlProgramTerrain::displayScene(BlScene *blScene)
+void BlProgramTerrain::displayScene(BlScene *blScene, btTransform view)
 {
         glUseProgram(programId);
-        sendTransform(blCamera->view, locView);
+        sendTransform(view, locView);
         for (std::vector<BlTerrain*>::iterator
                         it = blScene->blTerrains->begin();
                         it != blScene->blTerrains->end(); ++it) {

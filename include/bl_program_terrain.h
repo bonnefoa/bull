@@ -8,28 +8,23 @@
 #include <bl_config.h>
 #include <bl_terrain.h>
 #include <bl_scene.h>
-#include <bl_camera.h>
 
 class BlProgramTerrain : public BlProgram
 {
         public:
                 BlProgramTerrain(std::vector<BlShader *> shaders,
-                                BlConfig *_blConfig,
-                                BlCamera *_blCamera
-                                )
+                                BlConfig *_blConfig)
                         : BlProgram(shaders),
-                        blConfig(_blConfig),
-                        blCamera(_blCamera) {};
+                        blConfig(_blConfig) {};
 
                 void init(void);
-                void displayScene(BlScene *scene);
+                void displayScene(BlScene *scene, btTransform view);
                 void moveLight(btVector3 newPosition);
 
                 void bindProjection();
 
         private:
                 BlConfig *blConfig;
-                BlCamera *blCamera;
 
                 GLint locModel;
                 GLint locView;
@@ -46,6 +41,6 @@ class BlProgramTerrain : public BlProgram
                 GLint locBitangent;
 };
 
-BlProgramTerrain *getProgramTerrain(BlConfig *blConfig, BlCamera *blCamera);
+BlProgramTerrain *getProgramTerrain(BlConfig *blConfig);
 
 #endif

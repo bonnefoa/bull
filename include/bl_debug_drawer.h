@@ -7,18 +7,15 @@
 #include <vector>
 #include <bl_program_debug.h>
 #include <bl_state.h>
-#include <bl_camera.h>
 #include <bl_text.h>
 
 class BlDebugDrawer : public btIDebugDraw {
         public:
                 BlDebugDrawer(BlProgramDebug *_blProgramDebug,
                                 BlState *_blState,
-                                BlCamera *_blCamera,
                                 BlText *_blText)
                         : blProgramDebug(_blProgramDebug),
                         blState(_blState),
-                        blCamera(_blCamera),
                         blText(_blText) {} ;
                 void init();
                 virtual void drawLine(const btVector3& from,
@@ -30,7 +27,7 @@ class BlDebugDrawer : public btIDebugDraw {
                 virtual void draw3dText(const btVector3& location, const char* textString);
                 virtual void setDebugMode(int debugMode);
                 virtual int getDebugMode() const;
-                void initDebugRender();
+                void initDebugRender(btTransform view);
                 void finalizeDraw();
                 void drawAxis(const btTransform& center,
                                 const btVector3& direction,
@@ -43,7 +40,6 @@ class BlDebugDrawer : public btIDebugDraw {
         private:
                 BlProgramDebug *blProgramDebug;
                 BlState *blState;
-                BlCamera *blCamera;
                 BlText *blText;
 
                 GLuint lineBuffer;

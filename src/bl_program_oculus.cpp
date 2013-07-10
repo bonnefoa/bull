@@ -9,6 +9,7 @@ const GLfloat BlProgramOculus::quadVertices[12] = {
 };
 
 BlProgramOculus *getProgramOculus(BlConfig *blConfig,
+                BlCamera *blCamera,
                 BlProgramModel *blProgramModel,
                 BlProgramTerrain *blProgramTerrain,
                 BlProgramSkybox *blProgramSkybox,
@@ -25,7 +26,7 @@ BlProgramOculus *getProgramOculus(BlConfig *blConfig,
         shaders.push_back(modelFragmentShader);
 
         BlProgramOculus *blProgramOculus = new BlProgramOculus(blConfig,
-                        shaders, blProgramModel, blProgramTerrain,
+                        blCamera, shaders, blProgramModel, blProgramTerrain,
                         blProgramSkybox, blProgramShadow, blDebug, blScene);
         blProgramOculus->loadProgram();
         blProgramOculus->init();
@@ -63,6 +64,20 @@ void BlProgramOculus::initFramebuffer()
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+void BlProgramOculus::initViewports()
+{
+        int eyeWidth = blConfig->width / 2;
+        viewportLeft.width = eyeWidth;
+        viewportLeft.height = blConfig->height;
+        viewportLeft.x = 0;
+        viewportLeft.y = 0;
+
+        viewportRight.width = eyeWidth;
+        viewportRight.height = blConfig->height;
+        viewportRight.x = eyeWidth;
+        viewportRight.y = 0;
+}
+
 void BlProgramOculus::init()
 {
         glUseProgram(programId);
@@ -76,28 +91,30 @@ void BlProgramOculus::init()
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
         locVertices = glGetAttribLocation(programId, "vertexPosition");
-        samplerTexture = glGetUniformLocation(programId, "samplerTexture");
-        glUniform1i(samplerTexture, 6);
+        locSampler = glGetUniformLocation(programId, "samplerTexture");
+        locTextureModel = glGetUniformLocation(programId, "textureModel");
+        glUniform1i(locSampler, 6);
 }
 
-void BlProgramOculus::renderSceneToTexture()
+void BlProgramOculus::renderSceneToTexture(viewport_t viewport, btTransform view)
 {
+        (void) viewport;
         glBindFramebuffer(GL_FRAMEBUFFER, oculusFramebuffer);
 
         glClearColor( 0.0, 0.0, 0.2, 1.0 );
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        blProgramSkybox->displayScene(blScene);
-        blProgramTerrain->displayScene(blScene);
-        blProgramModel->displayScene(blScene, blProgramShadow->depthTexture);
-        blDebug->renderDebug();
+        blProgramSkybox->displayScene(blScene, view);
+        blProgramTerrain->displayScene(blScene, view);
+        blProgramModel->displayScene(blScene, blProgramShadow->depthTexture, view);
+        blDebug->renderDebug(view);
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void BlProgramOculus::renderScene()
 {
-        renderSceneToTexture();
+        renderSceneToTexture(viewportLeft, blCamera->view);
 
         glUseProgram(programId);
 

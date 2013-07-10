@@ -6,27 +6,23 @@
 #include <bl_program.h>
 #include <bl_shader.h>
 #include <bl_config.h>
-#include <bl_camera.h>
 #include <bl_scene.h>
 
 class BlProgramSkybox : public BlProgram
 {
         public:
                 BlProgramSkybox(std::vector<BlShader *> shaders,
-                                BlConfig *_blConfig,
-                                BlCamera *_blCamera
+                                BlConfig *_blConfig
                                )
                         : BlProgram(shaders),
-                        blConfig(_blConfig),
-                        blCamera(_blCamera) {};
+                        blConfig(_blConfig) {};
 
                 void init(void);
-                void displayScene(BlScene *scene);
+                void displayScene(BlScene *scene, btTransform view);
                 void bindProjection();
 
         private:
                 BlConfig *blConfig;
-                BlCamera *blCamera;
 
                 GLint locVertices;
                 GLint locModel;
@@ -35,6 +31,6 @@ class BlProgramSkybox : public BlProgram
                 GLint cubemapSampler;
 };
 
-BlProgramSkybox *getProgramSkybox(BlConfig *blConfig, BlCamera *blCamera);
+BlProgramSkybox *getProgramSkybox(BlConfig *blConfig);
 
 #endif /* end of include guard: BL_PROGRAM_SKYBOX_H */

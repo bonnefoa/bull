@@ -14,10 +14,10 @@ void BlDebug::printFps()
         blText->print2dText(str, 0, blConfig->height * 3.0f / 4.0f );
 }
 
-void BlDebug::renderDebug()
+void BlDebug::renderDebug(btTransform view)
 {
         if(blState->debugState) {
-                blDebugDrawer->initDebugRender();
+                blDebugDrawer->initDebugRender(view);
                 blSimulation->debugDraw();
                 for(std::vector<BlTerrain*>::iterator it = blScene->blTerrains->begin();
                                 it != blScene->blTerrains->end();

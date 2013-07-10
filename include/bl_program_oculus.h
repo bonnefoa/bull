@@ -10,10 +10,18 @@
 #include <bl_program.h>
 #include <bl_config.h>
 
+typedef struct viewport {
+        int width;
+        int height;
+        int x;
+        int y;
+} viewport_t;
+
 class BlProgramOculus : public BlProgram
 {
         public:
                 BlProgramOculus(BlConfig *_blConfig,
+                                BlCamera *_blCamera,
                                 std::vector<BlShader *> shaders,
                                 BlProgramModel *_blProgramModel,
                                 BlProgramTerrain *_blProgramTerrain,
@@ -23,6 +31,7 @@ class BlProgramOculus : public BlProgram
                                 BlScene *_blScene) :
                         BlProgram(shaders),
                         blConfig(_blConfig),
+                        blCamera(_blCamera),
                         blProgramModel(_blProgramModel),
                         blProgramTerrain(_blProgramTerrain),
                         blProgramSkybox(_blProgramSkybox),
@@ -35,11 +44,13 @@ class BlProgramOculus : public BlProgram
                 void renderScene();
 
         private:
-                void renderSceneToTexture();
+                void renderSceneToTexture(viewport_t viewport, btTransform view);
                 void initFramebuffer();
+                void initViewports();
 
         private:
                 BlConfig *blConfig;
+                BlCamera *blCamera;
                 BlProgramModel *blProgramModel;
                 BlProgramTerrain *blProgramTerrain;
                 BlProgramSkybox *blProgramSkybox;
@@ -51,13 +62,18 @@ class BlProgramOculus : public BlProgram
 
                 GLuint oculusFramebuffer;
                 GLuint vertexBuffer;
+                GLint locTextureModel;
                 GLint locVertices;
-                GLint samplerTexture;
+                GLint locSampler;
                 GLuint sceneTexture;
                 GLuint depthRenderBuffer;
+
+                viewport_t viewportLeft;
+                viewport_t viewportRight;
 };
 
 BlProgramOculus *getProgramOculus(BlConfig *blConfig,
+                BlCamera *blCamera,
                 BlProgramModel *blProgramModel,
                 BlProgramTerrain *blProgramTerrain,
                 BlProgramSkybox *blProgramSkybox,

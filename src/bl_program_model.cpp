@@ -6,8 +6,7 @@
 #include <bl_matrix.h>
 
 BlProgramModel *getProgramModel(BlConfig *blConfig,
-                BlState *blState,
-                BlCamera *blCamera)
+                BlState *blState)
 {
         std::vector<BlShader*> shaders;
         BlShader *vertexShader = new BlShader("glsl/model.vert"
@@ -25,8 +24,7 @@ BlProgramModel *getProgramModel(BlConfig *blConfig,
 
         BlProgramModel *blProgramModel = new BlProgramModel(shaders,
                         blConfig,
-                        blState,
-                        blCamera);
+                        blState);
         blProgramModel->loadProgram();
         blProgramModel->init();
         return blProgramModel;
@@ -87,14 +85,14 @@ void BlProgramModel::moveLight(btVector3 position)
         sendTransform(trans, locShadowVP);
 }
 
-void BlProgramModel::displayScene(BlScene *blScene, GLuint depthTexture)
+void BlProgramModel::displayScene(BlScene *blScene, GLuint depthTexture, btTransform view)
 {
         glUseProgram(programId);
 
         glActiveTexture(GL_TEXTURE2);
         glBindTexture(GL_TEXTURE_2D, depthTexture);
 
-        sendTransform(blCamera->view, locView);
+        sendTransform(view, locView);
 
         for (std::vector<BlLightPoint*>::iterator
                         it = blScene->blLightPoints->begin();
