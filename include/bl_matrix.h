@@ -24,5 +24,6 @@ void bindProjectionMatrix(GLint programId, GLuint locProjection, btTransform pro
 btTransform buildMVPMatrix(btVector3 position, btTransform projection,
                 btTransform view);
 btTransform buildModelMatrix(btVector3 scale, btVector3 position);
+btTransform translateBtTransform(btTransform source, btVector3 translation);
 
 #endif

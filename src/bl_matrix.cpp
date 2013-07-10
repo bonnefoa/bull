@@ -127,3 +127,10 @@ btTransform buildModelMatrix(btVector3 scale, btVector3 position)
         result.setOrigin(position);
         return result;
 }
+
+btTransform translateBtTransform(btTransform source, btVector3 translation)
+{
+        btMatrix3x3 rot = source.getBasis();
+        btVector3 origin = source.getOrigin();
+        return btTransform(rot, origin + translation);
+}
