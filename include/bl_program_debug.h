@@ -7,8 +7,8 @@
 class BlProgramDebug : public BlProgram
 {
         public:
-                BlProgramDebug(std::vector<BlShader *> shaders, BlConfig *_blConfig) :
-                        BlProgram(shaders), blConfig(_blConfig) {};
+                BlProgramDebug(std::vector<BlShader *> shaders) :
+                        BlProgram(shaders) {};
 
                 void init(void);
 
@@ -19,9 +19,8 @@ class BlProgramDebug : public BlProgram
                 GLint locColor;
                 GLint samplerTexture;
         private:
-                BlConfig *blConfig;
 };
 
-BlProgramDebug *getProgramDebug(BlConfig *blConfig);
+BlProgramDebug *getProgramDebug();
 
 #endif

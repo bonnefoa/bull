@@ -60,10 +60,12 @@ void BlDebugDrawer::reportErrorWarning(const char* warningString)
         INFO("Debug drawer warning : %s\n", warningString);
 }
 
-void BlDebugDrawer::initDebugRender(btTransform view)
+void BlDebugDrawer::initDebugRender(btTransform view, btTransform projection)
 {
         glUseProgram(blProgramDebug->programId);
         sendTransform(view, blProgramDebug->locView);
+        bindProjectionMatrix(blProgramDebug->programId,
+                        blProgramDebug->locProjection, projection);
         colors.clear();
         lines.clear();
         textVertices.clear();

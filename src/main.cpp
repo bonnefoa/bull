@@ -70,7 +70,7 @@ void initComponents(const char *filename)
         blText = new BlText(blProgramText2d, blProgramText3d, blConfig, blState);
         blText->init();
 
-        blProgramDebug = getProgramDebug(blConfig);
+        blProgramDebug = getProgramDebug();
         blDebugDrawer = new BlDebugDrawer(blProgramDebug, blState, blText);
         blDebugDrawer->init();
         blSimulation = new BlSimulation(blDebugDrawer, blState);

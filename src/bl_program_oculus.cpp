@@ -125,7 +125,7 @@ void BlProgramOculus::renderSceneToTexture(viewport_t viewport, btTransform view
         blProgramTerrain->displayScene(blScene, view, viewport.projection);
         blProgramModel->displayScene(blScene, blProgramShadow->depthTexture,
                         view, viewport.projection);
-        blDebug->renderDebug(view);
+        blDebug->renderDebug(view, viewport.projection);
 }
 
 void BlProgramOculus::renderScene()

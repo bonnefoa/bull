@@ -26,7 +26,7 @@ class BlDebug
                 ~BlDebug();
 
                 void printFps();
-                void renderDebug(btTransform view);
+                void renderDebug(btTransform view, btTransform projection);
 
         private:
                 BlConfig *blConfig;

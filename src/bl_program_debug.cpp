@@ -2,7 +2,7 @@
 #include <bl_matrix.h>
 #include <bl_log.h>
 
-BlProgramDebug *getProgramDebug(BlConfig *blConfig)
+BlProgramDebug *getProgramDebug()
 {
         std::vector<BlShader*> shaders;
         BlShader *vertexShader = new BlShader("glsl/debug.vert"
@@ -12,7 +12,7 @@ BlProgramDebug *getProgramDebug(BlConfig *blConfig)
         shaders.push_back(vertexShader);
         shaders.push_back(fragmentShader);
 
-        BlProgramDebug *blProgramDebug = new BlProgramDebug(shaders, blConfig);
+        BlProgramDebug *blProgramDebug = new BlProgramDebug(shaders);
         blProgramDebug->loadProgram();
         blProgramDebug->init();
         return blProgramDebug;
@@ -36,6 +36,4 @@ void BlProgramDebug::init()
         }
 
         glUniform1i(samplerTexture, 5);
-
-        bindProjectionMatrix(programId, locProjection, blConfig->projection);
 }

@@ -27,7 +27,7 @@ class BlDebugDrawer : public btIDebugDraw {
                 virtual void draw3dText(const btVector3& location, const char* textString);
                 virtual void setDebugMode(int debugMode);
                 virtual int getDebugMode() const;
-                void initDebugRender(btTransform view);
+                void initDebugRender(btTransform view, btTransform projection);
                 void finalizeDraw();
                 void drawAxis(const btTransform& center,
                                 const btVector3& direction,
