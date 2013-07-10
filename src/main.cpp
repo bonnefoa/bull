@@ -15,6 +15,7 @@
 #include <bl_debug.h>
 #include <bl_program_skybox.h>
 #include <bl_skybox.h>
+#include <bl_program_oculus.h>
 
 BlInput *blInput;
 BlSdl *blSdl;
@@ -25,6 +26,7 @@ BlProgramTerrain *blProgramTerrain;
 BlProgramShadow *blProgramShadow;
 BlProgramTexture *blProgramTexture;
 BlProgramSkybox *blProgramSkybox;
+BlProgramOculus *blProgramOculus;
 
 BlTexture *blTexture;
 BlLoader *blLoader;
@@ -82,6 +84,9 @@ void initComponents(const char *filename)
 
         blDebug = new BlDebug(blConfig, blState,
                         blDebugDrawer, blSimulation, blText, blScene);
+        blProgramOculus = getProgramOculus(blConfig, blProgramModel,
+                        blProgramTerrain, blProgramSkybox, blProgramShadow,
+                        blDebug, blScene);
 }
 
 void clean()
@@ -126,19 +131,14 @@ void render()
 {
         glViewport(0, 0, blConfig->width, blConfig->height);
         blProgramShadow->displaySceneForRender(blScene);
-        blProgramModel->displayScene(blScene, blProgramShadow->depthTexture);
-        blProgramTerrain->displayScene(blScene);
-        blProgramSkybox->displayScene(blScene);
-        blDebug->renderDebug();
+
+        blProgramOculus->renderScene();
 
         SDL_GL_SwapWindow(blSdl->window);
 }
 
 void mainLoop()
 {
-        glClearColor( 0.0, 0.0, 0.2, 1.0 );
-        glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
         blState->refreshState();
         blInput->handleInput();
 

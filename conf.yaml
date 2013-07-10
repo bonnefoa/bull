@@ -1,6 +1,6 @@
 screen:
-        height: 768
-        width: 1024
+        width: 1280
+        height: 800
 
 game:
         speed: 0.1
