@@ -1,10 +1,11 @@
 #version 130
 
 in vec3 vertexPosition;
-out  vec2 UV;
+in vec2 vertexUV;
+out vec2 UV;
 
 void main()
 {
         gl_Position = vec4(vertexPosition, 1);
-        UV = (vertexPosition.xy + vec2(1, 1)) / 2;
+        UV = vertexUV;
 }

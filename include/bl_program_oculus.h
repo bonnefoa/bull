@@ -10,12 +10,17 @@
 #include <bl_program.h>
 #include <bl_config.h>
 
+typedef enum {
+        FullEye,
+        LeftEye,
+        RightEye
+} oculusEye_t;
+
 typedef struct viewport {
         int width;
         int height;
-        int x;
-        int y;
         btTransform projection;
+        oculusEye_t eye;
 } viewport_t;
 
 class BlProgramOculus : public BlProgram
@@ -46,8 +51,12 @@ class BlProgramOculus : public BlProgram
 
         private:
                 void renderSceneToTexture(viewport_t viewport, btTransform view);
-                void initFramebuffer();
+                void initFramebuffer(GLuint *framebuffer, GLuint *sceneTexture,
+                                GLuint *depthRender, viewport_t viewport);
                 void initViewports();
+                void renderEyeScene(viewport_t viewport);
+                void initBuffers(GLuint *vertexBuffer, const GLfloat *quadVertices,
+                                GLuint *uvBuffer, const GLfloat *quadUV);
 
         private:
                 BlConfig *blConfig;
@@ -59,15 +68,28 @@ class BlProgramOculus : public BlProgram
                 BlDebug *blDebug;
                 BlScene *blScene;
 
-                static const GLfloat quadVertices[12];
+                static const GLfloat quadVerticesLeft[12];
+                static const GLfloat quadVerticesRight[12];
+                static const GLfloat quadUVLeft[8];
+                static const GLfloat quadUVRight[8];
 
-                GLuint oculusFramebuffer;
-                GLuint vertexBuffer;
+                GLuint oculusFramebufferRight;
+                GLuint oculusFramebufferLeft;
+                GLuint sceneTextureRight;
+                GLuint sceneTextureLeft;
+                GLuint depthRenderBufferRight;
+                GLuint depthRenderBufferLeft;
+
+                GLuint uvBufferLeft;
+                GLuint uvBufferRight;
+
+                GLuint vertexBufferLeft;
+                GLuint vertexBufferRight;
+
                 GLint locTextureModel;
                 GLint locVertices;
                 GLint locSampler;
-                GLuint sceneTexture;
-                GLuint depthRenderBuffer;
+                GLint locUV;
 
                 viewport_t viewportLeft;
                 viewport_t viewportRight;
