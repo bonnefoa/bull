@@ -270,11 +270,11 @@ void BlTerrain::drawElement(GLint locModel,
                 GLint locBitangent,
                 GLint locUVTexture) {
         bindModelMatrix(locModel);
-        bindVectors(locVertices, vertexBuffer);
-        bindVectors(locNormal, normalBuffer);
-        bindVectors(locTangent, tangentBuffer);
-        bindVectors(locBitangent, bitangentBuffer);
-        bindUVs(locUVTexture, uvBuffer);
+        bindBufferToLocation(locVertices, vertexBuffer, 4);
+        bindBufferToLocation(locNormal, normalBuffer, 4);
+        bindBufferToLocation(locTangent, tangentBuffer, 4);
+        bindBufferToLocation(locBitangent, bitangentBuffer, 4);
+        bindBufferToLocation(locUVTexture, uvBuffer, 2);
 
         bindTextures();
 

@@ -1,24 +1,13 @@
 #include "bl_gl_util.h"
 
-void bindVectors(GLint location, GLuint buffer)
+void bindBufferToLocation(GLint location, GLuint buffer, GLint size)
 {
         if(location < 0) {
                 return;
         }
         glEnableVertexAttribArray(location);
         glBindBuffer(GL_ARRAY_BUFFER, buffer);
-        glVertexAttribPointer(location, 4 , GL_FLOAT
-                        , GL_FALSE, 0, (void *)0);
-}
-
-void bindUVs(GLint location, GLuint buffer)
-{
-        if(location < 0) {
-                return;
-        }
-        glEnableVertexAttribArray(location);
-        glBindBuffer(GL_ARRAY_BUFFER, buffer);
-        glVertexAttribPointer(location, 2 , GL_FLOAT
+        glVertexAttribPointer(location, size , GL_FLOAT
                         , GL_FALSE, 0, (void *)0);
 }
 

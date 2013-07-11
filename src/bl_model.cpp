@@ -112,9 +112,9 @@ void BlModel::drawElement(GLint locModel, GLint locVertices,
         }
 
         if(locModel >= 0) sendTransform(getModelTansform(), locModel);
-        bindVectors(locVertices, vertexBuffer);
-        bindVectors(locNormals, normalBuffer);
-        bindUVs(locUVs, uvBuffer);
+        bindBufferToLocation(locVertices, vertexBuffer, 4);
+        bindBufferToLocation(locNormals, normalBuffer, 4);
+        bindBufferToLocation(locUVs, uvBuffer, 2);
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, diffuseTextureBuffer);
