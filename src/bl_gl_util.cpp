@@ -34,7 +34,13 @@ void loadIndicesInBuffer(GLuint buffer, std::vector<unsigned int> &indices)
                         &indices[0], GL_STATIC_DRAW);
 }
 
-void loadVectorsInBuffer(GLuint buffer, std::vector<btVector3> &vectors)
+void loadArrayInBuffer(GLuint buffer, const GLfloat *array, size_t size)
+{
+        glBindBuffer(GL_ARRAY_BUFFER, buffer);
+        glBufferData(GL_ARRAY_BUFFER, size, array, GL_STATIC_DRAW);
+}
+
+void loadBtVectorsInBuffer(GLuint buffer, std::vector<btVector3> &vectors)
 {
         glBindBuffer(GL_ARRAY_BUFFER, buffer);
         glBufferData(GL_ARRAY_BUFFER,

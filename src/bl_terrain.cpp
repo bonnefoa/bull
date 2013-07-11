@@ -233,10 +233,10 @@ BlTerrain::~BlTerrain()
 
 void BlTerrain::loadInBuffer()
 {
-        loadVectorsInBuffer(vertexBuffer, vertices);
-        loadVectorsInBuffer(normalBuffer, normals);
-        loadVectorsInBuffer(tangentBuffer, tangents);
-        loadVectorsInBuffer(bitangentBuffer, bitangents);
+        loadBtVectorsInBuffer(vertexBuffer, vertices);
+        loadBtVectorsInBuffer(normalBuffer, normals);
+        loadBtVectorsInBuffer(tangentBuffer, tangents);
+        loadBtVectorsInBuffer(bitangentBuffer, bitangents);
 
         loadUVsInBuffer(uvBuffer, textureUVs);
 

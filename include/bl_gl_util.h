@@ -8,11 +8,11 @@
 
 void bindBufferToLocation(GLint location, GLuint buffer, GLint size);
 void disableLocation(GLint location);
-void loadVectorsInBuffer(GLuint buffer, std::vector<btVector3> &vectors);
+void loadBtVectorsInBuffer(GLuint buffer, std::vector<btVector3> &vectors);
 
 void loadUVsInBuffer(GLuint buffer, std::vector<float> &uvs);
 void loadIndicesInBuffer(GLuint buffer, std::vector<unsigned int> &indices);
 void drawIndices(GLuint indiceBuffer, int size);
-
+void loadArrayInBuffer(GLuint buffer, const GLfloat *array, size_t size);
 
 #endif

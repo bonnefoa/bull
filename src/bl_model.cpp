@@ -67,10 +67,10 @@ BlModel::~BlModel(void)
 
 void BlModel::loadInBuffer()
 {
-        loadVectorsInBuffer(vertexBuffer, vertices);
-        loadVectorsInBuffer(normalBuffer, normals);
-        loadVectorsInBuffer(tangentBuffer, tangents);
-        loadVectorsInBuffer(bitangentBuffer, bitangents);
+        loadBtVectorsInBuffer(vertexBuffer, vertices);
+        loadBtVectorsInBuffer(normalBuffer, normals);
+        loadBtVectorsInBuffer(tangentBuffer, tangents);
+        loadBtVectorsInBuffer(bitangentBuffer, bitangents);
         loadIndicesInBuffer(indiceBuffer, indices);
 
         for(std::vector< std::vector<BlModel*> *>::iterator
