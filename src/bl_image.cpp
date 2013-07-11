@@ -66,7 +66,6 @@ GLenum BlImage::getSurfaceFormat()
         Uint32 g = surface->format->Gmask;
         Uint32 b = surface->format->Bmask;
         bool hasAlpha = surface->format->BytesPerPixel == 4;
-        INFO("r %x, g %x, b %x, a %x\n", r, g, b);
         if(r == 0xff && g == 0xff00 && b == 0xff0000) {
                 if(hasAlpha) {
                         return GL_RGBA;
