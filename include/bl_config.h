@@ -11,8 +11,8 @@ typedef struct oculusConf {
     float eyeToScreenDistance;
     float lensSeparationDistance;
     float interpupillaryDistance;
-    float heightResolution;
-    float widthResolution;
+    int heightResolution;
+    int widthResolution;
     float distortion[3];
 } oculusConf_t;
 

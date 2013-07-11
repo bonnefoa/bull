@@ -71,8 +71,8 @@ BlConfig *loadBlConfig(const char *configurationFile)
             / (1280.0f / 800.0f);
         oculusConf.eyeToScreenDistance = 0.041f;
         oculusConf.interpupillaryDistance = 0.064f;
-        oculusConf.heightResolution = 1280.0f;
-        oculusConf.widthResolution = 800.0f;
+        oculusConf.heightResolution = 800;
+        oculusConf.widthResolution = 1280;
         oculusConf.distortion[0] = 1.0f;
         oculusConf.distortion[1] = 0.22f;
         oculusConf.distortion[2] = 0.24f;
