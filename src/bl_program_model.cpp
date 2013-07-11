@@ -87,7 +87,7 @@ void BlProgramModel::displayScene(BlScene *blScene, GLuint depthTexture, btTrans
 {
         glUseProgram(programId);
 
-        bindProjectionMatrix(programId, locProjection, projection);
+        bindProjectionMatrix(locProjection, projection);
 
         glActiveTexture(GL_TEXTURE2);
         glBindTexture(GL_TEXTURE_2D, depthTexture);

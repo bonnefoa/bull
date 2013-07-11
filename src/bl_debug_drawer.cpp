@@ -64,8 +64,7 @@ void BlDebugDrawer::initDebugRender(btTransform view, btTransform projection)
 {
         glUseProgram(blProgramDebug->programId);
         sendTransform(view, blProgramDebug->locView);
-        bindProjectionMatrix(blProgramDebug->programId,
-                        blProgramDebug->locProjection, projection);
+        bindProjectionMatrix(blProgramDebug->locProjection, projection);
         colors.clear();
         lines.clear();
         textVertices.clear();

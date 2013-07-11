@@ -101,7 +101,7 @@ btTransform computeVPShadowMatrix(btVector3 position)
 }
 
 
-void bindProjectionMatrix(GLint programId, GLuint locProjection, btTransform projection)
+void bindProjectionMatrix(GLuint locProjection, btTransform projection)
 {
         btScalar mat[16];
         projection.getOpenGLMatrix(mat);

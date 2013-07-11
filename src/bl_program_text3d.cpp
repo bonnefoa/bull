@@ -34,7 +34,7 @@ void BlProgramText3d::init()
         }
 
         glUniform1i(locSampler, 4);
-        bindProjectionMatrix(programId, locProjection, blConfig->projection);
+        bindProjectionMatrix(locProjection, blConfig->projection);
 
         glUseProgram(0);
 }

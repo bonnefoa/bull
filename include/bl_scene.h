@@ -34,7 +34,7 @@ class BlScene {
 
                 virtual ~BlScene ();
 
-                void init(BlSimulation *blSimulation, GLuint programModelId);
+                void init(BlSimulation *blSimulation);
 
 };
 

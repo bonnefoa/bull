@@ -38,7 +38,7 @@ void BlProgramSkybox::displayScene(BlScene *scene, btTransform view,
                 btTransform projection)
 {
         glUseProgram(programId);
-        bindProjectionMatrix(programId, locProjection, projection);
+        bindProjectionMatrix(locProjection, projection);
         sendTransform(view, locView);
         scene->blSkybox->drawSkybox(locModel, locVertices);
         glUseProgram(0);

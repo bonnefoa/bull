@@ -20,7 +20,7 @@ btTransform computeViewMatrix(const btVector3 &right
                 , const btVector3 &direction
                 , const btVector3 &position);
 btTransform computeVPShadowMatrix(btVector3 position);
-void bindProjectionMatrix(GLint programId, GLuint locProjection, btTransform projection);
+void bindProjectionMatrix(GLuint locProjection, btTransform projection);
 void printBtVector(btVector3 &vect);
 btTransform buildMVPMatrix(btVector3 position, btTransform projection,
                 btTransform view);
