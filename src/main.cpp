@@ -76,7 +76,9 @@ void initComponents(const char *filename)
         blSimulation = new BlSimulation(blDebugDrawer, blState);
 
         blScene = blLoader->loadScene(filename);
-        blScene->init(blSimulation, blProgramModel->programId);
+        blScene->init(blSimulation);
+        blScene->blLightAmbient->loadInBuffer(blProgramModel->programId);
+        blScene->blLightAmbient->loadInBuffer(blProgramTerrain->programId);
 
         blDebug = new BlDebug(blConfig, blState,
                         blDebugDrawer, blSimulation, blText, blScene);
@@ -109,7 +111,8 @@ void shutdown()
         delete blTexture;
 }
 
-void setLight() {
+void setLight()
+{
         BlLightPoint *light = blScene->blLightPoints->at(0);
         blProgramShadow->moveLight(blScene->blCharacter->getPosition() + btVector3(0, 5, 0));
         blProgramModel->moveLight(blScene->blCharacter->getPosition() + btVector3(0, 5, 0));
@@ -118,7 +121,8 @@ void setLight() {
         light->loadLightInProgram(blProgramTerrain->programId);
 }
 
-void moveLight() {
+void moveLight()
+{
         if(blState->lightState > 0) {
                 setLight();
         }
