@@ -31,6 +31,7 @@ void BlProgramSkybox::init()
         cubemapSampler = glGetUniformLocation(programId
                         , "cubemapSampler");
         glUniform1i(cubemapSampler, 10);
+        glUseProgram(0);
 }
 
 void BlProgramSkybox::displayScene(BlScene *scene, btTransform view,
@@ -40,4 +41,5 @@ void BlProgramSkybox::displayScene(BlScene *scene, btTransform view,
         bindProjectionMatrix(programId, locProjection, projection);
         sendTransform(view, locView);
         scene->blSkybox->drawSkybox(locModel, locVertices);
+        glUseProgram(0);
 }

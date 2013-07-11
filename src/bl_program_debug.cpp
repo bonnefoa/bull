@@ -36,4 +36,5 @@ void BlProgramDebug::init()
         }
 
         glUniform1i(samplerTexture, 5);
+        glUseProgram(0);
 }

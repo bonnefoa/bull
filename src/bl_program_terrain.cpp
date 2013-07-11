@@ -63,6 +63,7 @@ void BlProgramTerrain::init(void)
                         || locTangent < 0 || locBitangent < 0 ) {
                 ERROR("unused location\n");
         }
+        glUseProgram(0);
 }
 
 void BlProgramTerrain::displayScene(BlScene *blScene, btTransform view,
@@ -81,4 +82,5 @@ void BlProgramTerrain::displayScene(BlScene *blScene, btTransform view,
                                 locBitangent,
                                 locUVTexture);
         }
+        glUseProgram(0);
 }

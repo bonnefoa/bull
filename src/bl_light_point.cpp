@@ -35,6 +35,7 @@ void BlLightPoint::loadLightInProgram(GLuint programId)
         glUniform1f(locConstantAttenuation, constantAttenuation);
         glUniform1f(locLinearAttenuation, lineraAttenuation);
         glUniform1f(locQuadraticAttenuation, quadraticAttenuation);
+        glUseProgram(0);
 }
 
 void BlLightPoint::loadInBuffer()

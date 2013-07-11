@@ -69,6 +69,7 @@ void BlDebugDrawer::initDebugRender(btTransform view, btTransform projection)
         colors.clear();
         lines.clear();
         textVertices.clear();
+        glUseProgram(0);
 }
 
 void BlDebugDrawer::finalizeDraw()

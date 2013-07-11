@@ -39,6 +39,7 @@ void BlProgramTexture::init()
         glBufferData(GL_ARRAY_BUFFER, sizeof(quadBufferData)
                         , quadBufferData, GL_STATIC_DRAW);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glUseProgram(0);
 }
 
 void BlProgramTexture::displayTexture(GLuint textureId)

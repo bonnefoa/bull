@@ -71,6 +71,7 @@ void BlProgramModel::init()
                         || diffuseSampler < 0 || samplerShadow < 0 ){
                 ERROR("A location is unused");
         }
+        glUseProgram(0);
 }
 
 void BlProgramModel::moveLight(btVector3 position)
@@ -78,6 +79,7 @@ void BlProgramModel::moveLight(btVector3 position)
         glUseProgram(programId);
         btTransform trans = computeVPShadowMatrix(position);
         sendTransform(trans, locShadowVP);
+        glUseProgram(0);
 }
 
 void BlProgramModel::displayScene(BlScene *blScene, GLuint depthTexture, btTransform view,
@@ -115,4 +117,5 @@ void BlProgramModel::displayScene(BlScene *blScene, GLuint depthTexture, btTrans
         glDisableVertexAttribArray(locVertices);
         glDisableVertexAttribArray(locNormals);
         glDisableVertexAttribArray(locUVs);
+        glUseProgram(0);
 }
