@@ -33,7 +33,6 @@ BlConfig *loadBlConfig(const char *configurationFile)
         YAML::Node cameraNode = config["camera"];
         float degFov = getNodeFloat(cameraNode["fov"], 45.0f);
         float fov = M_PI * degFov / float(90);
-        float aspect = getNodeFloat(cameraNode["aspect"], 4.0f/3.0f);
         float zNear = getNodeFloat(cameraNode["zNear"], 0.1f);
         float zFar = getNodeFloat(cameraNode["zFar"], 100.0f);
 
@@ -62,7 +61,21 @@ BlConfig *loadBlConfig(const char *configurationFile)
         int width =  screenNode["width"].as<int>();
         int height = screenNode["height"].as<int>();
 
+        float aspect = float(width) / float(height);
         btTransform projection = computeProjection(fov, aspect, zNear, zFar);
+
+        oculusConf_t oculusConf;
+        oculusConf.screenHeight = 0.14976f;
+        oculusConf.screenWidth = 0.0935f;
+        oculusConf.screenHeightCenter = oculusConf.screenHeight
+            / (1280.0f / 800.0f);
+        oculusConf.eyeToScreenDistance = 0.041f;
+        oculusConf.interpupillaryDistance = 0.064f;
+        oculusConf.heightResolution = 1280.0f;
+        oculusConf.widthResolution = 800.0f;
+        oculusConf.distortion[0] = 1.0f;
+        oculusConf.distortion[1] = 0.22f;
+        oculusConf.distortion[2] = 0.24f;
 
         BlConfig *blConfig = new BlConfig(
                      mouseSpeed,
@@ -90,7 +103,8 @@ BlConfig *loadBlConfig(const char *configurationFile)
                      key_cameraFirstPerson,
                      key_cameraThirdPerson,
                      host,
-                     port
+                     port,
+                     oculusConf
                      );
 
         return blConfig;
