@@ -133,7 +133,8 @@ btTransform buildModelMatrix(btVector3 scale, btVector3 position)
 
 btTransform translateBtTransform(btTransform source, btVector3 translation)
 {
-        btMatrix3x3 rot = source.getBasis();
-        btVector3 origin = source.getOrigin();
-        return btTransform(rot, origin + translation);
+        btTransform trans;
+        trans.setIdentity();
+        trans.setOrigin(translation);
+        return trans * source;
 }
