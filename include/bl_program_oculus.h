@@ -86,7 +86,6 @@ class BlProgramOculus : public BlProgram
                 GLuint vertexBufferLeft;
                 GLuint vertexBufferRight;
 
-                GLint locTextureModel;
                 GLint locVertices;
                 GLint locSampler;
                 GLint locUV;

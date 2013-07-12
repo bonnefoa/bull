@@ -74,10 +74,12 @@ void BlProgramOculus::initViewports()
         viewportLeft.width       = eyeWidth;
         viewportLeft.height      = conf.heightResolution;
         viewportLeft.eye         = LeftEye;
+
         viewportRight.projection = rightProjection;
         viewportRight.width      = eyeWidth;
         viewportRight.height     = conf.heightResolution;
         viewportRight.eye        = RightEye;
+
         viewportFull.projection  = blConfig->projection;
         viewportFull.width       = blConfig->width;
         viewportFull.height      = blConfig->height;
@@ -146,8 +148,14 @@ void BlProgramOculus::init()
         locUV = glGetAttribLocation(programId, "vertexUV");
         locVertices = glGetAttribLocation(programId, "vertexPosition");
         locSampler = glGetUniformLocation(programId, "samplerTexture");
-        locTextureModel = glGetUniformLocation(programId, "textureModel");
         glUniform1i(locSampler, 6);
+
+        INFO("UV location %i\n", locUV);
+        INFO("vertex location %i\n", locVertices);
+        INFO("Sampler %i\n", locSampler);
+        if(locUV < 0 || locVertices < 0 || locSampler < 0) {
+                ERROR("A location is unused");
+        }
 
         glUseProgram(0);
 }
@@ -166,17 +174,23 @@ void BlProgramOculus::renderSceneToTexture(viewport_t viewport, btTransform view
 
 void BlProgramOculus::renderEyeScene(viewport_t viewport)
 {
+        btVector3 centerOffset = btVector3(
+                        blConfig->oculusConf.interpupillaryDistance * 0.5f, 0, 0);
+        btTransform view = blCamera->view;
+
         switch(viewport.eye) {
                 case RightEye:
                         glBindFramebuffer(GL_FRAMEBUFFER, oculusFramebufferRight);
+                        view = translateBtTransform(blCamera->view, centerOffset);
                         break;
                 case LeftEye:
                         glBindFramebuffer(GL_FRAMEBUFFER, oculusFramebufferLeft);
+                        view = translateBtTransform(blCamera->view, -1 * centerOffset);
                         break;
                 case FullEye:
                         return;
         };
-        renderSceneToTexture(viewport, blCamera->view);
+        renderSceneToTexture(viewport, view);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
