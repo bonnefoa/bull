@@ -6,14 +6,18 @@ lights:
 ambient:
         filename: /home/sora/blender/ambientLight.dae
 
-textureSet:
-        - name: firstTextureSet
-          files: [/home/sora/blender/soil/ground_grass_gen_05.png,
-                  /home/sora/blender/soil/ground_grass_gen_02.png]
+skybox:
+        xpos: /home/sora/blender/sky/miramar_ft.tga
+        xneg: /home/sora/blender/sky/miramar_bk.tga
+        ypos: /home/sora/blender/sky/miramar_up.tga
+        yneg: /home/sora/blender/sky/miramar_dn.tga
+        zpos: /home/sora/blender/sky/miramar_rt.tga
+        zneg: /home/sora/blender/sky/miramar_lf.tga
 
 terrains:
         - name: floor
           image: /home/sora/blender/heightmap.png
+          normalmap: /home/sora/blender/heightmap_normal.png
           scale: [4.0, 1.0, 4.0]
           position: [0.0, 0.0, 0.0]
           gridWidth: 64
@@ -21,56 +25,66 @@ terrains:
           heightScale: 0.05
           minHeight: -10
           maxHeight: 10
-          textureSetName: firstTextureSet
-          textureSetHeights: [0.0, 10.0]
+          diffuseTexture: /home/sora/blender/soil/pattern_164/diffuse.png
+          normalTexture: /home/sora/blender/soil/pattern_164/normal.png
 
 character:
         name: knight
         filename: /home/sora/blender/mini_knight_fem.dae
-        image: /home/sora/blender/mini_knight_fem.png
+        diffuse: /home/sora/blender/mini_knight_fem.png
         shape: /home/sora/blender/mini_knight_fem.yaml
         position: [0.0, 4.0, 4.0]
+        angularDamping: 0.5
+        linearDamping: 0.5
+        angularThreshold: 0.5
+        speed: 0.1
 
 models:
 
         - name: suzanne
           filename: /home/sora/blender/suzanne.dae
-          image: /home/sora/blender/cubeTextured.png
+          diffuse: /home/sora/blender/cubeTextured.png
+          normal: /home/sora/blender/normal.png
           shape: /home/sora/blender/suzanne.yaml
           position: [4.0, 4.0, 0.0]
 
         - name: cube
           filename: /home/sora/blender/cubeTextured.dae
-          image: /home/sora/blender/cubeTextured.png
+          diffuse: /home/sora/blender/cubeTextured.png
+          normal: /home/sora/blender/normal.png
           shape: /home/sora/blender/cubeTextured.yaml
           position: [0.0, 10.0, 0.0]
 
         - name: sphere
           filename: /home/sora/blender/sphere.dae
-          image: /home/sora/blender/cubeTextured.png
+          diffuse: /home/sora/blender/cubeTextured.png
+          normal: /home/sora/blender/normal.png
           shape: /home/sora/blender/sphere.yaml
           position: [0.0, 9.0, 1.0]
 
         - name: cone
           filename: /home/sora/blender/cone.dae
-          image: /home/sora/blender/cubeTextured.png
+          diffuse: /home/sora/blender/cubeTextured.png
+          normal: /home/sora/blender/normal.png
           shape: /home/sora/blender/cone.yaml
           position: [7.0, 20.0, 7.0]
 
         - name: cylinder
           filename: /home/sora/blender/cylinder.dae
-          image: /home/sora/blender/cubeTextured.png
+          diffuse: /home/sora/blender/cubeTextured.png
+          normal: /home/sora/blender/normal.png
           shape: /home/sora/blender/cylinder.yaml
           position: [0.0, 20.0, 7.0]
 
         - name: capsule
           filename: /home/sora/blender/capsule.dae
           shape: /home/sora/blender/capsule.yaml
-          image: /home/sora/blender/cubeTextured.png
+          normal: /home/sora/blender/normal.png
+          diffuse: /home/sora/blender/cubeTextured.png
           position: [2.0, 20.0, 2.0]
 
         - name: sword
           filename: /home/sora/blender/sword.dae
           shape: /home/sora/blender/sword.yaml
-          image: /home/sora/blender/sword.png
+          diffuse: /home/sora/blender/sword.png
           position: [2.0, 9.0, 2.0]

@@ -1,6 +1,6 @@
 #include "bl_scene.h"
 
-void BlScene::init(BlSimulation *blSimulation, GLuint programModelId)
+void BlScene::init(BlSimulation *blSimulation)
 {
         for (std::vector<BlModel*>::iterator it = blModels->begin();
                         it != blModels->end(); ++it) {
@@ -21,10 +21,11 @@ void BlScene::init(BlSimulation *blSimulation, GLuint programModelId)
                         it != blLightPoints->end(); ++it) {
                 BlLightPoint *light = *it;
                 light->init();
-                light->loadInBuffer(programModelId);
+                light->loadInBuffer();
         }
-        blLightAmbient->loadInBuffer(programModelId);
 
+        blSkybox->init();
+        blSkybox->loadInBuffer();
         blCharacter->loadInBuffer();
         blSimulation->addCharacter(blCharacter);
 }

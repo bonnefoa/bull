@@ -6,7 +6,6 @@
 #include <bl_program.h>
 #include <bl_shader.h>
 #include <bl_config.h>
-#include <bl_state.h>
 #include <bl_terrain.h>
 #include <bl_scene.h>
 
@@ -14,34 +13,33 @@ class BlProgramTerrain : public BlProgram
 {
         public:
                 BlProgramTerrain(std::vector<BlShader *> shaders,
-                                BlConfig *_blConfig,
-                                BlState *_blState
-                                )
+                                BlConfig *_blConfig)
                         : BlProgram(shaders),
-                        blConfig(_blConfig),
-                        blState(_blState) {};
+                        blConfig(_blConfig) {};
 
                 void init(void);
-                void displayScene(BlScene *scene);
-
-                void bindProjection();
+                void displayScene(BlScene *scene, btTransform view,
+                                btTransform projection);
+                void moveLight(btVector3 newPosition);
 
         private:
                 BlConfig *blConfig;
-                BlState *blState;
 
                 GLint locModel;
                 GLint locView;
                 GLint locProjection;
-                GLint locGridLenght;
-                GLint locGridWidth;
                 GLint locUVTexture;
+                GLint locUVNormal;
                 GLint heightmapSampler;
                 GLint textureSampler;
+                GLint normalmapSampler;
 
                 GLint locVertices;
+                GLint locNormal;
+                GLint locTangent;
+                GLint locBitangent;
 };
 
-BlProgramTerrain *getProgramTerrain(BlConfig *blConfig, BlState *blState);
+BlProgramTerrain *getProgramTerrain(BlConfig *blConfig);
 
 #endif

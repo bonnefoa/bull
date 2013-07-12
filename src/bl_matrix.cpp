@@ -9,6 +9,16 @@ void sendTransform(btTransform trans, GLuint uniform)
         glUniformMatrix4fv(uniform, 1, GL_FALSE, mat);
 }
 
+void printMatrix(btMatrix3x3 &mat)
+{
+        for (int n = 0; n < 3; n++) {
+                for (int m = 0; m < 3; m++) {
+                        printf("%f ", mat[n][m]);
+                }
+                printf("\n");
+        }
+}
+
 void printBtTransform(btTransform &mat)
 {
        btMatrix3x3 bas = mat.getBasis();
@@ -21,6 +31,11 @@ void printBtTransform(btTransform &mat)
                 printf("\n");
        }
        printf("%f %f %f %f\n\n", 0.f, 0.f, 0.f, 1.f);
+}
+
+void printBtVector(btVector3 &vect)
+{
+       printf("%f %f %f\n", vect[0], vect[1], vect[2]);
 }
 
 btTransform computeProjection(btScalar fov, btScalar aspect,
@@ -86,10 +101,8 @@ btTransform computeVPShadowMatrix(btVector3 position)
 }
 
 
-void bindProjectionMatrix(GLint programId, GLuint locProjection, btTransform projection)
+void bindProjectionMatrix(GLuint locProjection, btTransform projection)
 {
-        glUseProgram(programId);
-
         btScalar mat[16];
         projection.getOpenGLMatrix(mat);
         mat[11] = -1.0f;
@@ -116,4 +129,12 @@ btTransform buildModelMatrix(btVector3 scale, btVector3 position)
         result.setBasis(basis);
         result.setOrigin(position);
         return result;
+}
+
+btTransform translateBtTransform(btTransform source, btVector3 translation)
+{
+        btTransform trans;
+        trans.setIdentity();
+        trans.setOrigin(translation);
+        return trans * source;
 }

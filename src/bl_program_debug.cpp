@@ -2,17 +2,17 @@
 #include <bl_matrix.h>
 #include <bl_log.h>
 
-BlProgramDebug *getProgramDebug(BlConfig *blConfig)
+BlProgramDebug *getProgramDebug()
 {
         std::vector<BlShader*> shaders;
-        BlShader *vertexShader = new BlShader("glsl/debug_vertex.glsl"
+        BlShader *vertexShader = new BlShader("glsl/debug.vert"
                         , GL_VERTEX_SHADER);
-        BlShader *fragmentShader = new BlShader("glsl/debug_fragment.glsl"
+        BlShader *fragmentShader = new BlShader("glsl/debug.frag"
                         , GL_FRAGMENT_SHADER);
         shaders.push_back(vertexShader);
         shaders.push_back(fragmentShader);
 
-        BlProgramDebug *blProgramDebug = new BlProgramDebug(shaders, blConfig);
+        BlProgramDebug *blProgramDebug = new BlProgramDebug(shaders);
         blProgramDebug->loadProgram();
         blProgramDebug->init();
         return blProgramDebug;
@@ -24,20 +24,17 @@ void BlProgramDebug::init()
 
         locView = glGetUniformLocation(programId, "V");
         locProjection = glGetUniformLocation(programId, "P");
-        locHasTexture = glGetUniformLocation(programId, "hasTexture");
 
         locVertices = glGetAttribLocation(programId, "vertexPosition_modelspace");
         locColor = glGetAttribLocation(programId, "vertexColor");
-	locUV = glGetAttribLocation(programId, "vertexUV");
         samplerTexture = glGetUniformLocation(programId
                         , "textureSampler");
-        INFO("Loc vertices %i, loc Color %i, loc UV %i\n",
-                        locVertices, locColor, locUV);
-        if(locVertices < 0 || locColor < 0 || locUV < 0) {
+        INFO("Loc vertices %i, loc Color %i\n",
+                        locVertices, locColor);
+        if(locVertices < 0 || locColor < 0) {
                 ERROR("A location is unused");
         }
 
         glUniform1i(samplerTexture, 5);
-
-        bindProjectionMatrix(programId, locProjection, blConfig->projection);
+        glUseProgram(0);
 }

@@ -158,7 +158,8 @@ BlModel *BlMeshLoader::loadMesh(
                 btVector3 position,
                 std::map<std::string, btRigidBody*> mapIndexBody,
                 std::map<std::string, btVector3> mapIndexOffset,
-                const char *image)
+                const char *diffuse,
+                const char *normal)
 {
         btVector3 offset;
         btRigidBody *rigidBody = NULL;
@@ -214,7 +215,8 @@ BlModel *BlMeshLoader::loadMesh(
                         vertices, indices, normals,
                         tangents, bitangents,
                         uvs, position, rigidBody,
-                        name, image);
+                        name, diffuse,
+                        normal);
         return blModel;
 }
 
@@ -223,7 +225,8 @@ std::vector<BlModel*> *BlMeshLoader::loadNode(const aiScene *scene,
                 btVector3 position,
                 std::map<std::string, btRigidBody*> mapIndexBody,
                 std::map<std::string, btVector3> mapIndexOffset,
-                const char *image )
+                const char *diffuse,
+                const char *normal )
 {
         std::vector< std::vector<BlModel*>* > *children =
                 new std::vector< std::vector<BlModel*>* >();
@@ -236,7 +239,8 @@ std::vector<BlModel*> *BlMeshLoader::loadNode(const aiScene *scene,
                                         position,
                                         mapIndexBody,
                                         mapIndexOffset,
-                                        image);
+                                        diffuse,
+                                        normal);
                 children->push_back(currentChild);
         }
 
@@ -247,7 +251,8 @@ std::vector<BlModel*> *BlMeshLoader::loadNode(const aiScene *scene,
                                 name,
                                 children,
                                 position,
-                                mapIndexBody, mapIndexOffset, image);
+                                mapIndexBody, mapIndexOffset,
+                                diffuse, normal);
                 res->push_back(currentModel);
         }
         if(node->mNumMeshes == 0) {
@@ -268,14 +273,15 @@ std::vector<BlModel*> *BlMeshLoader::loadModelFile(const char *modelPath,
                 btVector3 position,
                 std::map<std::string, btRigidBody*> mapIndexBody,
                 std::map<std::string, btVector3> mapIndexOffset,
-                const char *image)
+                const char *diffuse,
+                const char *normal)
 {
-        INFO("Loading asset from file %s, image %s, position %f %f %f\n",
-                        modelPath, image,
+        INFO("Loading asset from file %s, diffuse %s, position %f %f %f\n",
+                        modelPath, diffuse,
                         position[0], position[1], position[2]);
         const aiScene *scene = loadAssimpScene(modelPath);
         aiNode *rootNode = scene->mRootNode;
         std::vector<BlModel*> *res = loadNode(scene, rootNode,
-                        position, mapIndexBody, mapIndexOffset, image);
+                        position, mapIndexBody, mapIndexOffset, diffuse, normal);
         return res;
 }

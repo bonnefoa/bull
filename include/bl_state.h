@@ -18,21 +18,11 @@ enum gamestate_enum {
 
 class BlState {
         public:
-                BlState(btVector3 _position, TTF_Font *_font,
+                BlState(TTF_Font *_font,
                                 BlConfig *_blConfig) :
                         gamestate(NORMAL),
                         font(_font),
                         blConfig(_blConfig),
-
-                        phi(0.0f),
-                        theta(M_PI_2),
-                        position(_position),
-                        direction(btVector3()),
-                        view(btTransform()),
-                        rotation(0,0,0,1),
-                        deltaRotation(btQuaternion()),
-                        rightDirection(btVector3(1,0,0)),
-                        upDirection(btVector3(0,1,0)),
 
                         lightState(0),
                         debugState(0),
@@ -55,19 +45,12 @@ class BlState {
                 TTF_Font *font;
                 BlConfig *blConfig;
 
-                float phi;
-                float theta;
-
-                btVector3 position;
-                btVector3 direction;
-                btTransform view;
-                btQuaternion rotation;
-                btQuaternion deltaRotation;
-                btVector3 rightDirection;
-                btVector3 upDirection;
-
                 int lightState;
                 int debugState;
+                int cameraChange;
+
+                int mouseDeltaX;
+                int mouseDeltaY;
 
                 int axisRight;
                 int axisLeft;
@@ -100,13 +83,13 @@ class BlState {
                 void stopLight();
 
                 void debug();
-                void logState();
-                void refreshDeltaTime();
+                void refreshState();
 
-                void computeNewAngles();
-                void computeDirectionFromDelta(float &deltaUp, float &deltaRight);
-                void computeView();
-                btVector3 getDeltaPosition();
+                float getDeltaX();
+                float getDeltaY();
+
+                float getDeltaRotX();
+                float getDeltaRotY();
 
         private:
                 void incrementAxis(SDL_Keymod mod, int *normalAxis,

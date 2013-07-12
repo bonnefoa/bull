@@ -3,9 +3,9 @@
 BlProgramTexture *getProgramTexture()
 {
         std::vector<BlShader*> shaders;
-        BlShader *vertexShader = new BlShader("glsl/texture_vertex.glsl"
+        BlShader *vertexShader = new BlShader("glsl/texture.vert"
                         , GL_VERTEX_SHADER);
-        BlShader *fragmentShader = new BlShader("glsl/texture_fragment.glsl"
+        BlShader *fragmentShader = new BlShader("glsl/texture.frag"
                         , GL_FRAGMENT_SHADER);
         shaders.push_back(vertexShader);
         shaders.push_back(fragmentShader);
@@ -39,13 +39,12 @@ void BlProgramTexture::init()
         glBufferData(GL_ARRAY_BUFFER, sizeof(quadBufferData)
                         , quadBufferData, GL_STATIC_DRAW);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glUseProgram(0);
 }
 
 void BlProgramTexture::displayTexture(GLuint textureId)
 {
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glViewport(0, 0, 512, 512);
-
         glUseProgram(programId);
 
         glActiveTexture(GL_TEXTURE4);

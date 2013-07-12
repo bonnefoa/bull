@@ -5,9 +5,9 @@
 BlProgramShadow *getProgramShadow(btVector3 lightPosition)
 {
         std::vector<BlShader*> shaders;
-        BlShader *modelVertexShader = new BlShader("glsl/shadow_vertex.glsl"
+        BlShader *modelVertexShader = new BlShader("glsl/shadow.vert"
                         , GL_VERTEX_SHADER);
-        BlShader *modelFragmentShader = new BlShader("glsl/shadow_fragment.glsl"
+        BlShader *modelFragmentShader = new BlShader("glsl/shadow.frag"
                         , GL_FRAGMENT_SHADER);
         shaders.push_back(modelVertexShader);
         shaders.push_back(modelFragmentShader);
@@ -57,10 +57,9 @@ void BlProgramShadow::init(void)
         if(locDepthVP < 0 || locVertices < 0 || locDepthM < 0) {
                 ERROR("A location is unused");
         }
+        glUseProgram(0);
 
         moveLight(lightPosition);
-
-        glUseProgram(0);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
@@ -76,6 +75,7 @@ void BlProgramShadow::moveLight(btVector3 newPosition)
         glUseProgram(programId);
         btTransform shadowVP = computeVPShadowMatrix(newPosition);
         sendTransform(shadowVP, locDepthVP);
+        glUseProgram(0);
 }
 
 void BlProgramShadow::displaySceneForRender(BlScene *blScene)
@@ -89,9 +89,11 @@ void BlProgramShadow::displaySceneForRender(BlScene *blScene)
                         it != blScene->blModels->end(); ++it) {
                 BlModel *model = (*it);
                 model->drawElement(locDepthM, locVertices,
+                                -1, -1,
                                 -1, -1);
         }
 
         glDisableVertexAttribArray(locVertices);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glUseProgram(0);
 }

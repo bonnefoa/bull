@@ -23,7 +23,7 @@ def process_file(f):
 
         bpy.context.scene.collada_export(filepath=filepath_dae, apply_modifiers=True)
         if any([obj.rigid_body for obj in bpy.data.objects]):
-                bpy.ops.object.export_bullet_shapes(filepath=filepath_shape, y_up=True)
+                bpy.ops.object.export_bullet_shapes(filepath=filepath_shape, y_up=False)
 
 for f in files:
         process_file(f)

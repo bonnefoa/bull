@@ -54,20 +54,12 @@ START_TEST (test_gravity)
 }
 END_TEST
 
-START_TEST (test_heightmap)
-{
-        BlImage *normal = generateNormalMapFromHeightmap(testImage);
-        normal->writeImage("/tmp/toto.png");
-}
-END_TEST
-
 Suite *heightmap_suite (void)
 {
   Suite *s = suite_create ("Heightmap suite");
   TCase *tc_core = tcase_create("Heightmap case");
   tcase_add_checked_fixture (tc_core, setup, teardown);
   tcase_add_test (tc_core, test_gravity);
-  tcase_add_test (tc_core, test_heightmap);
   tcase_add_test (tc_core, test_delta_pixel);
   tcase_add_test (tc_core, test_off_grid);
   suite_add_tcase (s, tc_core);

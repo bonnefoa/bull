@@ -14,22 +14,21 @@ class  BlProgramModel : public BlProgram
 {
         public:
                 BlProgramModel(std::vector<BlShader *> shaders
-                                , BlInput *_blInput
                                 , BlConfig *_blConfig
                                 , BlState *_blState
                                 ) :
-                        BlProgram(shaders), blInput(_blInput), blConfig(_blConfig),
+                        BlProgram(shaders),
+                        blConfig(_blConfig),
                         blState(_blState) {};
                 void init(void);
                 void bindModelMatrix(BlModel *blModel);
                 void displayModel(BlModel *model);
                 void displayCharacter(BlCharacter *blCharacter);
-                void displayScene(BlScene *blScene, GLuint depthTexture);
+                void displayScene(BlScene *blScene, GLuint depthTexture,
+                                btTransform view, btTransform projection);
                 void moveLight(btVector3 position);
-                void bindProjection();
 
         private:
-                BlInput *blInput;
                 BlConfig *blConfig;
                 BlState *blState;
 
@@ -41,11 +40,14 @@ class  BlProgramModel : public BlProgram
                 GLint locVertices;
                 GLint locNormals;
                 GLint locUVs;
+                GLint locTangent;
+                GLint locBitangent;
 
-                GLint samplerTexture;
+                GLint diffuseSampler;
+                GLint normalSampler;
                 GLint samplerShadow;
 };
 
-BlProgramModel *getProgramModel(BlInput *blInput, BlConfig *blConfig, BlState *blState);
+BlProgramModel *getProgramModel(BlConfig *blConfig, BlState *blState);
 
 #endif

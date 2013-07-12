@@ -3,6 +3,26 @@
 #include <bl_log.h>
 #include <bl_matrix.h>
 
+float BlState::getDeltaY()
+{
+        return float(axisUp - axisDown);
+}
+
+float BlState::getDeltaX()
+{
+        return float(axisRight - axisLeft);
+}
+
+float BlState::getDeltaRotY()
+{
+        return float(-mouseDeltaY + sAxisUp - sAxisDown);
+}
+
+float BlState::getDeltaRotX()
+{
+        return float(mouseDeltaX + sAxisRight - sAxisLeft);
+}
+
 void BlState::incrementAxis(SDL_Keymod mod, int *normalAxis, int *modAxis)
 {
         if(mod == KMOD_LSHIFT) {
@@ -93,58 +113,11 @@ void BlState::pause()
         };
 }
 
-void BlState::refreshDeltaTime()
+void BlState::refreshState()
 {
         Uint32 now = SDL_GetTicks();
         deltaTime = float(now - lastTicks);
         lastTicks = now;
-}
 
-void BlState::logState()
-{
-        INFO("position %f %f %f\n", position[0], position[1], position[2]);
-        INFO("V\n");
-        printBtTransform(view);
-}
-
-void BlState::computeDirectionFromDelta(float &deltaUp, float &deltaRight)
-{
-        btQuaternion rightRot = btQuaternion(btVector3(0,1,0), deltaRight);
-        btQuaternion upRot = btQuaternion(rightDirection, deltaUp);
-
-        deltaRotation = rightRot * upRot;
-        rotation = deltaRotation * rotation;
-        btTransform trans = btTransform(rotation);
-
-        rightDirection = trans(btVector3(1, 0, 0));
-        direction = trans(btVector3(0,0,-1)).normalize();
-        upDirection = trans(btVector3(0, 1, 0));
-}
-
-void BlState::computeNewAngles()
-{
-        int deltaX, deltaY;
-        SDL_GetRelativeMouseState(&deltaX, &deltaY);
-
-        float deltaUp = blConfig->mouseSpeed * deltaTime *
-                float(-deltaY + sAxisUp - sAxisDown);
-        float deltaRight = -1.0f * blConfig->mouseSpeed * deltaTime *
-                float(deltaX + sAxisRight - sAxisLeft);
-
-        computeDirectionFromDelta(deltaUp, deltaRight);
-}
-
-btVector3 BlState::getDeltaPosition()
-{
-        btVector3 deltaPosition = float(axisUp - axisDown)
-                * direction * deltaTime * blConfig->speed;
-        deltaPosition += float(axisRight - axisLeft)
-                * rightDirection * deltaTime * blConfig->speed;
-        return deltaPosition;
-}
-
-void BlState::computeView()
-{
-        view = computeViewMatrix(rightDirection, upDirection,
-                        direction, position);
+        SDL_GetRelativeMouseState(&mouseDeltaX, &mouseDeltaY);
 }

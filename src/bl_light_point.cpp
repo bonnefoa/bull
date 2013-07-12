@@ -8,10 +8,9 @@ void BlLightPoint::init()
         }
 }
 
-void BlLightPoint::moveLight(btVector3 newPosition, GLuint programId)
+void BlLightPoint::moveLight(btVector3 newPosition)
 {
         position = newPosition;
-        loadInBuffer(programId);
         for (std::vector<BlModel*>::iterator
                         it = blModels->begin();
                         it != blModels->end(); ++it) {
@@ -19,7 +18,7 @@ void BlLightPoint::moveLight(btVector3 newPosition, GLuint programId)
         }
 }
 
-void BlLightPoint::loadInBuffer(GLuint programId)
+void BlLightPoint::loadLightInProgram(GLuint programId)
 {
         glUseProgram(programId);
         GLint locConstantAttenuation = glGetUniformLocation(programId,
@@ -36,7 +35,11 @@ void BlLightPoint::loadInBuffer(GLuint programId)
         glUniform1f(locConstantAttenuation, constantAttenuation);
         glUniform1f(locLinearAttenuation, lineraAttenuation);
         glUniform1f(locQuadraticAttenuation, quadraticAttenuation);
+        glUseProgram(0);
+}
 
+void BlLightPoint::loadInBuffer()
+{
         for (std::vector<BlModel*>::iterator it = blModels->begin();
                         it != blModels->end(); ++it) {
                 (*it)->loadInBuffer();

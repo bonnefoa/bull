@@ -4,43 +4,28 @@
 GLuint BlTexture::fetchTexture(std::string filename)
 {
         if(mapTextureToBuffer.count(filename) > 0) {
-                return mapTextureToBuffer[filename];
+                GLuint texId = mapTextureToBuffer[filename];
+                if (glIsTexture(texId)) {
+                        printf("Texid %u for %s is a texture\n", texId, filename.c_str());
+                        return texId;
+                }
+                mapTextureToBuffer.erase(filename);
         }
-
+        INFO("Loading texture %s\n", filename.c_str());
         GLuint textureBuffer;
         glGenTextures(1, &textureBuffer);
-        BlImage *blImage = readPngImage(filename.c_str());
+        BlImage *blImage = new BlImage(filename.c_str());
         blImage->loadInBuffer(textureBuffer);
         delete blImage;
         mapTextureToBuffer[filename] = textureBuffer;
         return textureBuffer;
 }
 
-GLuint BlTexture::fillTextureAtlas(std::string setName
-                , std::vector<std::string> files)
+void BlTexture::deleteTexture(std::string filename)
 {
-        BlImage *blImage = readMultipleImages(files);
-
-        GLuint textureBuffer;
-        glGenTextures(1, &textureBuffer);
-        glBindTexture(GL_TEXTURE_2D, textureBuffer);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-        glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-        INFO("Loading in buffer %i image of size %i / %i\n",
-                        textureBuffer, blImage->width, blImage->height);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
-                        blImage->width, blImage->height,
-                        0, GL_RGB, GL_UNSIGNED_BYTE,
-                        blImage->pixels);
-
-        mapTextureToBuffer[setName] = textureBuffer;
-        return textureBuffer;
+        GLuint texId = mapTextureToBuffer[filename];
+        glDeleteTextures(1, &texId);
+        mapTextureToBuffer.erase(filename);
 }
 
 void BlTexture::clear()

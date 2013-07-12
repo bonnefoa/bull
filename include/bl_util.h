@@ -9,6 +9,10 @@
 #define print_vector(prefix, vect) \
         INFO("%s %f %f %f\n", prefix, vect[0], vect[1], vect[2]);
 
+#define print_quaternion(prefix, quat) \
+        INFO("%s Angle %f Axis %f %f %f\n", prefix, quat.getAngle(), \
+                        quat.getAxis()[0], quat.getAxis()[1], quat.getAxis()[2]);
+
 void showInfoLog(GLuint object,
                 PFNGLGETSHADERIVPROC glGet__iv,
                 PFNGLGETSHADERINFOLOGPROC glGet__InfoLog);

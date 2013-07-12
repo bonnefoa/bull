@@ -20,9 +20,9 @@ class BlTerrain
                                 float _minHeight, float _maxHeight,
                                 btVector3 _position,
                                 btVector3 _scale,
-                                const char *_heightmapImage,
-                                const char *_textureSetName,
-                                std::vector<float> _textureSetHeights
+                                const char *_heightMapPath,
+                                const char *_diffuseTexture,
+                                const char *_normalTexture
                          ) :
                         position(_position),
                         scale(_scale),
@@ -32,30 +32,35 @@ class BlTerrain
                         heightScale(_heightScale),
                         minHeight(_minHeight),
                         maxHeight(_maxHeight),
-                        heightmapImage(_heightmapImage),
-                        textureSetName(_textureSetName),
-                        textureSetHeights(_textureSetHeights) {};
+                        heightMapPath(_heightMapPath),
+                        diffuseTexturePath(_diffuseTexture),
+                        normalTexturePath(_normalTexture) {};
                 ~BlTerrain();
 
                 void init();
                 void loadInBuffer();
-                void drawElement(GLint locModel, GLint locVertices, GLint locUVTexture,
-                        GLint locGridLenght, GLint locGridWidth);
+                void drawElement(GLint locModel,
+                                GLint locVertices,
+                                GLint locNormal,
+                                GLint locTangent,
+                                GLint locBitangent,
+                                GLint locUVTexture);
 
-                void bindVertices(GLint locVertices);
-                void bindUVTexture(GLint locUVTexture);
                 void bindTextures();
                 void bindModelMatrix(GLint uniformModel);
-                void bindGridSize(GLint locGridLenght, GLint locGridWidth);
 
                 btRigidBody *rigidBody;
                 btVector3 position;
                 btVector3 scale;
 
+                std::vector <btVector3> vertices;
+                std::vector <btVector3> normals;
+                std::vector <btVector3> tangents;
+                std::vector <btVector3> bitangents;
+
         private:
                 BlTexture *blTexture;
-                std::vector <btVector3> vertices;
-                std::vector <float> UVs;
+                std::vector <float> textureUVs;
                 std::vector <unsigned int> indices;
 
                 int gridWidth;
@@ -64,23 +69,37 @@ class BlTerrain
                 float minHeight;
                 float maxHeight;
 
-                const char *heightmapImage;
+                const char *heightMapPath;
                 char *heightMapData;
-                const char *textureSetName;
-                std::vector<float> textureSetHeights;
+                const char *diffuseTexturePath;
+                const char *normalTexturePath;
 
-                void createRigidBody();
-                char *extractHeightmapData(BlImage *blImage);
-                void initTextures();
-                void initVertices();
-                void initIndices();
-                void initUVs();
+                GLuint heightmapTextureBuffer;
+                GLuint diffuseTextureBuffer;
+                GLuint normalTextureBuffer;
 
-                GLuint heightmapBuffer;
-                GLuint textureBuffer;
                 GLuint vertexBuffer;
+                GLuint normalBuffer;
+                GLuint tangentBuffer;
+                GLuint bitangentBuffer;
+
                 GLuint indiceBuffer;
                 GLuint uvBuffer;
+
+        private:
+                void createRigidBody();
+                std::vector<btVector3> extractImageData(BlImage *blImage);
+                void initTextures();
+                void initVertices();
+                void initNormals();
+                void initHeightmapData();
+                void initIndices();
+                void initTangents();
+                void initUVs();
+                void pushVertice(int x, int z);
+                void pushNormal(int x, int z);
+                BlImage *createNormalHeightmap(BlImage *blImage);
+                std::vector<btVector3> averageVectors(std::vector< std::vector<btVector3> > &source);
 };
 
 #endif

@@ -2,111 +2,6 @@
 #include <bl_matrix.h>
 #include <bl_physic.h>
 
-namespace YAML {
-        template<>
-                struct convert<btVector3> {
-                        static Node encode(const btVector3& rhs) {
-                                Node node;
-                                node.push_back(rhs[0]);
-                                node.push_back(rhs[1]);
-                                node.push_back(rhs[2]);
-                                return node;
-                        }
-
-                        static bool decode(const Node& node, btVector3& rhs) {
-                                if(!node.IsSequence() || node.size() != 3)
-                                        return false;
-                                rhs[0] = node[0].as<btScalar>();
-                                rhs[1] = node[1].as<btScalar>();
-                                rhs[2] = node[2].as<btScalar>();
-                                return true;
-                        }
-                };
-
-        template<>
-                struct convert<btQuaternion> {
-                        static Node encode(const btQuaternion& rhs) {
-                                Node node;
-                                node.push_back(rhs[0]);
-                                node.push_back(rhs[1]);
-                                node.push_back(rhs[2]);
-                                node.push_back(rhs[3]);
-                                return node;
-                        }
-
-                        static bool decode(const Node& node,
-                                        btQuaternion& rhs) {
-                                if(!node.IsSequence() || node.size() != 4)
-                                        return false;
-                                rhs[0] = node[0].as<btScalar>();
-                                rhs[1] = node[1].as<btScalar>();
-                                rhs[2] = node[2].as<btScalar>();
-                                rhs[3] = node[3].as<btScalar>();
-                                return true;
-                        }
-                };
-
-        template<>
-                struct convert<std::vector<float> > {
-                        static Node encode(const std::vector<float>& rhs) {
-                                Node node;
-                                std::vector<float>::const_iterator it;
-                                for (it = rhs.begin();it != rhs.end(); ++it) {
-                                        node.push_back(*it);
-                                }
-                                return node;
-                        }
-
-                        static bool decode(const Node& node,
-                                        std::vector<float>& rhs) {
-                                if(!node.IsSequence())
-                                        return false;
-                                YAML::const_iterator it;
-                                for(it=node.begin();
-                                                it!=node.end();
-                                                ++it) {
-                                        rhs.push_back(it->as<float>());
-                                }
-                                return true;
-                        }
-                };
-
-        template<>
-                struct convert<std::vector<std::string> > {
-                        static Node encode(
-                                        const std::vector<std::string>& rhs) {
-                                Node node;
-                                std::vector<std::string>::const_iterator it;
-                                for (it = rhs.begin();it != rhs.end(); ++it) {
-                                        node.push_back(*it);
-                                }
-                                return node;
-                        }
-
-                        static bool decode(const Node& node,
-                                        std::vector<std::string>& rhs) {
-                                if(!node.IsSequence())
-                                        return false;
-                                YAML::const_iterator it;
-                                for(it=node.begin();
-                                                it!=node.end();
-                                                ++it) {
-                                        rhs.push_back(it->as<std::string>());
-                                }
-                                return true;
-                        }
-                };
-
-}
-
-btVector3 BlLoader::readVector3(YAML::Node node)
-{
-        if(!node) {
-                return btVector3();
-        }
-        return node.as<btVector3>();
-}
-
 btTransform BlLoader::readShapeTransform(YAML::Node node, btVector3 position)
 {
         btQuaternion rotation = node["rotation"].as<btQuaternion>();
@@ -192,27 +87,31 @@ BlTerrain* BlLoader::loadTerrain(YAML::Node node)
         float minHeight = node["minHeight"].as<float>();
         float maxHeight = node["maxHeight"].as<float>();
 
-        const char *textureSetName = strduplicate((node["textureSetName"]
+        const char *diffuseTexture = strduplicate((node["diffuseTexture"]
                                 .as<std::string>()).c_str());
-        std::vector<float> textureSetHeights =
-                node["textureSetHeights"].as<std::vector<float> >();
+        const char *normalTexture = strduplicate((node["normalTexture"]
+                                .as<std::string>()).c_str());
 
         BlTerrain *blTerrain = new BlTerrain(blTexture,
                         gridWidth, gridLenght,
                         heightScale,
                         minHeight, maxHeight,
-                        position, scale, image,
-                        textureSetName,
-                        textureSetHeights);
+                        position, scale,
+                        image,
+                        diffuseTexture, normalTexture);
         return blTerrain;
 }
 
 std::vector<BlModel*> *BlLoader::loadModel(YAML::Node node)
 {
         std::string modelPath = node["filename"].as<std::string>();
-        const char *image = NULL;
-        if(node["image"]) {
-                image = strduplicate((node["image"].as<std::string>()).c_str());
+        const char *normal = NULL;
+        if(node["normal"]) {
+                normal = strduplicate((node["normal"].as<std::string>()).c_str());
+        }
+        const char *diffuse = NULL;
+        if(node["diffuse"]) {
+                diffuse = strduplicate((node["diffuse"].as<std::string>()).c_str());
         }
         btVector3 position = readVector3(node["position"]);
 
@@ -227,7 +126,7 @@ std::vector<BlModel*> *BlLoader::loadModel(YAML::Node node)
 
         std::vector<BlModel*> * models =
                 blMeshLoader.loadModelFile(modelPath.c_str(), position,
-                        mapIndexBody, mapIndexOffset, image);
+                        mapIndexBody, mapIndexOffset, diffuse, normal);
         return models;
 }
 
@@ -237,11 +136,18 @@ BlCharacter *BlLoader::loadCharacter(YAML::Node node)
         const char *shapeFile = (node["shape"].as<std::string>()).c_str();
         YAML::Node shapeNode = YAML::LoadFile(shapeFile);
         float mass = shapeNode["mass"].as<float>();
+        float linearDamping = node["linearDamping"].as<float>();
+        float angularDamping = node["angularDamping"].as<float>();
+        float angularThreshold = node["angularThreshold"].as<float>();
+        float speed = node["speed"].as<float>();
         btVector3 position = readVector3(node["position"]);
         btTransform transform = readShapeTransform(shapeNode, position);
         btConvexShape *collisionShape = readCollisionShape(shapeNode);
         BlCharacter *blCharacter = new BlCharacter(blModels,
-                        mass, collisionShape,
+                        mass, linearDamping, angularDamping,
+                        angularThreshold,
+                        speed,
+                        collisionShape,
                         blState, transform);
         return blCharacter;
 }
@@ -252,12 +158,15 @@ BlLightAmbient *BlLoader::loadAmbientNode(YAML::Node node)
         return blMeshLoader.loadAmbientFile(filename.c_str());
 }
 
-void BlLoader::loadTextureSet(YAML::Node node)
+BlSkybox *BlLoader::loadSkybox(YAML::Node node)
 {
-        const char *setName = (node["name"].as<std::string>()).c_str();
-        std::vector<std::string> files = node["files"]
-                .as<std::vector<std::string> >();
-        blTexture->fillTextureAtlas(setName, files);
+        const char *xpos = getNodeChar(node, "xpos");
+        const char *xneg = getNodeChar(node, "xneg");
+        const char *ypos = getNodeChar(node, "ypos");
+        const char *yneg = getNodeChar(node, "yneg");
+        const char *zpos = getNodeChar(node, "zpos");
+        const char *zneg = getNodeChar(node, "zneg");
+        return new BlSkybox(xpos, xneg, ypos, yneg, zpos, zneg);
 }
 
 std::vector<BlLightPoint*> BlLoader::loadLightNode(YAML::Node node)
@@ -296,11 +205,6 @@ BlScene *BlLoader::loadScene(const char *filename)
                         models->push_back(*it);
                 }
         }
-        YAML::Node configTextureSet = (config["textureSet"]);
-        for(YAML::const_iterator it=configTextureSet.begin();
-                        it!=configTextureSet.end();++it) {
-                loadTextureSet(*it);
-        }
         YAML::Node configTerrain = config["terrains"];
         for(YAML::const_iterator it=configTerrain.begin();
                         it!=configTerrain.end();++it) {
@@ -309,7 +213,9 @@ BlScene *BlLoader::loadScene(const char *filename)
         }
         YAML::Node characterNode = config["character"];
         BlCharacter *blCharacter = loadCharacter(characterNode);
+        YAML::Node skyboxNode = config["skybox"];
+        BlSkybox *blSkybox = loadSkybox(skyboxNode);
         INFO("Scene has %i models, %i lights\n", models->size(),
                         lights->size());
-        return new BlScene(models, lights, ambient, terrains, blCharacter);
+        return new BlScene(models, lights, ambient, terrains, blCharacter, blSkybox);
 }

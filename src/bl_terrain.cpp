@@ -1,11 +1,14 @@
 #include "bl_terrain.h"
+#include <bl_gl_util.h>
 #include <bl_matrix.h>
 #include <bl_log.h>
-#include <bl_heightmap.h>
+#include <sys/stat.h>
 #include <map>
+#include <bl_vertice.h>
 
 void BlTerrain::initVertices()
 {
+        vertices = std::vector<btVector3>(gridWidth * gridLenght);
         float deltaX = (gridWidth - 1) / 2.0f;
         float deltaZ = (gridLenght- 1) / 2.0f;
         for(int z = 0; z < gridLenght; z++) {
@@ -15,7 +18,70 @@ void BlTerrain::initVertices()
                         float height = heightData * heightScale;
                         btVector3 vert = btVector3(x - deltaX,
                                         height, z - deltaZ);
-                        vertices.push_back(vert);
+                        vertices[index] = vert;
+                }
+        }
+}
+
+void BlTerrain::initNormals()
+{
+        normals = std::vector<btVector3>(gridWidth * gridLenght);
+        for(int z = 1; z < gridLenght - 1; z++) {
+                for(int x = 1; x < gridWidth - 1; x++) {
+                        int index = x + z * gridWidth;
+                        btVector3 right = vertices[index + 1];
+                        btVector3 left = vertices[index - 1];
+                        btVector3 up = vertices[index + gridWidth];
+                        btVector3 down = vertices[index - gridWidth];
+                        btVector3 normal = (left - right).cross(up - down);
+                        normals[index] = normal.normalize();
+                }
+        }
+}
+
+void BlTerrain::initTangents()
+{
+        tangents = std::vector<btVector3>();
+        bitangents = std::vector<btVector3>();
+
+        std::vector< std::vector<btVector3> >tempTangents(gridWidth * gridLenght);
+        std::vector< std::vector<btVector3> >tempBitangents(gridWidth * gridLenght);
+
+        for(unsigned int i = 0; i < indices.size(); i+=3) {
+                int ind0 = indices[i];
+                int ind1 = indices[i + 1];
+                int ind2 = indices[i + 2];
+                btVector3 vert0 = vertices[ind0];
+                btVector3 vert1 = vertices[ind1];
+                btVector3 vert2 = vertices[ind2];
+                btVector3 uv0 = btVector3(textureUVs[ind0 * 2 ],
+                                textureUVs[ind0 * 2 + 1], 0);
+                btVector3 uv1 = btVector3(textureUVs[ind1 * 2 ],
+                                textureUVs[ind1 * 2 + 1], 0);
+                btVector3 uv2 = btVector3(textureUVs[ind2 * 2 ],
+                                textureUVs[ind2 * 2 + 1], 0);
+                btVector3 tangent;
+                btVector3 bitangent;
+                computeTangentSpace(vert0, vert1, vert2,
+                                uv0, uv1, uv2,
+                                tangent, bitangent);
+                for(int j = 0; j < 3; j++) {
+                        tempTangents[indices[i + j]].push_back(tangent);
+                        tempBitangents[indices[i + j]].push_back(bitangent);
+                }
+        }
+        tangents = averageVectors(tempTangents);
+        bitangents = averageVectors(tempBitangents);
+
+        for(unsigned int i = 0; i < indices.size(); i++) {
+                btVector3 normal = normals[i];
+                btVector3 tangent = tangents[i];
+                btVector3 bitangent = bitangents[i];
+
+                tangent = (tangent - normal * normal.dot(tangent)).normalize();
+
+                if(normal.cross(tangent).dot(bitangent) < 0.0f) {
+                        tangent = tangent * -1.0f;
                 }
         }
 }
@@ -37,14 +103,32 @@ void BlTerrain::initIndices()
 
 void BlTerrain::initUVs()
 {
-        for (std::vector<btVector3>::iterator
-                        it = vertices.begin();
-                        it != vertices.end(); ++it) {
-                float u = (*it)[0] / 32.0f;
-                float v = (*it)[2] / 32.0f;
-                UVs.push_back(u);
-                UVs.push_back(v);
+        for(std::vector<btVector3>::iterator it = vertices.begin();
+                        it != vertices.end();
+                        it++) {
+                btVector3 vert = (*it);
+                float u = float(vert.x());
+                float v = float(vert.z());
+                textureUVs.push_back(u);
+                textureUVs.push_back(v);
         }
+}
+
+std::vector<btVector3> BlTerrain::averageVectors(std::vector< std::vector<btVector3> > &source)
+{
+        std::vector<btVector3> means;
+        for(std::vector< std::vector<btVector3> >::iterator it = source.begin();
+                        it != source.end(); it++) {
+                std::vector<btVector3> vectors = *it;
+                btVector3 mean;
+                for(std::vector<btVector3>::iterator it2 = vectors.begin();
+                                it2 != vectors.end(); it2++) {
+                        mean += *it2;
+                }
+                mean /= vectors.size();
+                means.push_back(mean.normalize());
+        }
+        return means;
 }
 
 void BlTerrain::createRigidBody()
@@ -73,70 +157,88 @@ void BlTerrain::createRigidBody()
         rigidBody->setWorldTransform(model);
 }
 
-char *BlTerrain::extractHeightmapData(BlImage *blImage)
+std::vector<btVector3> BlTerrain::extractImageData(BlImage *blImage)
 {
-        size_t size = gridWidth * gridLenght * sizeof(char);
-        char *height = (char *)malloc(size);
-        int lengthIncrement = blImage->height / gridLenght;
-        int widthIncrement = blImage->width / gridWidth;
+        std::vector<btVector3> gridData = std::vector<btVector3>(gridWidth * gridLenght);
+        int lengthIncrement = blImage->surface->h / gridLenght;
+        int widthIncrement = blImage->surface->w / gridWidth;
         for(int x = 0; x < gridWidth; x++) {
                 for(int z = 0; z < gridLenght; z++) {
                         int index = x + z * gridWidth;
-                        height[index] =
-                                blImage->getPixelAt(x * widthIncrement,
-                                                z * lengthIncrement);
+                        gridData[index] = blImage->getPixelsAt(
+                                        x * widthIncrement,
+                                        z * lengthIncrement);
                 }
         }
-        return height;
+        return gridData;
 }
 
 void BlTerrain::initTextures()
 {
-        textureBuffer = blTexture->fetchTexture(textureSetName);
-        heightmapBuffer = blTexture->fetchTexture(heightmapImage);
+        diffuseTextureBuffer = blTexture->fetchTexture(diffuseTexturePath);
+        normalTextureBuffer = blTexture->fetchTexture(normalTexturePath);
+        heightmapTextureBuffer = blTexture->fetchTexture(heightMapPath);
+}
+
+void BlTerrain::initHeightmapData()
+{
+        BlImage *heightMapImage = new BlImage(heightMapPath);
+
+        std::vector<btVector3> heightVectors = extractImageData(heightMapImage);
+        heightMapData = (char *)malloc(gridWidth * gridLenght * sizeof(char));
+        for(int x = 0; x < gridWidth; x++) {
+                for(int z = 0; z < gridLenght; z++) {
+                        int index = x + z * gridWidth;
+                        heightMapData[index] = heightVectors[index][0] * 255.f;
+                }
+        }
+
+        delete heightMapImage;
 }
 
 void BlTerrain::init()
 {
         glGenBuffers(1, &indiceBuffer);
         glGenBuffers(1, &vertexBuffer);
+        glGenBuffers(1, &tangentBuffer);
+        glGenBuffers(1, &normalBuffer);
+        glGenBuffers(1, &bitangentBuffer);
         glGenBuffers(1, &uvBuffer);
 
-        BlImage *blImage = readPngImage(heightmapImage);
-        heightMapData = extractHeightmapData(blImage);
-
+        initHeightmapData();
         createRigidBody();
         initVertices();
+        initNormals();
         initIndices();
 
         initTextures();
         initUVs();
-
-        delete blImage;
+        initTangents();
 }
 
 BlTerrain::~BlTerrain()
 {
         glDeleteBuffers(1, &indiceBuffer);
         glDeleteBuffers(1, &vertexBuffer);
+        glDeleteBuffers(1, &normalBuffer);
+        glDeleteBuffers(1, &tangentBuffer);
+        glDeleteBuffers(1, &bitangentBuffer);
         glDeleteBuffers(1, &uvBuffer);
-        if(heightmapBuffer > 0)
-                glDeleteTextures(1, &heightmapBuffer);
+
+        blTexture->deleteTexture(diffuseTexturePath);
+        blTexture->deleteTexture(normalTexturePath);
+        blTexture->deleteTexture(heightMapPath);
         free(heightMapData);
 }
 
 void BlTerrain::loadInBuffer()
 {
-        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-        glBufferData(GL_ARRAY_BUFFER,
-                        vertices.size() * sizeof(btVector3),
-                        &vertices[0], GL_STATIC_DRAW);
+        loadBtVectorsInBuffer(vertexBuffer, vertices);
+        loadBtVectorsInBuffer(normalBuffer, normals);
+        loadBtVectorsInBuffer(tangentBuffer, tangents);
+        loadBtVectorsInBuffer(bitangentBuffer, bitangents);
 
-        glBindBuffer(GL_ARRAY_BUFFER, uvBuffer);
-        glBufferData(GL_ARRAY_BUFFER
-                        , UVs.size() * sizeof(float)
-                        , &UVs[0], GL_STATIC_DRAW);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        loadUVsInBuffer(uvBuffer, textureUVs);
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indiceBuffer);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER
@@ -145,34 +247,14 @@ void BlTerrain::loadInBuffer()
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-void BlTerrain::bindVertices(GLint locVertices)
-{
-        glEnableVertexAttribArray(locVertices);
-        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-        glVertexAttribPointer(locVertices, 4 , GL_FLOAT
-                        , GL_FALSE, 0, (void *)0);
-}
-
-void BlTerrain::bindUVTexture(GLint locUVTexture)
-{
-        glEnableVertexAttribArray(locUVTexture);
-        glBindBuffer(GL_ARRAY_BUFFER, uvBuffer);
-        glVertexAttribPointer(locUVTexture, 2 , GL_FLOAT
-                        , GL_FALSE, 0, (void *)0);
-}
-
-void BlTerrain::bindGridSize(GLint locGridLenght, GLint locGridWidth)
-{
-        glUniform1i(locGridWidth, gridWidth);
-        glUniform1i(locGridLenght, gridLenght);
-}
-
 void BlTerrain::bindTextures()
 {
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, heightmapBuffer);
+        glBindTexture(GL_TEXTURE_2D, heightmapTextureBuffer);
         glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, textureBuffer);
+        glBindTexture(GL_TEXTURE_2D, diffuseTextureBuffer);
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_2D, normalTextureBuffer);
 }
 
 void BlTerrain::bindModelMatrix(GLint uniformModel)
@@ -181,17 +263,28 @@ void BlTerrain::bindModelMatrix(GLint uniformModel)
         sendTransform(model, uniformModel);
 }
 
-void BlTerrain::drawElement(GLint locModel, GLint locVertices, GLint locUVTexture,
-                GLint locGridLenght, GLint locGridWidth) {
+void BlTerrain::drawElement(GLint locModel,
+                GLint locVertices,
+                GLint locNormal,
+                GLint locTangent,
+                GLint locBitangent,
+                GLint locUVTexture) {
         bindModelMatrix(locModel);
-        bindVertices(locVertices);
-        bindUVTexture(locUVTexture);
+        bindBufferToLocation(locVertices, vertexBuffer, 4);
+        bindBufferToLocation(locNormal, normalBuffer, 4);
+        bindBufferToLocation(locTangent, tangentBuffer, 4);
+        bindBufferToLocation(locBitangent, bitangentBuffer, 4);
+        bindBufferToLocation(locUVTexture, uvBuffer, 2);
+
         bindTextures();
-        bindGridSize(locGridLenght, locGridWidth);
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indiceBuffer);
         glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (void *)0);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-        glDisableVertexAttribArray(locUVTexture);
-        glDisableVertexAttribArray(locVertices);
+        disableLocation(locUVTexture);
+        disableLocation(locVertices);
+        disableLocation(locTangent);
+        disableLocation(locBitangent);
+        disableLocation(locNormal);
 }

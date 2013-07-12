@@ -6,9 +6,9 @@ TESTDIR = tests
 
 CC      = clang++
 CCFLAGS = -I$(IDIR) -Wextra -Wall -Werror
-CCFLAGS += `pkg-config --cflags glew gl sdl2 bullet assimp libpng yaml-cpp SDL2_ttf`
+CCFLAGS += `pkg-config --cflags glew gl sdl2 bullet assimp yaml-cpp sdl2 SDL2_ttf SDL2_image`
 
-LIBS = `pkg-config --libs glew gl sdl2 bullet assimp libpng yaml-cpp SDL2_ttf`
+LIBS = `pkg-config --libs glew gl bullet assimp libpng yaml-cpp sdl2 SDL2_ttf SDL2_image`
 
 TEST_CCFLAGS = $(CCFLAGS)
 TEST_CCFLAGS += `pkg-config --cflags check`
@@ -50,6 +50,5 @@ main: $(MAIN)
 .PHONY: clean debug
 
 clean:
-	rm -f $(ODIR)/*.o 
-	rm -f $(ODIR)/*.d
+	rm -f $(ODIR)/*
 	rm -f check_*

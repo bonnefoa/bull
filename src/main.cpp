@@ -10,8 +10,12 @@
 #include <bl_simulation.h>
 #include <bl_sdl.h>
 #include <bl_matrix.h>
-
-#define TICK_INTERVAL 1000
+#include <bl_camera.h>
+#include <bl_text.h>
+#include <bl_debug.h>
+#include <bl_program_skybox.h>
+#include <bl_skybox.h>
+#include <bl_program_oculus.h>
 
 BlInput *blInput;
 BlSdl *blSdl;
@@ -21,16 +25,25 @@ BlProgramModel *blProgramModel;
 BlProgramTerrain *blProgramTerrain;
 BlProgramShadow *blProgramShadow;
 BlProgramTexture *blProgramTexture;
+BlProgramSkybox *blProgramSkybox;
+BlProgramOculus *blProgramOculus;
+
 BlTexture *blTexture;
 BlLoader *blLoader;
 
 BlProgramDebug *blProgramDebug;
-BlDebugDrawer *blDebugDrawer;
+
+BlProgramText2d *blProgramText2d;
+BlProgramText3d *blProgramText3d;
+BlText *blText;
 
 BlScene *blScene;
 BlState *blState;
 BlConfig *blConfig;
-Uint32 nextTime = 0;
+BlCamera *blCamera;
+
+BlDebugDrawer *blDebugDrawer;
+BlDebug *blDebug;
 
 void initWindow()
 {
@@ -39,22 +52,40 @@ void initWindow()
         blTexture = new BlTexture();
 }
 
-void initComponents()
+void initComponents(const char *filename)
 {
-        blState = new BlState(btVector3(0,0,8), blSdl->font,
-                        blConfig);
-        blInput = new BlInput(blState, blConfig);
+        blState = new BlState(blSdl->font, blConfig);
+        blCamera = new BlCamera(blConfig, blState);
+        blInput = new BlInput(blState, blConfig, blCamera);
 
-        blProgramModel = getProgramModel(blInput, blConfig, blState);
-        blProgramTerrain = getProgramTerrain(blConfig, blState);
+        blProgramModel = getProgramModel(blConfig, blState);
+        blProgramTerrain = getProgramTerrain(blConfig);
         blProgramTexture = getProgramTexture();
+        blProgramSkybox = getProgramSkybox();
         blProgramShadow = getProgramShadow(btVector3());
         blLoader = new BlLoader(blTexture, blState);
 
-        blProgramDebug = getProgramDebug(blConfig);
-        blDebugDrawer = new BlDebugDrawer(blProgramDebug, blState);
+        blProgramText2d = getProgramText2d(blConfig);
+        blProgramText3d = getProgramText3d(blConfig);
+        blText = new BlText(blProgramText2d, blProgramText3d, blConfig, blState);
+        blText->init();
+
+        blProgramDebug = getProgramDebug();
+        blDebugDrawer = new BlDebugDrawer(blProgramDebug, blState, blText);
         blDebugDrawer->init();
         blSimulation = new BlSimulation(blDebugDrawer, blState);
+
+        blScene = blLoader->loadScene(filename);
+        blScene->init(blSimulation);
+        blScene->blLightAmbient->loadInBuffer(blProgramModel->programId);
+        blScene->blLightAmbient->loadInBuffer(blProgramTerrain->programId);
+
+        blDebug = new BlDebug(blConfig, blState,
+                        blDebugDrawer, blSimulation, blText, blScene);
+        blProgramOculus = getProgramOculus(blConfig,
+                        blCamera, blProgramModel,
+                        blProgramTerrain, blProgramSkybox, blProgramShadow,
+                        blDebug, blScene);
 }
 
 void clean()
@@ -63,9 +94,12 @@ void clean()
         delete blProgramShadow;
         delete blProgramTexture;
         delete blProgramTerrain;
+        delete blProgramText2d;
+
         delete blScene;
         delete blSimulation;
         delete blInput;
+        delete blText;
 }
 
 void shutdown()
@@ -77,84 +111,50 @@ void shutdown()
         delete blTexture;
 }
 
-void initScene(const char *filename)
+void setLight()
 {
-        blScene = blLoader->loadScene(filename);
-        blProgramModel->bindProjection();
-        blProgramTerrain->bindProjection();
-        blScene->init(blSimulation, blProgramModel->programId);
-}
-
-void setLight() {
         BlLightPoint *light = blScene->blLightPoints->at(0);
-        blProgramShadow->moveLight(blState->position);
-        blProgramModel->moveLight(blState->position);
-        light->moveLight(blState->position,
-                        blProgramModel->programId);
+        blProgramShadow->moveLight(blScene->blCharacter->getPosition() + btVector3(0, 5, 0));
+        blProgramModel->moveLight(blScene->blCharacter->getPosition() + btVector3(0, 5, 0));
+        light->moveLight(blScene->blCharacter->getPosition() + btVector3(0, 5, 0));
+        light->loadLightInProgram(blProgramModel->programId);
+        light->loadLightInProgram(blProgramTerrain->programId);
 }
 
-void moveLight() {
+void moveLight()
+{
         if(blState->lightState > 0) {
                 setLight();
         }
 }
 
-void debugScene()
-{
-        for (std::vector<BlTerrain*>::iterator
-                        it = blScene->blTerrains->begin();
-                        it != blScene->blTerrains->end(); ++it) {
-                BlTerrain *terrain = *it;
-                blDebugDrawer->drawXYZAxis(buildModelMatrix(btVector3(1,1,1),
-                                        terrain->position));
-        }
-
-        btTransform center = buildModelMatrix(btVector3(1,1,1),
-                                blState->position + blState->direction + btVector3(0.5, 0.5,0.5));
-        blDebugDrawer->drawAxis(center, blState->direction, btVector3(1,1,1));
-        blDebugDrawer->drawAxis(center, blState->rightDirection, btVector3(1,0,0));
-        blDebugDrawer->drawAxis(center, blState->upDirection, btVector3(0,1,0));
-}
-
-void renderDebug()
-{
-        if(blState->debugState) {
-                blDebugDrawer->initDebugRender();
-                blSimulation->debugDraw();
-                debugScene();
-                blDebugDrawer->finalizeDraw();
-        }
-}
-
 void render()
 {
-        glViewport(0, 0, 1024, 1024);
+        glViewport(0, 0, blConfig->width, blConfig->height);
         blProgramShadow->displaySceneForRender(blScene);
-        blProgramModel->displayScene(blScene, blProgramShadow->depthTexture);
-        blProgramTerrain->displayScene(blScene);
-        renderDebug();
+
+        blProgramOculus->renderScene();
+
         SDL_GL_SwapWindow(blSdl->window);
 }
 
 void mainLoop()
 {
-        glClearColor( 0.0, 0.0, 0.2, 1.0 );
-        glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        blState->refreshDeltaTime();
+        blState->refreshState();
         blInput->handleInput();
 
-        blState->computeNewAngles();
+        blCamera->moveCamera(blScene->blCharacter->getPosition());
+        blCamera->computeNewCamera();
         blScene->blCharacter->handleMovement();
-        blState->computeView();
+        blScene->blCharacter->handleTurn(blCamera->rotation);
 
         if(blState->leftMouse == 1) {
-                blSimulation->pushObject();
+                blSimulation->pushObject(blScene->blCharacter);
         }
         if(blState->rightMouse == 1) {
-                blSimulation->pickObject();
+                blSimulation->pickObject(blScene->blCharacter);
         } else {
-                blSimulation->endPickObject();
+                blSimulation->endPickObject(blScene->blCharacter);
         }
 
         moveLight();
@@ -164,20 +164,16 @@ void mainLoop()
 void reload(const char *configFile)
 {
         clean();
-        initComponents();
-        initScene(configFile);
+        initComponents(configFile);
+        setLight();
         blState->gamestate = NORMAL;
 }
 
 void reloadKeepPosition(const char *configFile)
 {
-        btVector3 oldPosition = blState->position;
-        float oldPhi = blState->phi;
-        float oldTheta = blState->theta;
+        btVector3 oldPosition = blScene->blCharacter->getPosition();
         reload(configFile);
-        blState->phi = oldPhi;
-        blState->theta = oldTheta;
-        blState->position = oldPosition;
+        blScene->blCharacter->getPosition() = oldPosition;
         blSimulation->toggleDebug(blState->debugState);
 }
 
@@ -190,8 +186,7 @@ int main(int argc, char **argv)
         blConfig = loadBlConfig("conf.yaml");
 
         initWindow();
-        initComponents();
-        initScene(configFile);
+        initComponents(configFile);
         setLight();
 
         while(true) {

@@ -5,6 +5,7 @@
 #include <bl_program_debug.h>
 #include <bl_matrix.h>
 #include <BulletCollision/BroadphaseCollision/btBroadphaseProxy.h>
+#include <bl_character.h>
 
 BlSimulation::BlSimulation(BlDebugDrawer *_blDebugDrawer
                 , BlState *_blState)
@@ -30,18 +31,19 @@ BlSimulation::~BlSimulation()
         delete collisionConfiguration;
 }
 
-btCollisionWorld::ClosestRayResultCallback BlSimulation::getCenterObject()
+btCollisionWorld::ClosestRayResultCallback BlSimulation::getCenterObject(BlCharacter *blCharacter)
 {
-        btCollisionWorld::ClosestRayResultCallback rayCallback(
-                        blState->position, blState->direction);
-        dynamicsWorld->rayTest(blState->position,
-                        blState->direction * 100,
-                        rayCallback);
+        btVector3 position = blCharacter->getPosition();
+        btVector3 direction = blCharacter->getDirection();
+        btCollisionWorld::ClosestRayResultCallback rayCallback(position,
+                        direction);
+        dynamicsWorld->rayTest(position, direction * 100, rayCallback);
         return rayCallback;
 }
 
-void BlSimulation::endPickObject()
+void BlSimulation::endPickObject(BlCharacter *blCharacter)
 {
+        (void) blCharacter;
         if(!pickedBody) {
                 return;
         }
@@ -51,15 +53,17 @@ void BlSimulation::endPickObject()
         pickedBody = NULL;
 }
 
-void BlSimulation::movePickedObject()
+void BlSimulation::movePickedObject(BlCharacter *blCharacter)
 {
-        btVector3 position = blState->position + blState->direction * 3;
+        btVector3 position = blCharacter->getPosition()
+                + blCharacter->getDirection() * 3;
         btTransform tr = buildModelMatrix(btVector3(1,1,1), position);
         pickedBody->setCenterOfMassTransform(tr);
 }
 
 void BlSimulation::initializePickedObject(
-                btCollisionWorld::ClosestRayResultCallback rayCallback)
+                btCollisionWorld::ClosestRayResultCallback rayCallback,
+                BlCharacter *blCharacter)
 {
         pickedBody = btRigidBody::upcast(
                         rayCallback.m_collisionObject);
@@ -68,7 +72,8 @@ void BlSimulation::initializePickedObject(
                 return;
         }
 
-        btVector3 position = blState->position + blState->direction * 3;
+        btVector3 position = blCharacter->getPosition()
+                + blCharacter->getDirection() * 3;
         btTransform tr = buildModelMatrix(btVector3(1,1,1), position);
 
         pickedBody->setGravity(btVector3(0,0,0));
@@ -77,31 +82,31 @@ void BlSimulation::initializePickedObject(
         pickedBody->setActivationState(DISABLE_DEACTIVATION);
 }
 
-void BlSimulation::pickObject()
+void BlSimulation::pickObject(BlCharacter *blCharacter)
 {
         if(pickedBody) {
-                movePickedObject();
+                movePickedObject(blCharacter);
                 return;
         }
         btCollisionWorld::ClosestRayResultCallback rayCallback =
-                getCenterObject();
+                getCenterObject(blCharacter);
         if(!rayCallback.hasHit()) {
                 return;
         }
-        initializePickedObject(rayCallback);
+        initializePickedObject(rayCallback, blCharacter);
 }
 
-void BlSimulation::pushObject()
+void BlSimulation::pushObject(BlCharacter *blCharacter)
 {
         btCollisionWorld::ClosestRayResultCallback rayCallback =
-                getCenterObject();
+                getCenterObject(blCharacter);
         if(rayCallback.hasHit()) {
                 btRigidBody *body = btRigidBody::upcast(
                                 rayCallback.m_collisionObject);
                 if(!body->isStaticObject()) {
-                        btVector3 str = blState->direction;
-                        body->activate(true);
-                        body->setLinearVelocity(body->getLinearVelocity() + str);
+                        btVector3 str = blCharacter->getDirection();
+                        body->forceActivationState(ACTIVE_TAG);
+                        body->applyCentralImpulse(str);
                 }
         }
 }

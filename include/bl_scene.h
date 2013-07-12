@@ -7,6 +7,7 @@
 #include <bl_light_ambient.h>
 #include <bl_character.h>
 #include <bl_simulation.h>
+#include <bl_skybox.h>
 
 class BlScene {
         public:
@@ -15,22 +16,25 @@ class BlScene {
                                 , BlLightAmbient *_ambient
                                 , std::vector<BlTerrain*> *_terrains
                                 , BlCharacter *_blCharacter
-                                ) :
+                                , BlSkybox *_blSkybox
+                        ) :
                         blModels(_models),
                         blLightPoints(_lightPoints),
                         blLightAmbient(_ambient),
                         blTerrains(_terrains),
-                        blCharacter(_blCharacter)
-        {} ;
+                        blCharacter(_blCharacter),
+                        blSkybox(_blSkybox) {} ;
 
                 std::vector<BlModel*> *blModels;
                 std::vector<BlLightPoint*> *blLightPoints;
                 BlLightAmbient *blLightAmbient;
                 std::vector<BlTerrain*> *blTerrains;
                 BlCharacter *blCharacter;
-        virtual ~BlScene ();
+                BlSkybox *blSkybox;
 
-        void init(BlSimulation *blSimulation, GLuint programModelId);
+                virtual ~BlScene ();
+
+                void init(BlSimulation *blSimulation);
 
 };
 

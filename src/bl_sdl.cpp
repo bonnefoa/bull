@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <bl_log.h>
+#include <SDL_image.h>
 
 void errorCallback( GLenum source,
                 GLenum type, GLuint id, GLenum severity,
@@ -41,6 +42,7 @@ void BlSdl::shutdown()
         SDL_GL_DeleteContext(context);
         SDL_DestroyWindow(window);
         TTF_Quit();
+        IMG_Quit();
         SDL_Quit();
 }
 
@@ -61,6 +63,14 @@ void BlSdl::launch()
 {
         if (SDL_Init(SDL_INIT_VIDEO) < 0)
                 die("Unable to initialize SDL");
+
+        int flags = IMG_INIT_JPG | IMG_INIT_PNG;
+        int initted = IMG_Init(flags);
+        if(initted != flags) {
+                INFO("IMG_Init: %s\n", IMG_GetError());
+                die("IMG_Init: Failed to init required jpg and png support!\n");
+        }
+
         SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
         SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
@@ -69,7 +79,7 @@ void BlSdl::launch()
 
         window = SDL_CreateWindow("bullora"
                         , SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                        1024, 1024
+                        blConfig->width, blConfig->height
                         , SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_INPUT_GRABBED);
         if (!window)
                 die("Unable to create window");

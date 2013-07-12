@@ -1,141 +1,85 @@
 #include "bl_image.h"
+
 #include <bl_log.h>
+#include <string.h>
+#include <bl_util.h>
 #include <png.h>
 #include <zlib.h>
 #include <math.h>
-#include <string.h>
-#include <bl_util.h>
 
-int colorTypeToNumberChannels(int colorType)
+bool BlImage::isTga(const char *filename)
 {
-        switch(colorType) {
-                case PNG_COLOR_TYPE_GRAY:
-                        return RGB_CHANNEL;
-                case PNG_COLOR_TYPE_GRAY_ALPHA:
-                        return RGBA_CHANNEL;
-                case PNG_COLOR_TYPE_RGB:
-                        return RGB_CHANNEL;
-                case PNG_COLOR_TYPE_RGB_ALPHA:
-                        return RGBA_CHANNEL;
+        const char *extension = filename + strlen(filename) - 4;
+        int res = strncmp(extension, ".tga", 4);
+        return res == 0;
+}
+
+BlImage::BlImage (const char *filename)
+{
+        SDL_RWops *rwop;
+        rwop = SDL_RWFromFile(filename, "rb");
+        bool isReverted = IMG_isPNG(rwop);
+
+        if(isTga(filename)){
+                surface = IMG_LoadTyped_RW(rwop, 1, "TGA");
+        } else {
+                surface = IMG_Load_RW(rwop, 1);
         }
-        ERROR("Unknown color type %i\n", colorType);
+        if (!surface) {
+                INFO("Error on loading image %s\n", filename);
+                INFO("IMG_Load: %s\n", IMG_GetError());
+        }
+        if (isReverted) {
+                size_t lineSize = surface->format->BytesPerPixel * surface->w;
+                unsigned char upPixels[lineSize * surface->h / 2];
+                unsigned char *pixels = (unsigned char *)surface->pixels;
+                for (int i = 0; i < surface->h / 2; i++) {
+                        int downIndex = surface->h - i - 1;
+                        memcpy(upPixels, pixels + i * lineSize, lineSize);
+                        memcpy(pixels + i * lineSize,
+                                        pixels + downIndex * lineSize,
+                                        lineSize);
+                        memcpy(pixels + downIndex * lineSize,
+                                        upPixels,
+                                        lineSize);
+                }
+        }
+};
+
+GLenum BlImage::getGlFormat()
+{
+        switch(surface->format->BytesPerPixel) {
+                case 1:
+                        return GL_LUMINANCE;
+                case 3:
+                        return GL_RGB;
+                case 4:
+                        return GL_RGBA;
+        }
+        ERROR("Unknown color type %i\n", surface->format->BytesPerPixel);
         return 0;
 }
 
-GLenum colorTypeToGlFormat(int colorType)
+GLenum BlImage::getSurfaceFormat()
 {
-        switch(colorType) {
-                case PNG_COLOR_TYPE_GRAY:
-                        return GL_RGB;
-                case PNG_COLOR_TYPE_GRAY_ALPHA:
+        Uint32 r = surface->format->Rmask;
+        Uint32 g = surface->format->Gmask;
+        Uint32 b = surface->format->Bmask;
+        bool hasAlpha = surface->format->BytesPerPixel == 4;
+        if(r == 0xff && g == 0xff00 && b == 0xff0000) {
+                if(hasAlpha) {
                         return GL_RGBA;
-                case PNG_COLOR_TYPE_RGB:
-                        return GL_RGB;
-                case PNG_COLOR_TYPE_RGB_ALPHA:
-                        return GL_RGBA;
+                }
+                return GL_RGB;
         }
-        ERROR("Unknown color type %i\n", colorType);
-        return 0;
-}
-
-BlImage *readMultipleImages(std::vector<std::string> images)
-{
-        std::vector<BlImage*> parsedImages;
-        for (std::vector<std::string>::iterator it=images.begin();
-                        it!=images.end(); ++it) {
-                parsedImages.push_back(readPngImage((*it).c_str()));
+        if(r == 0xff0000 && g == 0xff00 && b == 0xff) {
+                if(hasAlpha) {
+                        return GL_BGRA;
+                }
+                return GL_BGR;
         }
-
-        unsigned int width = parsedImages[0]->width;
-        unsigned int height = parsedImages[0]->height;
-        GLenum format = parsedImages[0]->format;
-        int numChannels = parsedImages[0]->numChannels;
-
-        size_t imageSize = width * height * numChannels * sizeof(char);
-        unsigned char *pixels = (unsigned char*) malloc(imageSize
-                        * images.size());
-
-        for (unsigned int i = 0; i < images.size(); i++) {
-                memcpy(pixels + i * imageSize,
-                       parsedImages[i]->pixels,
-                       imageSize);
-                delete parsedImages[i];
-        }
-        return new BlImage(width, height, pixels, format, numChannels);
-}
-
-BlImage *readPngImage(const char *filename)
-{
-        FILE * infile;
-        if ((infile = fopen(filename, "rb")) == NULL) {
-                ERROR("can't open '%s'\n", filename);
-                return NULL;
-        }
-        unsigned char sig[8];
-        fread(sig, 1, 8, infile);
-        if (png_sig_cmp(sig, 0, 8) != 0) {
-                ERROR("%s is not a png file\n", filename);
-                return NULL;
-        }
-
-        int bitDepth;
-        int colorType;
-        png_uint_32  i, rowbytes;
-        png_uint_32 width;
-        png_uint_32 height;
-        png_structp pngPtr = png_create_read_struct(PNG_LIBPNG_VER_STRING
-                        , NULL, NULL, NULL);
-        png_infop infoPtr = png_create_info_struct(pngPtr);
-
-        png_init_io(pngPtr, infile);
-        png_set_sig_bytes(pngPtr, 8);
-        png_read_info(pngPtr, infoPtr);
-        png_get_IHDR(pngPtr, infoPtr, &width, &height, &bitDepth,
-                        &colorType, NULL, NULL, NULL);
-        if (colorType == PNG_COLOR_TYPE_PALETTE)
-                png_set_expand(pngPtr);
-        if (colorType == PNG_COLOR_TYPE_GRAY && bitDepth < 8)
-                png_set_expand(pngPtr);
-        if (png_get_valid(pngPtr, infoPtr, PNG_INFO_tRNS))
-                png_set_expand(pngPtr);
-        if (bitDepth == 16)
-                png_set_strip_16(pngPtr);
-        if (colorType == PNG_COLOR_TYPE_GRAY ||
-                        colorType == PNG_COLOR_TYPE_GRAY_ALPHA)
-                png_set_gray_to_rgb(pngPtr);
-
-        int numChannels = colorTypeToNumberChannels(colorType);
-        GLenum format = colorTypeToGlFormat(colorType);
-
-        png_bytep row_pointers[height];
-        png_read_update_info(pngPtr, infoPtr);
-        rowbytes = png_get_rowbytes(pngPtr, infoPtr);
-
-        unsigned char *lines = (unsigned char *) malloc(sizeof(unsigned char)
-                                * width * height * numChannels);
-        for (i = 0;  i < height;  ++i)
-                row_pointers[i] = lines + (height - 1 - i)*rowbytes;
-        png_read_image(pngPtr, row_pointers);
-        png_read_end(pngPtr, NULL);
-        png_destroy_read_struct(&pngPtr, &infoPtr, NULL);
-
-        unsigned int texWidth = roundUpPowerOfTwo(width);
-        unsigned int texHeight = roundUpPowerOfTwo(height);
-        if(texWidth == width && texHeight == height) {
-                return new BlImage(width, height, lines, format, numChannels);
-        }
-
-        size_t sizePixels = sizeof(unsigned char) *
-                texWidth * texHeight * numChannels;
-        unsigned char *pixels = (unsigned char *) malloc(sizePixels);
-        memset(pixels, 0, sizePixels);
-        for (i = 0;  i < height; i++) {
-                memcpy(pixels + i * texWidth * numChannels,
-                       lines + i * width * numChannels,
-                       width * numChannels * sizeof(char));
-        }
-        free(lines);
-        return new BlImage(texWidth, texHeight, pixels, format, numChannels);
+        INFO("Unkown pixel color order\n");
+        return GL_RGB;
 }
 
 void BlImage::loadInBuffer(GLuint textureBuffer)
@@ -150,11 +94,22 @@ void BlImage::loadInBuffer(GLuint textureBuffer)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
         INFO("Loading in buffer %i image of size %i / %i\n", textureBuffer,
-                        width, height);
+                        surface->w, surface->h);
+        GLenum format = getGlFormat();
+        GLenum surfaceFormat = getSurfaceFormat();
         glTexImage2D(GL_TEXTURE_2D, 0, format,
-                        width, height,
-                        0, format, GL_UNSIGNED_BYTE,
-                        pixels);
+                        surface->w, surface->h,
+                        0, surfaceFormat, GL_UNSIGNED_BYTE,
+                        surface->pixels);
+}
+
+void BlImage::loadInCubeMap(GLenum target)
+{
+        GLenum format = getGlFormat();
+        GLenum surfaceFormat = getSurfaceFormat();
+        glTexImage2D(target, 0, format,
+                        surface->w, surface->h, 0, surfaceFormat,
+                        GL_UNSIGNED_BYTE, surface->pixels);
 }
 
 void BlImage::writeImage(const char *destination)
@@ -170,14 +125,16 @@ void BlImage::writeImage(const char *destination)
         infoPtr = png_create_info_struct(pngPtr);
         png_init_io(pngPtr, outfile);
         png_set_compression_level(pngPtr, Z_BEST_COMPRESSION);
-        png_set_IHDR(pngPtr, infoPtr, width,
-                        height, 8,
+        png_set_IHDR(pngPtr, infoPtr, surface->w,
+                        surface->h, 8,
                         PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE,
                         PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
         png_write_info(pngPtr, infoPtr);
-        for(unsigned int i = 0; i < height; i++) {
+        unsigned char *pixels = (unsigned char *)surface->pixels;
+        for(int i = 0; i < surface->h; i++) {
                 png_write_row(pngPtr,
-                                &pixels[i * width * numChannels]);
+                                &pixels[(surface->h - 1 - i)
+                                * surface->w * surface->format->BytesPerPixel]);
         }
         png_write_end(pngPtr, NULL);
         fclose(outfile);
@@ -185,16 +142,26 @@ void BlImage::writeImage(const char *destination)
 
 int BlImage::getPixelIndexAt(int x, int y)
 {
-        return x * numChannels + y * width * numChannels;
+        int numChannels = surface->format->BytesPerPixel;
+        return x * numChannels + y * surface->w * numChannels;
 }
 
 unsigned char BlImage::getPixelAt(int x, int y)
 {
-        return pixels[getPixelIndexAt(x, y)];
+        return ((unsigned char *) surface->pixels)[getPixelIndexAt(x, y)];
 }
 
+btVector3 BlImage::getPixelsAt(int x, int y)
+{
+        unsigned char *pixels = (unsigned char *)surface->pixels;
+        int index = getPixelIndexAt(x, y);
+        float r = pixels[index] / 255.0f;
+        float g = pixels[index + 1] / 255.0f;
+        float b = pixels[index + 2] / 255.0f;
+        return btVector3(r, g, b);
+}
 
 BlImage::~BlImage()
 {
-        free(pixels);
+        SDL_FreeSurface(surface);
 }

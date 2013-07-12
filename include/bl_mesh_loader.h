@@ -29,7 +29,8 @@ class BlMeshLoader
                                 btVector3 position,
                                 std::map<std::string, btRigidBody*> mapIndexBody,
                                 std::map<std::string, btVector3> mapIndexOffset,
-                                const char *image);
+                                const char *diffuse,
+                                const char *normal);
                 std::vector<BlLightPoint*> loadLightFile(const char *path,
                                 btVector3 position,
                                 std::vector<BlModel*> *models);
@@ -54,7 +55,8 @@ class BlMeshLoader
                                 btVector3 position,
                                 std::map<std::string, btRigidBody*> mapIndexBody,
                                 std::map<std::string, btVector3> mapIndexOffset,
-                                const char *image );
+                                const char *diffuse,
+                                const char *normal);
 
                 BlModel *loadMesh(
                                 aiMesh *mesh,
@@ -63,7 +65,8 @@ class BlMeshLoader
                                 btVector3 position,
                                 std::map<std::string, btRigidBody*> mapIndexBody,
                                 std::map<std::string, btVector3> mapIndexOffset,
-                                const char *image);
+                                const char *diffuse,
+                                const char *normal);
 };
 
 #endif

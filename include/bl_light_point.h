@@ -31,9 +31,10 @@ class BlLightPoint {
                 float quadraticAttenuation;
                 std::vector<BlModel*> *blModels;
 
-                void loadInBuffer(GLuint programId);
+                void loadLightInProgram(GLuint programId);
+                void loadInBuffer();
                 void init();
-                void moveLight(btVector3 position, GLuint programId);
+                void moveLight(btVector3 position);
 
                 virtual ~BlLightPoint ();
 };

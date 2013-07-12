@@ -1,11 +1,17 @@
+screen:
+        width: 1280
+        height: 800
+
 game:
         speed: 0.1
         mouseSpeed: 0.0001
+
 camera:
         fov: 45
         aspect: 1.33
         zNear: 0.1
         zFar: 100.0
+        lookThreshold: 80.0
 
 keys:
         forward: w
@@ -17,8 +23,14 @@ keys:
         reload: r
         light: l
         debug: v
-        pause: space
+        pause: p
+        cameraFirstPerson: f1
+        cameraThirdPerson: f2
 
 text:
         font: /usr/share/fonts/dejavu/DejaVuSerif.ttf
-        size: 10
+        size: 30
+
+network:
+        host: localhost
+        port: 6666
